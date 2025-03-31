@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chennu Naga Venkata Sai| Resume</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  
+  <style>
+    :root {
+      --primary: #2c3e50;
+      --secondary: #3498db;
+      --accent: #FFCC33;
+      --gmu-green: #006633;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f8f9fa;
+      scroll-behavior: smooth;
+    }
+    
+    .gradient-header {
+      background: linear-gradient(135deg, var(--gmu-green), var(--accent));
+      clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+      padding: 4rem 0 8rem;
+      color: white;
+      text-align: center;
+    }
+    
+    .floating-img {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      border: 5px solid white;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    .section-title {
+      position: relative;
+      padding-bottom: 15px;
+      color: var(--gmu-green);
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .section-title:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background: var(--accent);
+    }
+    
+    .project-card {
+      background: white;
+      border-radius: 15px;
+      transition: all 0.3s;
+      border: none;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .project-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    }
+    
+    .card {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .social-links a {
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">CNV Sai</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="#articles">Articles</a></li>
+          <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
+          <li class="nav-item"><a class="nav-link" href="#skills">Soft Skills</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="gradient-header">
+    <div class="container" data-aos="fade-up">
+      <img src="./Images/DSC_0008 copy.jpg" class="floating-img mb-4" alt="Profile">
+      <h1 class="display-4 fw-bold mb-3">Chennu Naga Venkata Sai</h1>
+      <p class="lead">AI/ML Engineer, Full-Stack Developer, & Event Technician</p>
+      <div class="social-links mt-4">
+        <a href="https://www.linkedin.com/in/chennu-nagavenkatasai/" class="text-white mx-3"><i class="fab fa-linkedin fa-2x"></i></a>
+        <a href="https://github.com/Nagavenkatasai7" class="text-white mx-3"><i class="fab fa-github fa-2x"></i></a>
+        <a href="https://orcid.org/0009-0000-8252-8682" target="_blank" class="text-white mx-3">
+          <i class="fab fa-orcid fa-2x"></i>
+        </a>
+        <a href="https://www.scopus.com/authid/detail.uri?authorId=58404553900" target="_blank" class="text-white mx-3">
+          <i class="fas fa-book-open fa-2x"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- About Section -->
+  <section id="about" class="container py-5">
+    <h2 class="section-title" data-aos="fade-right">About Me</h2>
+    <div class="row">
+      <div class="col-md-12" data-aos="fade-up">
+        <p>
+          I am Chemu Naga Venkata Sai – an enthusiastic AI/ML Engineer and Full-Stack Developer with a strong passion for building innovative web applications and harnessing the power of artificial intelligence to solve real-world problems. Alongside my technical pursuits, I excel as an event technician, successfully organizing events for over 500 clients, and as a stage hand at Monumental Sports Eagle Bank Arnea, collaborating with teams of 10 to 50 professionals. These experiences have enriched my problem-solving, leadership, and communication skills, making me a versatile and results-driven professional.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Articles Section -->
+  <section id="articles" class="bg-light py-5">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-right">Articles & Publications</h2>
+      <div class="row">
+        <!-- Article 1 -->
+        <div class="col-md-6 mb-4" data-aos="zoom-in">
+          <div class="card h-100">
+            <div class="card-body">
+              <h4 class="card-title">Speech Quality Assessment and Control in Indian Languages</h4>
+              <p class="card-text"><strong>Authors:</strong> Manasa, A., Jaswanth, R., Sai, C.N., Reddy, Y.S.P., Gangashetty, S.V., Govind, D.</p>
+              <p class="card-text">A conference paper exploring techniques from signal processing, linguistics, and cognitive psychology to evaluate and enhance speech quality in diverse Indian languages.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Article 2 -->
+        <div class="col-md-6 mb-4" data-aos="zoom-in">
+          <div class="card h-100">
+            <div class="card-body">
+              <h4 class="card-title">Enhancing Hairfall Prediction: A Comparative Analysis of Individual Algorithms and An Ensemble Method</h4>
+              <p class="card-text"><strong>Authors:</strong> Sai, C.N.V., Archana, E., Vivek, B., Dhanwanth, B., Viknesh, K.S.</p>
+              <p class="card-text">An open access article proposing an ensemble machine learning approach that improves hair fall prediction accuracy by leveraging the strengths of multiple algorithms.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Article 3 -->
+        <div class="col-md-6 mb-4" data-aos="zoom-in">
+          <div class="card h-100">
+            <div class="card-body">
+              <h4 class="card-title">Assessing the Effectiveness of Artificial Intelligence Techniques in Mitigating Cyber Security Risks</h4>
+              <p class="card-text"><strong>Authors:</strong> Sai, C.N.V., Jaswanth, R., Manasa, A., Reddy, Y.S.P., Gangashetty, S.V., Govind, D.</p>
+              <p class="card-text">An article examining the role of machine learning in reducing cyber security threats by leveraging modern AI techniques and data analysis methods.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Article 4 -->
+        <div class="col-md-6 mb-4" data-aos="zoom-in">
+          <div class="card h-100">
+            <div class="card-body">
+              <h4 class="card-title">A Novel Strategy for Streamlining Land Registration using Ethereum Blockchain</h4>
+              <p class="card-text"><strong>Authors:</strong> Subedha, V., Vivek, B., Sai, C.N.V., Vadana, A.S., Dhanwanth, B.</p>
+              <p class="card-text">An article outlining a blockchain-based solution that simplifies land registration processes by leveraging Ethereum and smart contracts to increase transparency and efficiency.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Article 5 -->
+        <div class="col-md-6 mb-4" data-aos="zoom-in">
+          <div class="card h-100">
+            <div class="card-body">
+              <h4 class="card-title">Comparative Analysis of Psychological Stress Detection: A Study of Artificial Neural Networks and Cat Boost Algorithm</h4>
+              <p class="card-text"><strong>Authors:</strong> Jayanthi, G., Archana, E., Saravanan, R., Swaminathan, A., Sai, C.N.</p>
+              <p class="card-text">An article that evaluates various machine learning techniques for detecting psychological stress from online content, emphasizing early detection for effective intervention.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects Section -->
+  <section id="projects" class="container py-5">
+    <h2 class="section-title" data-aos="fade-right">Projects</h2>
+    <div class="row">
+      <!-- Project 1 -->
+      <div class="col-md-6 mb-4" data-aos="zoom-in">
+        <div class="project-card p-4 h-100">
+          <h4>Containerizing Microservices</h4>
+          <p>A microservices application built with Spring Boot, RESTful Web Services, JPA/Hibernate, and Docker, deployed on Kubernetes with a CI/CD pipeline.</p>
+          <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#project1">View Details</button>
+        </div>
+      </div>
+      <!-- Project 2 -->
+      <div class="col-md-6 mb-4" data-aos="zoom-in">
+        <div class="project-card p-4 h-100">
+          <h4>Containerized Web Application</h4>
+          <p>Developed a Dockerized web application deployed on Kubernetes, integrated with a CI/CD pipeline using GitHub and Jenkins for automated builds and deployments.</p>
+          <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#project2">View Details</button>
+        </div>
+      </div>
+      <!-- Project 3 -->
+      <div class="col-md-6 mb-4" data-aos="zoom-in">
+        <div class="project-card p-4 h-100">
+          <h4>Homepage & Student Survey Form</h4>
+          <p>Created a personal homepage and a student survey form hosted on AWS S3 and EC2, showcasing responsive design using HTML, CSS, and W3.CSS templates.</p>
+          <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#project3">View Details</button>
+        </div>
+      </div>
+      <!-- Project 4 -->
+      <div class="col-md-6 mb-4" data-aos="zoom-in">
+        <div class="project-card p-4 h-100">
+          <h4>Vue.js Re-implementation</h4>
+          <p>Re-developed a previous assignment using Vue.js for the frontend along with RESTful Web Services and JPA to enhance the user interface and experience.</p>
+          <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#project4">View Details</button>
+        </div>
+      </div>
+      <!-- Project 5 -->
+      <div class="col-md-6 mb-4" data-aos="zoom-in">
+        <div class="project-card p-4 h-100">
+          <h4>CS Department & Survey Website</h4>
+          <p>Designed and deployed a departmental website with a student survey form using HTML5, CSS, and Bootstrap, hosted on AWS S3 and EC2.</p>
+          <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#project5">View Details</button>
+        </div>
+      </div>
+      <!-- Project 6 -->
+      <div class="col-md-6 mb-4" data-aos="zoom-in">
+        <div class="project-card p-4 h-100">
+          <h4>Enhanced Survey Form with JavaScript & Ajax</h4>
+          <p>Improved a survey form using JavaScript, Bootstrap, and Ajax for dynamic computation of data (average and maximum) and real-time field validation.</p>
+          <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#project6">View Details</button>
+        </div>
+      </div>
+      <!-- Project 7 -->
+      <div class="col-md-6 mb-4" data-aos="zoom-in">
+        <div class="project-card p-4 h-100">
+          <h4>Full-Stack Survey Application</h4>
+          <p>Developed a full-stack application using Angular for the frontend and Spring Boot with JPA/Hibernate for the backend, implementing complete CRUD operations for managing student surveys.</p>
+          <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#project7">View Details</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Soft Skills Section -->
+  <section id="skills" class="bg-light py-5">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-right">Soft Skills & Experience</h2>
+      <div class="row">
+        <div class="col-md-12" data-aos="fade-up">
+          <ul class="list-unstyled">
+            <li><strong>Event Technician:</strong> Successfully organized and managed large-scale events for over 500 clients, ensuring smooth operations and high client satisfaction.</li>
+            <li><strong>Stage Hand at Monumental Sports Eagle Bank Arnea:</strong> Collaborated with teams ranging from 10 to 50 individuals to execute stage setups and event logistics effectively.</li>
+            <li><strong>Team Leadership & Collaboration:</strong> Demonstrated ability to lead projects and work collaboratively in diverse team environments.</li>
+            <li><strong>Adaptability & Problem-Solving:</strong> Proven capacity to adapt to dynamic situations and resolve complex challenges efficiently.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section with EmailJS Integration -->
+  <section id="contact" class="py-5">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-right">Contact</h2>
+      <div class="row justify-content-center">
+        <div class="col-md-6" data-aos="zoom-in">
+          <!-- Add an id to the form for EmailJS -->
+          <form id="contact-form">
+            <div class="mb-3">
+              <input type="text" name="from_name" class="form-control" placeholder="Name" required>
+            </div>
+            <div class="mb-3">
+              <input type="email" name="reply_to" class="form-control" placeholder="Email" required>
+            </div>
+            <div class="mb-3">
+              <textarea name="message" class="form-control" rows="4" placeholder="Message" required></textarea>
+            </div>
+            <button class="btn btn-primary w-100" type="submit">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Project Detail Modals -->
+  <!-- Modal for Project 1 -->
+  <div class="modal fade" id="project1" tabindex="-1" aria-labelledby="project1Label" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="project1Label">Containerizing Microservices</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>This project involved developing a microservices-based application using Spring Boot, RESTful Web Services, and JPA/Hibernate. The application implemented CRUD operations for managing student survey data, containerized using Docker, and deployed on a Kubernetes cluster with an automated CI/CD pipeline.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal for Project 2 -->
+  <div class="modal fade" id="project2" tabindex="-1" aria-labelledby="project2Label" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="project2Label">Containerized Web Application</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>This assignment required containerizing a web application using Docker and deploying it on Kubernetes. A CI/CD pipeline was established using GitHub and Jenkins for automated builds and deployments, ensuring scalability and resiliency.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal for Project 3 -->
+  <div class="modal fade" id="project3" tabindex="-1" aria-labelledby="project3Label" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="project3Label">Homepage & Student Survey Form</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>This project involved creating a personal homepage and a student survey form using HTML, CSS, and responsive design techniques. The homepage was hosted on AWS S3 while the survey form was deployed on an AWS EC2 instance.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal for Project 4 -->
+  <div class="modal fade" id="project4" tabindex="-1" aria-labelledby="project4Label" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="project4Label">Vue.js Re-implementation</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>This project re-implemented a previous assignment using Vue.js for the frontend along with RESTful Web Services and JPA for the backend. The focus was on enhancing the user interface and overall experience while maintaining core functionality.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal for Project 5 -->
+  <div class="modal fade" id="project5" tabindex="-1" aria-labelledby="project5Label" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="project5Label">CS Department & Survey Website</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>This project involved designing and deploying a website for the Computer Science Department that included information pages and a student survey form. The website was built using HTML5, CSS, and Bootstrap and hosted on AWS S3 and EC2.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal for Project 6 -->
+  <div class="modal fade" id="project6" tabindex="-1" aria-labelledby="project6Label" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="project6Label">Enhanced Survey Form with JavaScript & Ajax</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>This project enhanced an existing student survey form by incorporating JavaScript, Bootstrap, Ajax, and JSON. Features included dynamic computation of average and maximum values, real-time validation, and automatic population of fields based on user input.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal for Project 7 -->
+  <div class="modal fade" id="project7" tabindex="-1" aria-labelledby="project7Label" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="project7Label">Full-Stack Survey Application</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>This full-stack application was developed using Angular for the frontend and Spring Boot with JPA/Hibernate for the backend. It implemented complete CRUD functionality for managing student surveys and interfaced with a MySQL database.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <!-- Include EmailJS SDK -->
+  <script type="text/javascript" src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js"></script>
+  <script>
+    // Initialize EmailJS with your user ID
+    (function(){
+      emailjs.init("VglYTFzhGHWcgcH53"); // Replace with your actual user ID from EmailJS
+    })();
+
+    // Attach event listener to the contact form
+    document.getElementById('contact-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      emailjs.sendForm('service_vw6kkb2', 'template_zvwzcpn', this) // Replace with your actual service and template IDs
+        .then(function() {
+          alert('Your message has been sent successfully!');
+          document.getElementById('contact-form').reset();
+        }, function(error) {
+          alert('Failed to send message, please try again later.');
+        });
+    });
+
+    AOS.init({
+      duration: 1000,
+      once: true,
+      offset: 120
+    });
+  </script>
+</body>
+</html>
