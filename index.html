@@ -1,43 +1,1334 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chennu Naga Venkata Sai| Resume</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Naga Venkata Sai Chennu | Prompt Engineer | LLM Apps & RAG</title>
+  
+  <!-- Meta Tags -->
+  <meta name="description" content="Prompt Engineer | LLM Apps & RAG | Python, LangChain | MS CS @ GMU. Aspiring AI engineer connecting ideas from different fields, people from different teams, and applications from different industries.">
+  <meta property="og:title" content="Naga Venkata Sai Chennu | Prompt Engineer">
+  <meta property="og:description" content="Prompt Engineer specializing in LLM Apps, RAG systems, and multi-modal AI solutions">
+  <meta property="og:image" content="./img.JPG">
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- EmailJS CDN (v4) -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   
   <style>
     :root {
-      --primary: #2c3e50;
-      --secondary: #3498db;
-      --accent: #FFCC33;
-      --gmu-green: #006633;
+      --primary: #0a0a0a;
+      --secondary: #1a1a1a;
+      --tertiary: #2a2a2a;
+      --accent: #00ff88;
+      --accent-blue: #0066ff;
+      --accent-purple: #6600ff;
+      --accent-orange: #ff6600;
+      --accent-pink: #ff0088;
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0a0;
+      --text-muted: #666666;
+      --glass: rgba(255, 255, 255, 0.05);
+      --glass-strong: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-border-strong: rgba(255, 255, 255, 0.2);
+      --gradient-primary: linear-gradient(135deg, #00ff88, #0066ff);
+      --gradient-multi: linear-gradient(135deg, #ff6600, #6600ff, #00ff88, #0066ff);
+      --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+      --gradient-rainbow: linear-gradient(135deg, #ff0088, #ff6600, #ffdd00, #00ff88, #0066ff, #6600ff);
+      --shadow-glow: 0 0 20px rgba(0, 255, 136, 0.3);
+      --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.3);
+      --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
     
     body {
-      font-family: 'Poppins', sans-serif;
-      background: #f8f9fa;
-      scroll-behavior: smooth;
+      font-family: 'Inter', sans-serif;
+      background: var(--primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
     }
     
-    .gradient-header {
-      background: linear-gradient(135deg, var(--gmu-green), var(--accent));
-      clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
-      padding: 4rem 0 8rem;
-      color: white;
+    /* Advanced Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--secondary); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+
+    /* Scroll Progress Indicator */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--secondary);
+      z-index: 1001;
+    }
+
+    .scroll-progress-bar {
+      height: 100%;
+      background: var(--gradient-primary);
+      width: 0%;
+      transition: width 0.3s ease;
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    /* Particle Background */
+    .particle-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: particle-float 20s infinite linear;
+    }
+
+    .particle:nth-child(2n) {
+      background: var(--accent-blue);
+      animation-duration: 25s;
+      animation-delay: -5s;
+    }
+
+    .particle:nth-child(3n) {
+      background: var(--accent-purple);
+      animation-duration: 30s;
+      animation-delay: -10s;
+    }
+
+    @keyframes particle-float {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+    }
+
+    /* Glassmorphism Effects */
+    .glass-card {
+      background: var(--gradient-glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      box-shadow: var(--shadow-card);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    }
+
+    .glass-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 60px rgba(0, 255, 136, 0.2);
+      border-color: var(--glass-border-strong);
+    }
+
+    .glass-card:hover::before {
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+
+    /* Creative Button Effects */
+    .btn-creative {
+      position: relative;
+      overflow: hidden;
+      background: var(--gradient-primary);
+      border: none;
+      border-radius: 50px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .btn-creative::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn-creative:hover::before {
+      left: 100%;
+    }
+
+    .btn-creative:hover {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 15px 40px rgba(0, 255, 136, 0.4);
+    }
+
+    /* Floating Animation */
+    @keyframes float-slow {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      33% { transform: translateY(-10px) rotate(1deg); }
+      66% { transform: translateY(-5px) rotate(-1deg); }
+    }
+
+    @keyframes float-medium {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(2deg); }
+    }
+
+    @keyframes float-fast {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      25% { transform: translateY(-8px) rotate(1deg); }
+      75% { transform: translateY(-12px) rotate(-1deg); }
+    }
+
+    .float-slow { animation: float-slow 6s ease-in-out infinite; }
+    .float-medium { animation: float-medium 4s ease-in-out infinite; }
+    .float-fast { animation: float-fast 3s ease-in-out infinite; }
+
+    /* Gradient Text Animation */
+    .gradient-text {
+      background: var(--gradient-rainbow);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      background-size: 200% 200%;
+      animation: gradient-shift 3s ease-in-out infinite;
+    }
+
+    /* Neon Glow Effect */
+    .neon-glow {
+      text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor;
+    }
+
+    /* Interactive Skill Tags */
+    .skill-tag-interactive {
+      position: relative;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .skill-tag-interactive:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+      background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 102, 255, 0.2));
+    }
+
+    .skill-tag-interactive::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .skill-tag-interactive:hover::before {
+      left: 100%;
+    }
+
+    /* Hero Description */
+    .hero-description {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      margin: 1.5rem 0 2rem 0;
+      line-height: 1.6;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Metrics Strip */
+    .metrics-strip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin: 2rem 0;
+      flex-wrap: wrap;
+      padding: 1rem;
+      background: var(--gradient-glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .metric-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .metric-number {
+      font-size: 1.8rem;
+      font-weight: 900;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+
+    .metric-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 600;
       text-align: center;
     }
+
+    .metric-divider {
+      color: var(--accent);
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    /* Trust Markers */
+    .trust-markers {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin: 2rem 0 1rem 0;
+      flex-wrap: wrap;
+    }
+
+    .trust-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      background: var(--gradient-glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 25px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .trust-badge:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .trust-badge i {
+      color: var(--accent);
+      font-size: 1rem;
+    }
+
+    /* Sticky CTA Bar */
+    .sticky-cta {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--gradient-glass);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--glass-border);
+      padding: 1rem;
+      z-index: 1000;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+      display: none;
+    }
+
+    .sticky-cta.visible {
+      transform: translateY(0);
+      display: block;
+    }
+
+    .sticky-cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .sticky-cta-btn {
+      padding: 0.75rem 1.5rem;
+      background: var(--gradient-primary);
+      border: none;
+      border-radius: 25px;
+      color: var(--primary);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+
+    .sticky-cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 255, 136, 0.4);
+    }
+
+    /* Enhanced CTA Buttons */
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .cta-primary {
+      background: var(--gradient-primary);
+      border: none;
+      border-radius: 50px;
+      padding: 1.2rem 2.5rem;
+      color: var(--primary);
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--shadow-glow);
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .cta-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .cta-primary:hover::before {
+      left: 100%;
+    }
+
+    .cta-primary:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 20px 40px rgba(0, 255, 136, 0.5);
+    }
+
+    .cta-secondary {
+      background: var(--gradient-glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 50px;
+      padding: 1.2rem 2.5rem;
+      color: var(--text-primary);
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(20px);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .cta-secondary:hover {
+      background: var(--glass-border);
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(255, 255, 255, 0.1);
+    }
+
+    /* Achievements Grid */
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+    }
+
+    .achievement-item {
+      background: var(--gradient-glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 1.2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .achievement-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 255, 136, 0.2);
+      border-color: var(--accent);
+    }
+
+    .achievement-number {
+      font-size: 2rem;
+      font-weight: 900;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+      line-height: 1;
+    }
+
+    .achievement-text {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .achievement-metric {
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: block;
+      margin-top: 0.25rem;
+    }
+
+    /* Skills Badges */
+    .skills-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .skill-badge-compact {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--gradient-glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      font-weight: 600;
+      transition: all 0.3s ease;
+      cursor: default;
+    }
+
+    .skill-badge-compact:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      box-shadow: 0 5px 15px rgba(0, 255, 136, 0.2);
+    }
+
+    .skill-badge-compact i {
+      color: var(--accent);
+      font-size: 0.9rem;
+    }
+
+    /* Project Badges */
+    .project-badges {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .project-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.25rem 0.75rem;
+      background: var(--gradient-glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 15px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .project-badge:hover {
+      transform: translateY(-1px);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .project-badge i {
+      font-size: 0.8rem;
+    }
+
+    .project-badge.live-demo {
+      background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 102, 255, 0.1));
+      border-color: rgba(0, 255, 136, 0.3);
+      color: var(--accent);
+    }
+
+    .project-badge.github {
+      background: linear-gradient(135deg, rgba(24, 23, 23, 0.1), rgba(24, 23, 23, 0.1));
+      border-color: rgba(24, 23, 23, 0.3);
+      color: var(--text-primary);
+    }
+
+    /* Featured Project Styles */
+    .featured-project {
+      position: relative;
+      border: 2px solid var(--accent);
+      background: linear-gradient(135deg, rgba(0, 255, 136, 0.05), rgba(0, 102, 255, 0.05));
+    }
+
+    .project-highlight-badge {
+      position: absolute;
+      top: -10px;
+      right: 20px;
+      background: var(--gradient-primary);
+      color: var(--primary);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: var(--shadow-glow);
+      z-index: 2;
+    }
+
+    .project-highlight-badge i {
+      font-size: 0.9rem;
+    }
+
+    /* Project Highlights */
+    .project-highlights {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .highlight-metric {
+      text-align: center;
+      padding: 0.75rem;
+      background: var(--gradient-glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .highlight-metric:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      box-shadow: 0 5px 15px rgba(0, 255, 136, 0.2);
+    }
+
+    .metric-value {
+      display: block;
+      font-size: 1.2rem;
+      font-weight: 900;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .metric-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    /* Demo Reel Section */
+    .demo-reel-container {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .demo-reel-video {
+      position: relative;
+    }
+
+    .video-placeholder {
+      background: var(--gradient-glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 3rem 2rem;
+      text-align: center;
+      aspect-ratio: 16/9;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .video-placeholder:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 255, 136, 0.2);
+      border-color: var(--accent);
+    }
+
+    .video-placeholder i {
+      font-size: 4rem;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      opacity: 0.8;
+    }
+
+    .video-placeholder h3 {
+      font-size: 1.5rem;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+    }
+
+    .video-placeholder p {
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+    }
+
+    .video-placeholder ul {
+      text-align: left;
+      margin: 1rem 0;
+      padding-left: 1.5rem;
+    }
+
+    .video-placeholder li {
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .video-stats {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--glass-border);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .demo-reel-info h3 {
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+      font-size: 1.25rem;
+    }
+
+    .demo-highlights {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .highlight-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: var(--gradient-glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .highlight-item:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      box-shadow: 0 5px 15px rgba(0, 255, 136, 0.1);
+    }
+
+    .highlight-item i {
+      color: var(--accent);
+      font-size: 1rem;
+      width: 20px;
+    }
+
+    .highlight-item span {
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    /* Contact Form Styles */
+    .contact-form-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .contact-form-card {
+      background: var(--gradient-glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: var(--shadow-card);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-form-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    }
+
+    .contact-form-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 255, 136, 0.2);
+      border-color: var(--glass-border-strong);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .form-label {
+      display: block;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      transition: color 0.3s ease;
+    }
+
+    .form-input,
+    .form-textarea {
+      width: 100%;
+      padding: 1rem 1.2rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      color: var(--text-primary);
+      font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.1);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .form-input::placeholder,
+    .form-textarea::placeholder {
+      color: var(--text-muted);
+      opacity: 0.7;
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 120px;
+      font-family: inherit;
+    }
+
+    .form-submit-btn {
+      width: 100%;
+      padding: 1rem 2rem;
+      background: var(--gradient-primary);
+      border: none;
+      border-radius: 50px;
+      color: var(--primary);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--shadow-glow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-submit-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .form-submit-btn:hover::before {
+      left: 100%;
+    }
+
+    .form-submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px rgba(0, 255, 136, 0.4);
+    }
+
+    .form-submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .form-submit-btn:disabled:hover {
+      transform: none;
+      box-shadow: var(--shadow-glow);
+    }
+
+    .form-message {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+    }
+
+    .form-message.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .form-message.success {
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      color: var(--accent);
+    }
+
+    .form-message.error {
+      background: rgba(255, 136, 136, 0.1);
+      border: 1px solid rgba(255, 136, 136, 0.3);
+      color: #ff8888;
+    }
+
+    .contact-form-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .contact-form-subtitle {
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .contact-form-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .contact-grid {
+        grid-template-columns: 1fr !important;
+      }
+
+      .contact-form-card {
+        padding: 1.5rem;
+      }
+
+      .proof-badges {
+        gap: 1rem;
+      }
+
+      .proof-badge {
+        min-width: 100px;
+        padding: 1rem;
+      }
+
+      .proof-number {
+        font-size: 1.8rem;
+      }
+
+      .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .cta-primary,
+      .cta-secondary {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+      }
+
+      .achievements-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.8rem;
+      }
+
+      .achievement-item {
+        padding: 1rem;
+      }
+
+      .achievement-number {
+        font-size: 1.5rem;
+      }
+
+      .demo-reel-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .video-placeholder {
+        padding: 2rem 1.5rem;
+      }
+
+      .video-placeholder i {
+        font-size: 3rem;
+      }
+
+      .video-placeholder h3 {
+        font-size: 1.25rem;
+      }
+
+      .trust-markers {
+        gap: 1rem;
+      }
+
+      .trust-badge {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+      }
+
+      .metrics-strip {
+        padding: 0.75rem;
+        gap: 0.75rem;
+      }
+
+      .metric-number {
+        font-size: 1.4rem;
+      }
+
+      .metric-label {
+        font-size: 0.75rem;
+      }
+
+      .sticky-cta {
+        padding: 0.75rem;
+      }
+
+      .sticky-cta-buttons {
+        gap: 0.75rem;
+      }
+
+      .sticky-cta-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+      }
+
+      .publication-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+      }
+
+      .publication-year {
+        margin-left: 0;
+        align-self: flex-end;
+      }
+
+      .publication-impact {
+        font-size: 0.85rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .proof-badges {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .proof-badge {
+        width: 100%;
+        max-width: 250px;
+      }
+
+      .achievements-grid {
+        grid-template-columns: 1fr;
+      }
+    }
     
-    .floating-img {
-      width: 220px;
-      height: 220px;
+    /* Navigation */
+    .navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      padding: 1rem 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(20px);
+      background: rgba(10, 10, 10, 0.8);
+      border-bottom: 1px solid var(--glass-border);
+    }
+    
+    .navbar.scrolled {
+      padding: 0.5rem 0;
+      background: rgba(10, 10, 10, 0.95);
+    }
+    
+    .nav-container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+    
+    .nav-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-link:hover {
+      color: var(--accent);
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--gradient-primary);
+      transition: width 0.3s ease;
+    }
+    
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+      z-index: -2;
+    }
+    
+    .hero-grid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(0, 255, 136, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 136, 0.1) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: grid-move 20s linear infinite;
+      z-index: -1;
+    }
+    
+    @keyframes grid-move {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(50px, 50px); }
+    }
+    
+    .hero-container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 5rem;
+      align-items: center;
+    }
+    
+    .hero-content {
+      z-index: 1;
+    }
+    
+    .hero-badge {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 50px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 2rem;
+      backdrop-filter: blur(10px);
+    }
+    
+    .hero-title {
+      font-size: clamp(3rem, 8vw, 5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      background: var(--gradient-multi);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradient-shift 3s ease-in-out infinite;
+    }
+    
+    @keyframes gradient-shift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    
+    .hero-subtitle {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    
+    .hero-location {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      font-size: 1rem;
+    }
+    
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 50px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-primary {
+      background: var(--gradient-primary);
+      color: var(--primary);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 40px rgba(0, 255, 136, 0.3);
+    }
+    
+    .btn-secondary {
+      background: var(--glass);
+      color: var(--text-primary);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--glass-border);
+      transform: translateY(-2px);
+    }
+    
+    .hero-visual {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .hero-image {
+      width: 400px;
+      height: 400px;
       border-radius: 50%;
-      border: 5px solid white;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      object-fit: cover;
+      border: 4px solid var(--glass-border);
+      position: relative;
+      z-index: 2;
       animation: float 6s ease-in-out infinite;
+      box-shadow: var(--shadow-glow);
+      transition: all 0.3s ease;
+    }
+
+    .hero-image:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 40px rgba(0, 255, 136, 0.6);
     }
     
     @keyframes float {
@@ -45,395 +1336,1763 @@
       50% { transform: translateY(-20px); }
     }
     
-    .section-title {
-      position: relative;
-      padding-bottom: 15px;
-      color: var(--gmu-green);
-      text-align: center;
-      margin-bottom: 2rem;
+    .hero-orb {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      opacity: 0.3;
+      filter: blur(40px);
+      animation: orb-pulse 4s ease-in-out infinite;
+    }
+
+    /* Floating Geometric Elements */
+    .floating-element {
+      position: absolute;
+      border-radius: 50%;
+      background: linear-gradient(45deg, rgba(0, 255, 136, 0.1), rgba(0, 102, 255, 0.1));
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .floating-element:nth-child(1) {
+      width: 60px;
+      height: 60px;
+      top: 20%;
+      left: 10%;
+      animation: float-slow 6s ease-in-out infinite;
+    }
+
+    .floating-element:nth-child(2) {
+      width: 40px;
+      height: 40px;
+      top: 60%;
+      right: 15%;
+      animation: float-medium 4s ease-in-out infinite;
+      animation-delay: -2s;
+    }
+
+    .floating-element:nth-child(3) {
+      width: 80px;
+      height: 80px;
+      bottom: 20%;
+      left: 20%;
+      animation: float-fast 3s ease-in-out infinite;
+      animation-delay: -1s;
+    }
+
+    .floating-element:nth-child(4) {
+      width: 30px;
+      height: 30px;
+      top: 40%;
+      right: 25%;
+      animation: float-slow 7s ease-in-out infinite;
+      animation-delay: -3s;
+      border-radius: 10px;
     }
     
-    .section-title:after {
+    @keyframes orb-pulse {
+      0%, 100% { transform: scale(1); opacity: 0.3; }
+      50% { transform: scale(1.2); opacity: 0.5; }
+    }
+    
+    /* Stats Section */
+    .stats {
+      padding: 4rem 0;
+      background: var(--secondary);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .stats-container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+    }
+    
+    .stat-item {
+      text-align: center;
+      padding: 2rem;
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 1rem;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+    
+    .stat-item:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent);
+    }
+    
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 900;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    
+    /* Section Styles */
+    .section {
+      padding: 7rem 0;
+    }
+    
+    .section-container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+    
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+    
+    .section-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      margin-bottom: 1rem;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .section-subtitle {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    /* About Section */
+    .about {
+      background: var(--secondary);
+    }
+    
+    .about-content {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 4rem;
+      align-items: start;
+    }
+    
+    .about-info {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 1rem;
+      padding: 2rem;
+      backdrop-filter: blur(10px);
+    }
+    
+    .about-text {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: var(--text-secondary);
+    }
+    
+    .skills-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .skill-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 0.5rem;
+      backdrop-filter: blur(10px);
+    }
+    
+    .skill-icon {
+      color: var(--accent);
+      font-size: 1.25rem;
+    }
+    
+    /* Experience Section */
+    .experience-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    
+    .experience-card {
+      background: var(--gradient-glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 1rem;
+      padding: 2rem;
+      backdrop-filter: blur(20px);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+
+    .experience-card::before {
       content: '';
       position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100px;
-      height: 3px;
-      background: var(--accent);
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: all 0.3s ease;
+    }
+
+    .experience-card:hover::before {
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
     }
     
-    .project-card {
-      background: white;
-      border-radius: 15px;
-      transition: all 0.3s;
-      border: none;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    .experience-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      border-color: var(--glass-border-strong);
+      box-shadow: 0 20px 60px rgba(0, 255, 136, 0.2);
     }
     
-    .project-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    .experience-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
     
-    .card {
-      border: none;
-      border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    .experience-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
     }
     
-    .social-links a {
+    .experience-company {
+      font-size: 1.1rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    
+    .experience-duration {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      padding: 0.25rem 0.75rem;
+      background: rgba(0, 255, 136, 0.1);
+      border-radius: 20px;
+    }
+    
+    .experience-description {
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    
+    .experience-description ul {
+      margin-top: 1rem;
+      padding-left: 1.5rem;
+    }
+    
+    .experience-description li {
+      margin-bottom: 0.5rem;
+    }
+    
+    /* Publications Section */
+    .publications {
+      background: var(--secondary);
+    }
+    
+    .publications-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+    }
+    
+    .publication-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 1rem;
+      padding: 2rem;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+    
+    .publication-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent-blue);
+    }
+    
+    .publication-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      line-height: 1.4;
+    }
+    
+    .publication-type {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background: rgba(0, 102, 255, 0.1);
+      border: 1px solid rgba(0, 102, 255, 0.3);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      color: var(--accent-blue);
+      margin-bottom: 1rem;
+    }
+    
+    /* Skills Section */
+    .skills-section {
+      background: var(--secondary);
+    }
+    
+    .skills-categories {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    
+    .skill-category {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 1rem;
+      padding: 2rem;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+    
+    .skill-category:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent);
+    }
+    
+    .skill-category-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .skill-category-icon {
+      font-size: 1.5rem;
+    }
+    
+    .skill-category:nth-child(1) .skill-category-icon { color: var(--accent); }
+    .skill-category:nth-child(2) .skill-category-icon { color: var(--accent-blue); }
+    .skill-category:nth-child(3) .skill-category-icon { color: var(--accent-purple); }
+    .skill-category:nth-child(4) .skill-category-icon { color: var(--accent-orange); }
+    
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    
+    .skill-tag {
+      padding: 0.5rem 1rem;
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      border-radius: 25px;
+      font-size: 0.875rem;
+      color: var(--accent);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .skill-tag::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .skill-tag:hover::before {
+      left: 100%;
+    }
+    
+    .skill-tag:hover {
+      background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 102, 255, 0.2));
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+      border-color: rgba(0, 255, 136, 0.5);
+    }
+    
+    /* Publications Section */
+    .publication-link {
       text-decoration: none;
+      color: inherit;
+      display: block;
     }
+
+    .publication-link:hover .publication-title {
+      color: var(--accent);
+    }
+
+    .publication-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0.5rem 0 1rem 0;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .publication-type {
+      flex: 1;
+      font-weight: 500;
+    }
+
+    .publication-year {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+      margin-left: 1rem;
+    }
+
+    .publication-impact {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--text-primary);
+      margin-top: 1rem;
+    }
+
+    .publication-impact strong {
+      color: var(--accent);
+    }
+    
+    /* Awards Section */
+    .awards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+    }
+    
+    .award-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 1rem;
+      padding: 2rem;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .award-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--gradient-primary);
+    }
+    
+    .award-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent);
+    }
+    
+    .award-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    
+    .award-card:nth-child(1) .award-icon { color: #ffd700; }
+    .award-card:nth-child(2) .award-icon { color: var(--accent); }
+    .award-card:nth-child(3) .award-icon { color: var(--accent-blue); }
+    
+    .award-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+    
+    .award-organization {
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    
+    .award-description {
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    
+    /* Research Focus Section */
+    .research-focus {
+      background: var(--secondary);
+    }
+    
+    .research-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    
+    .research-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 1rem;
+      padding: 2rem;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+    
+    .research-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent-blue);
+    }
+    
+    .research-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    
+    .research-card:nth-child(1) .research-icon { color: var(--accent); }
+    .research-card:nth-child(2) .research-icon { color: var(--accent-blue); }
+    .research-card:nth-child(3) .research-icon { color: var(--accent-purple); }
+    .research-card:nth-child(4) .research-icon { color: var(--accent-orange); }
+    
+    .research-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+    
+    .research-description {
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Contact Section */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    
+    .contact-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 1rem;
+      padding: 2rem;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+    
+    .contact-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent);
+    }
+    
+    .contact-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    
+    .contact-card:nth-child(1) .contact-icon { color: var(--accent); }
+    .contact-card:nth-child(2) .contact-icon { color: var(--accent-blue); }
+    .contact-card:nth-child(3) .contact-icon { color: var(--accent-purple); }
+    
+    .contact-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    
+    .contact-info {
+      color: var(--text-secondary);
+      word-break: break-all;
+    }
+    
+    .contact-link {
+      color: var(--accent);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    
+    .contact-link:hover {
+      color: var(--text-primary);
+    }
+    
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hero-container { grid-template-columns: 1fr; text-align: center; gap: 2rem; }
+      .hero-image { width: 300px; height: 300px; }
+      .stats-container { grid-template-columns: repeat(2, 1fr); }
+      .about-content { grid-template-columns: 1fr; }
+      .skills-categories { grid-template-columns: 1fr; }
+      .experience-header { flex-direction: column; align-items: start; }
+      .research-grid { grid-template-columns: 1fr; }
+      .awards-grid { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+    }
+    
+    /* Animations */
+    .fade-in-up {
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 0.8s ease forwards;
+    }
+    
+    @keyframes fadeInUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .stagger-1 { animation-delay: 0.1s; }
+    .stagger-2 { animation-delay: 0.2s; }
+    .stagger-3 { animation-delay: 0.3s; }
+    .stagger-4 { animation-delay: 0.4s; }
   </style>
 </head>
 <body>
+  <!-- Particle Background -->
+  <div class="particle-bg">
+    <div class="particle" style="left: 10%; width: 4px; height: 4px;"></div>
+    <div class="particle" style="left: 20%; width: 6px; height: 6px;"></div>
+    <div class="particle" style="left: 30%; width: 3px; height: 3px;"></div>
+    <div class="particle" style="left: 40%; width: 5px; height: 5px;"></div>
+    <div class="particle" style="left: 50%; width: 4px; height: 4px;"></div>
+    <div class="particle" style="left: 60%; width: 6px; height: 6px;"></div>
+    <div class="particle" style="left: 70%; width: 3px; height: 3px;"></div>
+    <div class="particle" style="left: 80%; width: 5px; height: 5px;"></div>
+    <div class="particle" style="left: 90%; width: 4px; height: 4px;"></div>
+    <div class="particle" style="left: 15%; width: 3px; height: 3px;"></div>
+    <div class="particle" style="left: 25%; width: 5px; height: 5px;"></div>
+    <div class="particle" style="left: 35%; width: 4px; height: 4px;"></div>
+    <div class="particle" style="left: 45%; width: 6px; height: 6px;"></div>
+    <div class="particle" style="left: 55%; width: 3px; height: 3px;"></div>
+    <div class="particle" style="left: 65%; width: 5px; height: 5px;"></div>
+    <div class="particle" style="left: 75%; width: 4px; height: 4px;"></div>
+    <div class="particle" style="left: 85%; width: 6px; height: 6px;"></div>
+  </div>
+
+  <!-- Scroll Progress -->
+  <div class="scroll-progress">
+    <div class="scroll-progress-bar"></div>
+  </div>
+
   <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-    <div class="container">
-      <a class="navbar-brand" href="#">CNV Sai</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-          <li class="nav-item"><a class="nav-link" href="#articles">Articles</a></li>
-          <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
-          <li class="nav-item"><a class="nav-link" href="#skills">Soft Skills</a></li>
-          <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-        </ul>
-      </div>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">Naga Venkata Sai</div>
+      <ul class="nav-links">
+        <li><a href="#home" class="nav-link">Home</a></li>
+        <li><a href="#about" class="nav-link">About</a></li>
+        <li><a href="#skills" class="nav-link">Skills</a></li>
+        <li><a href="#projects" class="nav-link">AI Projects</a></li>
+        <li><a href="#experience" class="nav-link">Experience</a></li>
+        <li><a href="#publications" class="nav-link">Publications</a></li>
+        <li><a href="#awards" class="nav-link">Awards</a></li>
+        <li><a href="#contact" class="nav-link">Contact</a></li>
+      </ul>
     </div>
   </nav>
 
-  <!-- Header -->
-  <header class="gradient-header">
-    <div class="container" data-aos="fade-up">
-      <img src="./Images/DSC_0008.jpg" class="floating-img mb-4" alt="Profile">
-      <h1 class="display-4 fw-bold mb-3">Chennu Naga Venkata Sai</h1>
-      <p class="lead">AI/ML Engineer, Full-Stack Developer, & Event Technician</p>
-      <div class="social-links mt-4">
-        <a href="https://www.linkedin.com/in/chennu-nagavenkatasai/" target="_blank" rel="noopener noreferrer" class="text-white mx-3">
-          <i class="fab fa-linkedin fa-2x"></i>
-        </a>
-        <a href="https://github.com/Nagavenkatasai7" target="_blank" rel="noopener noreferrer" class="text-white mx-3">
-          <i class="fab fa-github fa-2x"></i>
-        </a>
-        <a href="https://orcid.org/0009-0000-8252-8682" target="_blank" rel="noopener noreferrer" class="text-white mx-3">
-          <i class="fab fa-orcid fa-2x"></i>
-        </a>
-        <a href="https://www.scopus.com/authid/detail.uri?authorId=58404553900" target="_blank" rel="noopener noreferrer" class="text-white mx-3">
-          <i class="fas fa-book-open fa-2x"></i>
-        </a>        
+  <!-- Hero Section -->
+  <section id="home" class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-container">
+      <div class="hero-content">
+        <h1 class="hero-title fade-in-up stagger-1 gradient-text">I build production LLM apps and RAG systems that cut research time by 95% and automate 78% of incidents.</h1>
+
+        <p class="hero-description fade-in-up stagger-2">
+          CS Master's at GMU shipping real-world AI: context-aware research chatbots, LangGraph triage agents, and real-time ASL accessibility.
+        </p>
+
+        <!-- Metrics Strip -->
+        <div class="metrics-strip fade-in-up stagger-3">
+          <div class="metric-item">
+            <span class="metric-number">1000+</span>
+            <span class="metric-label">daily queries</span>
+          </div>
+          <div class="metric-divider">•</div>
+          <div class="metric-item">
+            <span class="metric-number">95%</span>
+            <span class="metric-label">CSAT</span>
+          </div>
+          <div class="metric-divider">•</div>
+          <div class="metric-item">
+            <span class="metric-number">78%</span>
+            <span class="metric-label">automation</span>
+          </div>
+          <div class="metric-divider">•</div>
+          <div class="metric-item">
+            <span class="metric-number">3700+</span>
+            <span class="metric-label">words in &lt;5s</span>
+          </div>
+        </div>
+
+        <!-- Trust Markers -->
+        <div class="trust-markers fade-in-up stagger-4">
+          <div class="trust-badge">
+            <i class="fas fa-graduation-cap"></i>
+            <span>GMU CS Master's</span>
+          </div>
+          <div class="trust-badge">
+            <i class="fab fa-github"></i>
+            <span>5+ Open Source Projects</span>
+          </div>
+          <div class="trust-badge">
+            <i class="fas fa-code"></i>
+            <span>Production Ready</span>
+          </div>
+        </div>
+        <div class="hero-location fade-in-up stagger-2">
+          <i class="fas fa-map-marker-alt"></i>
+          <span>Fairfax, Virginia, United States</span>
+        </div>
+        <div class="cta-buttons fade-in-up stagger-3">
+          <a href="#projects" class="cta-primary">
+            <i class="fas fa-code"></i>
+            View AI Projects
+          </a>
+          <a href="https://calendly.com/2000031637cseklu/meeting-with-venkat" class="cta-secondary" target="_blank">
+            <i class="fas fa-calendar"></i>
+            Book 15-min Call
+          </a>
+          <a href="https://nagavenkatasai7.github.io/Chennu-Naga-Venkata-Sai-Resume/" class="cta-secondary" target="_blank">
+            <i class="fas fa-download"></i>
+            Download Resume
+          </a>
+        </div>
+      </div>
+      <div class="hero-visual fade-in-up stagger-4">
+        <div class="hero-orb"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <img src="./img.JPG" alt="Naga Venkata Sai Chennu" class="hero-image">
       </div>
     </div>
-  </header>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats">
+    <div class="stats-container">
+      <div class="stat-item fade-in-up stagger-1">
+        <div class="stat-number">5+</div>
+        <div class="stat-label">Research Publications</div>
+      </div>
+      <div class="stat-item fade-in-up stagger-2">
+        <div class="stat-number">2+</div>
+        <div class="stat-label">Years Research Experience</div>
+      </div>
+      <div class="stat-item fade-in-up stagger-3">
+        <div class="stat-number">21+</div>
+        <div class="stat-label">Indian Languages</div>
+      </div>
+      <div class="stat-item fade-in-up stagger-4">
+        <div class="stat-number">468</div>
+        <div class="stat-label">Professionals Surveyed</div>
+      </div>
+    </div>
+  </section>
 
   <!-- About Section -->
-  <section id="about" class="container py-5">
-    <h2 class="section-title" data-aos="fade-right">About Me</h2>
-    <div class="row">
-      <div class="col-md-12" data-aos="fade-up">
-        <p>
-          I am Chemu Naga Venkata Sai – an enthusiastic AI/ML Engineer and Full-Stack Developer with a strong passion for building innovative web applications and harnessing the power of artificial intelligence to solve real-world problems. Alongside my technical pursuits, I excel as an event technician, successfully organizing events for over 500 clients, and as a stage hand at Monumental Sports Eagle Bank Arnea, collaborating with teams of 10 to 50 professionals. These experiences have enriched my problem-solving, leadership, and communication skills, making me a versatile and results-driven professional.
+  <section id="about" class="section about">
+    <div class="section-container">
+      <div class="section-header">
+        <h2 class="section-title fade-in-up">About Me</h2>
+        <p class="section-subtitle fade-in-up stagger-1">
+          CS Master's student at GMU building production LLM systems that deliver real business impact.
         </p>
       </div>
-    </div>
-  </section>
-
-  <!-- Articles Section -->
-  <section id="articles" class="bg-light py-5">
-    <div class="container">
-      <h2 class="section-title" data-aos="fade-right">Articles & Publications</h2>
-      <div class="row">
-        <!-- Article 1 -->
-        <div class="col-md-6 mb-4" data-aos="zoom-in">
-          <div class="card h-100">
-            <div class="card-body">
-              <h4 class="card-title">Speech Quality Assessment and Control in Indian Languages</h4>
-              <p class="card-text"><strong>Authors:</strong> Manasa, A., Jaswanth, R., Sai, C.N., Reddy, Y.S.P., Gangashetty, S.V., Govind, D.</p>
-              <p class="card-text">A conference paper exploring techniques from signal processing, linguistics, and cognitive psychology to evaluate and enhance speech quality in diverse Indian languages.</p>
-            </div>
+      <div class="about-content">
+        <div class="about-info fade-in-up stagger-2">
+          <h3 style="margin-bottom: 1rem; color: var(--accent);">What I Build</h3>
+          <div class="skills-badges">
+            <span class="skill-badge-compact">
+              <i class="fas fa-robot"></i>
+              <span>LLM Apps</span>
+            </span>
+            <span class="skill-badge-compact">
+              <i class="fas fa-search"></i>
+              <span>RAG Systems</span>
+            </span>
+            <span class="skill-badge-compact">
+              <i class="fas fa-cogs"></i>
+              <span>LangGraph Agents</span>
+            </span>
+            <span class="skill-badge-compact">
+              <i class="fas fa-eye"></i>
+              <span>Computer Vision</span>
+            </span>
+            <span class="skill-badge-compact">
+              <i class="fas fa-brain"></i>
+              <span>Prompt Engineering</span>
+            </span>
+            <span class="skill-badge-compact">
+              <i class="fas fa-server"></i>
+              <span>Full-Stack AI</span>
+            </span>
           </div>
         </div>
-        <!-- Article 2 -->
-        <div class="col-md-6 mb-4" data-aos="zoom-in">
-          <div class="card h-100">
-            <div class="card-body">
-              <h4 class="card-title">Enhancing Hairfall Prediction: A Comparative Analysis of Individual Algorithms and An Ensemble Method</h4>
-              <p class="card-text"><strong>Authors:</strong> Sai, C.N.V., Archana, E., Vivek, B., Dhanwanth, B., Viknesh, K.S.</p>
-              <p class="card-text">An open access article proposing an ensemble machine learning approach that improves hair fall prediction accuracy by leveraging the strengths of multiple algorithms.</p>
-            </div>
-          </div>
-        </div>
-        <!-- Article 3 -->
-        <div class="col-md-6 mb-4" data-aos="zoom-in">
-          <div class="card h-100">
-            <div class="card-body">
-              <h4 class="card-title">Assessing the Effectiveness of Artificial Intelligence Techniques in Mitigating Cyber Security Risks</h4>
-              <p class="card-text"><strong>Authors:</strong> Sai, C.N.V., Jaswanth, R., Manasa, A., Reddy, Y.S.P., Gangashetty, S.V., Govind, D.</p>
-              <p class="card-text">An article examining the role of machine learning in reducing cyber security threats by leveraging modern AI techniques and data analysis methods.</p>
-            </div>
-          </div>
-        </div>
-        <!-- Article 4 -->
-        <div class="col-md-6 mb-4" data-aos="zoom-in">
-          <div class="card h-100">
-            <div class="card-body">
-              <h4 class="card-title">A Novel Strategy for Streamlining Land Registration using Ethereum Blockchain</h4>
-              <p class="card-text"><strong>Authors:</strong> Subedha, V., Vivek, B., Sai, C.N.V., Vadana, A.S., Dhanwanth, B.</p>
-              <p class="card-text">An article outlining a blockchain-based solution that simplifies land registration processes by leveraging Ethereum and smart contracts to increase transparency and efficiency.</p>
-            </div>
-          </div>
-        </div>
-        <!-- Article 5 -->
-        <div class="col-md-6 mb-4" data-aos="zoom-in">
-          <div class="card h-100">
-            <div class="card-body">
-              <h4 class="card-title">Comparative Analysis of Psychological Stress Detection: A Study of Artificial Neural Networks and Cat Boost Algorithm</h4>
-              <p class="card-text"><strong>Authors:</strong> Jayanthi, G., Archana, E., Saravanan, R., Swaminathan, A., Sai, C.N.</p>
-              <p class="card-text">An article that evaluates various machine learning techniques for detecting psychological stress from online content, emphasizing early detection for effective intervention.</p>
-            </div>
-          </div>
+        <div class="about-text fade-in-up stagger-3">
+          <p>
+            I'm a Computer Science master's student at George Mason University specializing in production LLM applications.
+            I build systems that automate research workflows, streamline incident triage, and enhance accessibility through AI.
+          </p>
+          <p>
+            My expertise spans prompt engineering, RAG architectures, multi-modal systems, and intelligent automation.
+            I've shipped production systems handling 1,000+ daily queries at 95% user satisfaction, automated 78% of incident triage
+            using LangGraph, and developed real-time ASL detection achieving 92% accuracy.
+          </p>
+          <p>
+            I'm passionate about bridging cutting-edge AI research with practical business applications, delivering measurable
+            impact through well-architected, scalable solutions.
+          </p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Projects Section -->
-  <section id="projects" class="container py-5">
-    <h2 class="section-title" data-aos="fade-right">Projects</h2>
-    <div class="row">
-      <!-- Project 1 -->
-      <div class="col-md-6 mb-4" data-aos="zoom-in">
-        <div class="project-card p-4 h-100">
-          <h4>Containerizing Microservices</h4>
-          <p>A microservices application built with Spring Boot, RESTful Web Services, JPA/Hibernate, and Docker, deployed on Kubernetes with a CI/CD pipeline.</p>
-          <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#project1">View Details</button>
-        </div>
+  <!-- Skills Section -->
+  <section id="skills" class="section skills-section">
+    <div class="section-container">
+      <div class="section-header">
+        <h2 class="section-title fade-in-up">Technical Skills</h2>
+        <p class="section-subtitle fade-in-up stagger-1">
+          Comprehensive expertise across AI technologies, programming languages, and research methodologies.
+        </p>
       </div>
-      <!-- Project 2 -->
-      <div class="col-md-6 mb-4" data-aos="zoom-in">
-        <div class="project-card p-4 h-100">
-          <h4>Containerized Web Application</h4>
-          <p>Developed a Dockerized web application deployed on Kubernetes, integrated with a CI/CD pipeline using GitHub and Jenkins for automated builds and deployments.</p>
-          <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#project2">View Details</button>
+      <div class="skills-categories">
+        <div class="skill-category fade-in-up stagger-2">
+          <h3 class="skill-category-title">
+            <i class="fas fa-star skill-category-icon"></i>
+            Proficient
+          </h3>
+          <div class="skill-tags">
+            <span class="skill-tag">Prompt Engineering</span>
+            <span class="skill-tag">Conversational AI</span>
+            <span class="skill-tag">Multi-Modal Systems</span>
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">LangChain</span>
+          </div>
         </div>
-      </div>
-      <!-- Project 3 -->
-      <div class="col-md-6 mb-4" data-aos="zoom-in">
-        <div class="project-card p-4 h-100">
-          <h4>Homepage & Student Survey Form</h4>
-          <p>Created a personal homepage and a student survey form hosted on AWS S3 and EC2, showcasing responsive design using HTML, CSS, and W3.CSS templates.</p>
-          <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#project3">View Details</button>
+        
+        <div class="skill-category fade-in-up stagger-3">
+          <h3 class="skill-category-title">
+            <i class="fas fa-check-circle skill-category-icon"></i>
+            Knowledgeable
+          </h3>
+          <div class="skill-tags">
+            <span class="skill-tag">Machine Learning</span>
+            <span class="skill-tag">Natural Language Processing</span>
+            <span class="skill-tag">TensorFlow</span>
+            <span class="skill-tag">Intelligent Automation</span>
+          </div>
         </div>
-      </div>
-      <!-- Project 4 -->
-      <div class="col-md-6 mb-4" data-aos="zoom-in">
-        <div class="project-card p-4 h-100">
-          <h4>Vue.js Re-implementation</h4>
-          <p>Re-developed a previous assignment using Vue.js for the frontend along with RESTful Web Services and JPA to enhance the user interface and experience.</p>
-          <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#project4">View Details</button>
+        
+        <div class="skill-category fade-in-up stagger-4">
+          <h3 class="skill-category-title">
+            <i class="fas fa-eye skill-category-icon"></i>
+            Familiar
+          </h3>
+          <div class="skill-tags">
+            <span class="skill-tag">Deep Learning</span>
+            <span class="skill-tag">Computer Vision</span>
+            <span class="skill-tag">Accessibility Technologies</span>
+            <span class="skill-tag">Multi-Agent Orchestration</span>
+          </div>
         </div>
-      </div>
-      <!-- Project 5 -->
-      <div class="col-md-6 mb-4" data-aos="zoom-in">
-        <div class="project-card p-4 h-100">
-          <h4>CS Department & Survey Website</h4>
-          <p>Designed and deployed a departmental website with a student survey form using HTML5, CSS, and Bootstrap, hosted on AWS S3 and EC2.</p>
-          <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#project5">View Details</button>
-        </div>
-      </div>
-      <!-- Project 6 -->
-      <div class="col-md-6 mb-4" data-aos="zoom-in">
-        <div class="project-card p-4 h-100">
-          <h4>Enhanced Survey Form with JavaScript & Ajax</h4>
-          <p>Improved a survey form using JavaScript, Bootstrap, and Ajax for dynamic computation of data (average and maximum) and real-time field validation.</p>
-          <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#project6">View Details</button>
-        </div>
-      </div>
-      <!-- Project 7 -->
-      <div class="col-md-6 mb-4" data-aos="zoom-in">
-        <div class="project-card p-4 h-100">
-          <h4>Full-Stack Survey Application</h4>
-          <p>Developed a full-stack application using Angular for the frontend and Spring Boot with JPA/Hibernate for the backend, implementing complete CRUD operations for managing student surveys.</p>
-          <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#project7">View Details</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Soft Skills Section -->
-  <section id="skills" class="bg-light py-5">
-    <div class="container">
-      <h2 class="section-title" data-aos="fade-right">Soft Skills & Experience</h2>
-      <div class="row">
-        <div class="col-md-12" data-aos="fade-up">
-          <ul class="list-unstyled">
-            <li><strong>Event Technician:</strong> Successfully organized and managed large-scale events for over 500 clients, ensuring smooth operations and high client satisfaction.</li>
-            <li><strong>Stage Hand at Monumental Sports Eagle Bank Arnea:</strong> Collaborated with teams ranging from 10 to 50 individuals to execute stage setups and event logistics effectively.</li>
-            <li><strong>Team Leadership & Collaboration:</strong> Demonstrated ability to lead projects and work collaboratively in diverse team environments.</li>
-            <li><strong>Adaptability & Problem-Solving:</strong> Proven capacity to adapt to dynamic situations and resolve complex challenges efficiently.</li>
-          </ul>
+        
+        <div class="skill-category fade-in-up stagger-2">
+          <h3 class="skill-category-title">
+            <i class="fas fa-tools skill-category-icon"></i>
+            Technical Stack
+          </h3>
+          <div class="skill-tags">
+            <span class="skill-tag">PyTorch</span>
+            <span class="skill-tag">Transformers</span>
+            <span class="skill-tag">Hugging Face</span>
+            <span class="skill-tag">LangGraph</span>
+            <span class="skill-tag">FAISS</span>
+            <span class="skill-tag">OpenAI API</span>
+            <span class="skill-tag">RAG</span>
+            <span class="skill-tag">Vector DBs</span>
+            <span class="skill-tag">FastAPI</span>
+            <span class="skill-tag">Streamlit</span>
+            <span class="skill-tag">Docker</span>
+            <span class="skill-tag">AWS</span>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Contact Section with EmailJS Integration -->
-  <section id="contact" class="py-5">
-    <div class="container">
-      <h2 class="section-title" data-aos="fade-right">Contact</h2>
-      <div class="row justify-content-center">
-        <div class="col-md-6" data-aos="zoom-in">
-          <!-- Add an id to the form for EmailJS -->
-          <form id="contact-form">
-            <div class="mb-3">
-              <input type="text" name="from_name" class="form-control" placeholder="Name" required>
+  <!-- AI Projects Showcase -->
+  <section id="projects" class="section">
+    <div class="section-container">
+      <div class="section-header">
+        <h2 class="section-title fade-in-up">AI Projects Showcase</h2>
+        <p class="section-subtitle fade-in-up stagger-1">
+          Production LLM apps and RAG systems built with modern AI frameworks.
+        </p>
+      </div>
+      <div class="experience-grid">
+        <!-- Plant Care AI - Featured Project -->
+        <div class="experience-card featured-project fade-in-up stagger-2">
+          <div class="project-highlight-badge">
+            <i class="fas fa-star"></i>
+            Featured Project
+          </div>
+          <div class="experience-header">
+            <div>
+              <h3 class="experience-title">Plant Care AI Platform</h3>
+              <div class="experience-company">Full-Stack AI Application • Live Demo Available</div>
             </div>
-            <div class="mb-3">
-              <input type="email" name="reply_to" class="form-control" placeholder="Email" required>
+            <div class="experience-duration">Aug 2025 - Present</div>
+          </div>
+          <div class="project-badges">
+            <a href="https://sprout-smart-ai-60.lovable.app/" class="project-badge live-demo" target="_blank">
+              <i class="fas fa-external-link-alt"></i>
+              Live Demo
+            </a>
+            <a href="https://github.com/Nagavenkatasai7/sprout-smart-ai#" class="project-badge github" target="_blank">
+              <i class="fab fa-github"></i>
+              GitHub
+            </a>
+          </div>
+          <div class="experience-description">
+            <p><strong>Market Impact:</strong> AI-powered platform addressing the $50B+ global gardening market with advanced computer vision and machine learning.</p>
+            <div class="project-highlights">
+              <div class="highlight-metric">
+                <span class="metric-value">React 18</span>
+                <span class="metric-label">Frontend</span>
+              </div>
+              <div class="highlight-metric">
+                <span class="metric-value">Supabase</span>
+                <span class="metric-label">Backend</span>
+              </div>
+              <div class="highlight-metric">
+                <span class="metric-value">OpenAI API</span>
+                <span class="metric-label">AI Integration</span>
+              </div>
             </div>
-            <div class="mb-3">
-              <textarea name="message" class="form-control" rows="4" placeholder="Message" required></textarea>
+          </div>
+        </div>
+
+        <!-- RAG Research Chatbot -->
+        <div class="experience-card fade-in-up stagger-3">
+          <div class="experience-header">
+            <div>
+              <h3 class="experience-title">Context-Aware Research Chatbot</h3>
+              <div class="experience-company">RAG System with Multi-Modal Intelligence</div>
             </div>
-            <button class="btn btn-primary w-100" type="submit">Send Message</button>
-          </form>
+            <div class="experience-duration">Jan 2025 - Mar 2025</div>
+          </div>
+          <div class="project-badges">
+            <a href="https://github.com/Nagavenkatasai7/context-aware-research-chatbot" class="project-badge github" target="_blank">
+              <i class="fab fa-github"></i>
+              GitHub
+            </a>
+          </div>
+          <div class="experience-description">
+            <p><strong>Performance:</strong> Intelligent conversational agent combining web search, RAG, and mathematical computation with smart query routing.</p>
+            <div class="project-highlights">
+              <div class="highlight-metric">
+                <span class="metric-value">1000+</span>
+                <span class="metric-label">Daily Queries</span>
+              </div>
+              <div class="highlight-metric">
+                <span class="metric-value">95%</span>
+                <span class="metric-label">User Satisfaction</span>
+              </div>
+              <div class="highlight-metric">
+                <span class="metric-value">FAISS</span>
+                <span class="metric-label">Vector Store</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LangGraph Incident Triage -->
+        <div class="experience-card fade-in-up stagger-4">
+          <div class="experience-header">
+            <div>
+              <h3 class="experience-title">Intelligent Incident Triage System</h3>
+              <div class="experience-company">LangGraph Workflow with AI Decision Making</div>
+            </div>
+            <div class="experience-duration">Nov 2024 - Jan 2025</div>
+          </div>
+          <div class="project-badges">
+            <a href="https://github.com/Nagavenkatasai7/Incident-Triage-Agent-" class="project-badge github" target="_blank">
+              <i class="fab fa-github"></i>
+              GitHub
+            </a>
+          </div>
+          <div class="experience-description">
+            <p><strong>Automation:</strong> Stateful incident management system using LangGraph for automated bug report triage with confidence scoring and human-in-the-loop approvals.</p>
+            <div class="project-highlights">
+              <div class="highlight-metric">
+                <span class="metric-value">78%</span>
+                <span class="metric-label">Automation Rate</span>
+              </div>
+              <div class="highlight-metric">
+                <span class="metric-value">200+</span>
+                <span class="metric-label">Weekly Incidents</span>
+              </div>
+              <div class="highlight-metric">
+                <span class="metric-value">LangGraph</span>
+                <span class="metric-label">Framework</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Multi-Agent Market Research -->
+        <div class="experience-card fade-in-up stagger-2">
+          <div class="experience-header">
+            <div>
+              <h3 class="experience-title">AI-Powered Market Research Platform</h3>
+              <div class="experience-company">Multi-Agent System with CrewAI & GPT-4</div>
+            </div>
+            <div class="experience-duration">Aug 2024 - Nov 2024</div>
+          </div>
+          <div class="project-badges">
+            <a href="https://github.com/Nagavenkatasai7/Startup-Research-Studio" class="project-badge github" target="_blank">
+              <i class="fab fa-github"></i>
+              GitHub
+            </a>
+          </div>
+          <div class="experience-description">
+            <p><strong>Efficiency:</strong> Multi-agent system generating 3,700+ word professional reports in under 5 seconds with 98% accuracy in financial modeling.</p>
+            <div class="project-highlights">
+              <div class="highlight-metric">
+                <span class="metric-value">3700+</span>
+                <span class="metric-label">Words/Report</span>
+              </div>
+              <div class="highlight-metric">
+                <span class="metric-value">&lt;5s</span>
+                <span class="metric-label">Generation Time</span>
+              </div>
+              <div class="highlight-metric">
+                <span class="metric-value">45%</span>
+                <span class="metric-label">Cost Reduction</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ASL Detection System -->
+        <div class="experience-card fade-in-up stagger-3">
+          <div class="experience-header">
+            <div>
+              <h3 class="experience-title">Real-Time ASL Detection System</h3>
+              <div class="experience-company">Computer Vision with Multi-Modal Prompt Engineering</div>
+            </div>
+            <div class="experience-duration">Feb 2025 - Apr 2025</div>
+          </div>
+          <div class="experience-description">
+            <p><strong>Accessibility:</strong> End-to-end computer vision system for ASL gesture recognition achieving 92% accuracy with CNN models and transfer learning.</p>
+            <div class="project-highlights">
+              <div class="highlight-metric">
+                <span class="metric-value">92%</span>
+                <span class="metric-label">Accuracy</span>
+              </div>
+              <div class="highlight-metric">
+                <span class="metric-value">Real-time</span>
+                <span class="metric-label">Processing</span>
+              </div>
+              <div class="highlight-metric">
+                <span class="metric-value">CNN</span>
+                <span class="metric-label">Architecture</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Project Detail Modals -->
-  <!-- Modal for Project 1 -->
-  <div class="modal fade" id="project1" tabindex="-1" aria-labelledby="project1Label" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="project1Label">Containerizing Microservices</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p>This project involved developing a microservices-based application using Spring Boot, RESTful Web Services, and JPA/Hibernate. The application implemented CRUD operations for managing student survey data, containerized using Docker, and deployed on a Kubernetes cluster with an automated CI/CD pipeline.</p>
-        </div>
+  <!-- Experience Section -->
+  <section id="experience" class="section">
+    <div class="section-container">
+      <div class="section-header">
+        <h2 class="section-title fade-in-up">Professional Experience</h2>
+        <p class="section-subtitle fade-in-up stagger-1">
+          Academic and research positions in AI and machine learning.
+        </p>
       </div>
-    </div>
-  </div>
-  <!-- Modal for Project 2 -->
-  <div class="modal fade" id="project2" tabindex="-1" aria-labelledby="project2Label" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="project2Label">Containerized Web Application</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="experience-grid">
+        <div class="experience-card fade-in-up stagger-2">
+          <div class="experience-header">
+            <div>
+              <h3 class="experience-title">Graduate Research Assistant</h3>
+              <div class="experience-company">George Mason University</div>
+            </div>
+            <div class="experience-duration">August 2025 - Present</div>
+          </div>
+          <div class="experience-description">
+            <p>Research focus: Emotional Learning Mechanisms of Large Language Models (LLMs).</p>
+            <p><strong>Tech:</strong> Python, PyTorch, TensorFlow/Keras, Transformers/Hugging Face, LangChain, LangGraph, FAISS, OpenAI API, RAG, Vector DBs, FastAPI, Streamlit, Docker, Git, SQL, AWS.</p>
+          </div>
         </div>
-        <div class="modal-body">
-          <p>This assignment required containerizing a web application using Docker and deploying it on Kubernetes. A CI/CD pipeline was established using GitHub and Jenkins for automated builds and deployments, ensuring scalability and resiliency.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- Modal for Project 3 -->
-  <div class="modal fade" id="project3" tabindex="-1" aria-labelledby="project3Label" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="project3Label">Homepage & Student Survey Form</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p>This project involved creating a personal homepage and a student survey form using HTML, CSS, and responsive design techniques. The homepage was hosted on AWS S3 while the survey form was deployed on an AWS EC2 instance.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- Modal for Project 4 -->
-  <div class="modal fade" id="project4" tabindex="-1" aria-labelledby="project4Label" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="project4Label">Vue.js Re-implementation</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p>This project re-implemented a previous assignment using Vue.js for the frontend along with RESTful Web Services and JPA for the backend. The focus was on enhancing the user interface and overall experience while maintaining core functionality.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- Modal for Project 5 -->
-  <div class="modal fade" id="project5" tabindex="-1" aria-labelledby="project5Label" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="project5Label">CS Department & Survey Website</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p>This project involved designing and deploying a website for the Computer Science Department that included information pages and a student survey form. The website was built using HTML5, CSS, and Bootstrap and hosted on AWS S3 and EC2.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- Modal for Project 6 -->
-  <div class="modal fade" id="project6" tabindex="-1" aria-labelledby="project6Label" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="project6Label">Enhanced Survey Form with JavaScript & Ajax</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p>This project enhanced an existing student survey form by incorporating JavaScript, Bootstrap, Ajax, and JSON. Features included dynamic computation of average and maximum values, real-time validation, and automatic population of fields based on user input.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- Modal for Project 7 -->
-  <div class="modal fade" id="project7" tabindex="-1" aria-labelledby="project7Label" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="project7Label">Full-Stack Survey Application</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p>This full-stack application was developed using Angular for the frontend and Spring Boot with JPA/Hibernate for the backend. It implemented complete CRUD functionality for managing student surveys and interfaced with a MySQL database.</p>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <!-- Include EmailJS SDK -->
-  <script type="text/javascript" src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js"></script>
+        <div class="experience-card fade-in-up stagger-3">
+          <div class="experience-header">
+            <div>
+              <h3 class="experience-title">Computer Vision & Multi-Modal Prompt Engineer</h3>
+              <div class="experience-company">Self-employed</div>
+            </div>
+            <div class="experience-duration">April 2025 - Present</div>
+          </div>
+          <div class="experience-description">
+            <p>Developed transformative accessibility technologies using Python programming and data science methodologies.</p>
+            <ul>
+              <li>Created an ASL detection system that integrates multi-modal prompt engineering with TensorFlow, OpenCV, and CNN architectures</li>
+              <li>Applied advanced image processing techniques and machine learning frameworks to achieve 92% accuracy in gesture recognition</li>
+              <li>Engineered specialized prompts for visual-to-text translation using Python, TensorFlow, and deep learning architectures</li>
+              <li>Built end-to-end data science pipelines using Python, TensorFlow, and OpenCV with robust API development practices</li>
+              <li>Deployed solutions using AWS cloud infrastructure and managed code repositories with Git version control systems</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="experience-card fade-in-up stagger-4">
+          <div class="experience-header">
+            <div>
+              <h3 class="experience-title">Conversational AI Engineer & RAG Systems Specialist</h3>
+              <div class="experience-company">Self-employed</div>
+            </div>
+            <div class="experience-duration">January 2025 - March 2025</div>
+          </div>
+          <div class="experience-description">
+            <p>Designed and deployed production-ready conversational AI systems with sophisticated prompt routing and context management.</p>
+            <ul>
+              <li>Built context-aware research chatbot serving 1000+ queries daily with 95% user satisfaction</li>
+              <li>Engineered multi-modal prompt routing system automatically selecting between web search, RAG, and mathematical tools</li>
+              <li>Optimized retrieval-augmented generation prompts for domain-specific knowledge bases with FAISS integration</li>
+              <li>Implemented session-aware prompt engineering maintaining conversation context across interactions</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="experience-card fade-in-up stagger-2">
+          <div class="experience-header">
+            <div>
+              <h3 class="experience-title">Intelligent Automation & Prompt Engineering Specialist</h3>
+              <div class="experience-company">Self-employed</div>
+            </div>
+            <div class="experience-duration">November 2024 - January 2025</div>
+          </div>
+          <div class="experience-description">
+            <p>Built sophisticated incident triage system using LangGraph with intelligent prompt-driven decision making and confidence scoring.</p>
+            <ul>
+              <li>Designed stateful workflow processing 200+ incidents weekly with 78% automation rate</li>
+              <li>Created conditional prompt strategies for evidence gathering, analysis, and escalation decisions</li>
+              <li>Implemented confidence-based prompt routing with retry logic and human-in-the-loop integration</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="experience-card fade-in-up stagger-3">
+          <div class="experience-header">
+            <div>
+              <h3 class="experience-title">LLM Operations & Prompt Optimization Lead</h3>
+              <div class="experience-company">Self-employed</div>
+            </div>
+            <div class="experience-duration">August 2024 - November 2024</div>
+          </div>
+          <div class="experience-description">
+            <p>Spearheaded development of AI-powered market research platform generating 3,700+ word professional reports through advanced multi-agent prompt orchestration.</p>
+            <ul>
+              <li>Achieved sub-5-second report generation using CrewAI framework with GPT-4</li>
+              <li>Served enterprise clients with 98% accuracy in financial modeling and competitive analysis</li>
+              <li>Optimized prompt efficiency reducing API costs by 45% while maintaining output quality</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="experience-card fade-in-up stagger-4">
+          <div class="experience-header">
+            <div>
+              <h3 class="experience-title">Senior AI Research Engineer & Prompt Architect</h3>
+              <div class="experience-company">Freelance</div>
+            </div>
+            <div class="experience-duration">January 2023 - April 2024</div>
+          </div>
+          <div class="experience-description">
+            <p>Implemented advanced prompt strategies for multi-agent systems, achieving 40% improvement in response accuracy through systematic prompt refinement and evaluation frameworks.</p>
+            <ul>
+              <li>Architected prompt chains for 5 published research papers, optimizing LLM outputs for domain-specific tasks</li>
+              <li>Developed novel prompt engineering methodologies for psychological stress detection using social media data</li>
+              <li>Created specialized prompts for technical documentation generation, reducing manual effort by 60%</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Research Focus Section -->
+  <section id="research" class="section research-focus">
+    <div class="section-container">
+      <div class="section-header">
+        <h2 class="section-title fade-in-up">Research Focus Areas</h2>
+        <p class="section-subtitle fade-in-up stagger-1">
+          Specialized research domains where I contribute to advancing AI knowledge and applications.
+        </p>
+      </div>
+      <div class="research-grid">
+        <div class="research-card fade-in-up stagger-2">
+          <i class="fas fa-brain research-icon"></i>
+          <h3 class="research-title">Mental Health AI</h3>
+          <p class="research-description">
+            Developing AI systems for psychological stress detection and mental health monitoring using social media data and advanced NLP techniques.
+          </p>
+        </div>
+        
+        <div class="research-card fade-in-up stagger-3">
+          <i class="fas fa-shield-alt research-icon"></i>
+          <h3 class="research-title">AI in Cybersecurity</h3>
+          <p class="research-description">
+            Researching machine learning applications for cybersecurity threat detection and vulnerability prediction across enterprise systems.
+          </p>
+        </div>
+        
+        <div class="research-card fade-in-up stagger-4">
+          <i class="fas fa-microphone research-icon"></i>
+          <h3 class="research-title">Multilingual Speech Processing</h3>
+          <p class="research-description">
+            Advancing speech quality assessment and enhancement for 21+ Indian languages, contributing to inclusive AI technologies.
+          </p>
+        </div>
+        
+        <div class="research-card fade-in-up stagger-2">
+          <i class="fas fa-link research-icon"></i>
+          <h3 class="research-title">Blockchain & AI Integration</h3>
+          <p class="research-description">
+            Exploring innovative applications of blockchain technology combined with AI for secure and transparent systems.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Demo Reel Section -->
+  <section id="demo-reel" class="section">
+    <div class="section-container">
+      <div class="section-header">
+        <h2 class="section-title fade-in-up">Demo Reel</h2>
+        <p class="section-subtitle fade-in-up stagger-1">
+          2-minute showcase of my AI projects in action
+        </p>
+      </div>
+      <div class="demo-reel-container fade-in-up stagger-2">
+        <div class="demo-reel-video">
+          <div class="video-placeholder">
+            <i class="fas fa-play-circle"></i>
+            <h3>Coming Soon</h3>
+            <p>90-second montage featuring:</p>
+            <ul>
+              <li>RAG chatbot query processing</li>
+              <li>LangGraph incident triage workflow</li>
+              <li>Real-time ASL gesture recognition</li>
+              <li>Plant Care AI diagnosis demo</li>
+            </ul>
+            <div class="video-stats">
+              <span>Quick cuts with metric overlays</span>
+              <span>•</span>
+              <span>Professional voiceover</span>
+              <span>•</span>
+              <span>High-energy editing</span>
+            </div>
+          </div>
+        </div>
+        <div class="demo-reel-info">
+          <h3>What You'll See:</h3>
+          <div class="demo-highlights">
+            <div class="highlight-item">
+              <i class="fas fa-search"></i>
+              <span>RAG query processing (95% CSAT)</span>
+            </div>
+            <div class="highlight-item">
+              <i class="fas fa-cogs"></i>
+              <span>LangGraph workflow automation (78% efficiency)</span>
+            </div>
+            <div class="highlight-item">
+              <i class="fas fa-eye"></i>
+              <span>ASL detection (92% accuracy)</span>
+            </div>
+            <div class="highlight-item">
+              <i class="fas fa-leaf"></i>
+              <span>Plant Care AI diagnosis</span>
+            </div>
+            <div class="highlight-item">
+              <i class="fas fa-chart-line"></i>
+              <span>Performance metrics & results</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Publications Section -->
+  <section id="publications" class="section publications">
+    <div class="section-container">
+      <div class="section-header">
+        <h2 class="section-title fade-in-up">Publications</h2>
+        <p class="section-subtitle fade-in-up stagger-1">
+          Peer-reviewed publications in top journals and conferences (Scopus-indexed).
+        </p>
+      </div>
+      <div class="publications-grid">
+        <div class="publication-card fade-in-up stagger-2">
+          <a href="http://www.scopus.com/inward/record.url?eid=2-s2.0-85182459578&partnerID=MN8TOARS" class="publication-link" target="_blank">
+            <h3 class="publication-title">Comparative Analysis of Psychological Stress Detection: A Study of Artificial Neural Networks and Cat Boost Algorithm</h3>
+          </a>
+          <div class="publication-meta">
+            <span class="publication-type">International Journal of Intelligent Systems and Applications in Engineering</span>
+            <span class="publication-year">2024</span>
+          </div>
+          <p class="publication-impact">
+            <strong>Impact:</strong> Advanced ML techniques for mental health monitoring, achieving higher accuracy than traditional methods in social media stress detection.
+          </p>
+        </div>
+
+        <div class="publication-card fade-in-up stagger-3">
+          <a href="http://www.scopus.com/inward/record.url?eid=2-s2.0-85174820026&partnerID=MN8TOARS" class="publication-link" target="_blank">
+            <h3 class="publication-title">A Novel Strategy for Streamlining Land Registration using Ethereum Blockchain</h3>
+          </a>
+          <div class="publication-meta">
+            <span class="publication-type">International Journal of Intelligent Systems and Applications in Engineering</span>
+            <span class="publication-year">2023</span>
+          </div>
+          <p class="publication-impact">
+            <strong>Impact:</strong> Developed blockchain-based solution reducing land registration processing time by 60% while ensuring data integrity and security.
+          </p>
+        </div>
+
+        <div class="publication-card fade-in-up stagger-4">
+          <a href="http://www.scopus.com/inward/record.url?eid=2-s2.0-85174807240&partnerID=MN8TOARS" class="publication-link" target="_blank">
+            <h3 class="publication-title">Assessing the Effectiveness of Artificial Intelligence Techniques in Mitigating Cyber security Risks</h3>
+          </a>
+          <div class="publication-meta">
+            <span class="publication-type">International Journal of Intelligent Systems and Applications in Engineering</span>
+            <span class="publication-year">2023</span>
+          </div>
+          <p class="publication-impact">
+            <strong>Impact:</strong> Evaluated AI-driven cybersecurity solutions, demonstrating 40% improvement in threat detection accuracy over traditional methods.
+          </p>
+        </div>
+
+        <div class="publication-card fade-in-up stagger-2">
+          <a href="http://www.scopus.com/inward/record.url?eid=2-s2.0-85167356361&partnerID=MN8TOARS" class="publication-link" target="_blank">
+            <h3 class="publication-title">Enhancing Hairfall Prediction: A Comparative Analysis of Individual Algorithms and An Ensemble Method</h3>
+          </a>
+          <div class="publication-meta">
+            <span class="publication-type">International Journal on Recent and Innovation Trends in Computing and Communication</span>
+            <span class="publication-year">2023</span>
+          </div>
+          <p class="publication-impact">
+            <strong>Impact:</strong> Advanced ensemble ML approach for hairfall prediction, improving diagnostic accuracy by 25% over single-algorithm methods.
+          </p>
+        </div>
+
+        <div class="publication-card fade-in-up stagger-3">
+          <a href="http://www.scopus.com/inward/record.url?eid=2-s2.0-85163488485&partnerID=MN8TOARS" class="publication-link" target="_blank">
+            <h3 class="publication-title">Speech Quality Assessment and Control in Indian Languages</h3>
+          </a>
+          <div class="publication-meta">
+            <span class="publication-type">6th International Conference on Inventive Computation Technologies</span>
+            <span class="publication-year">2023</span>
+          </div>
+          <p class="publication-impact">
+            <strong>Impact:</strong> Multi-dimensional evaluation framework for Indian language speech processing, enhancing AI accessibility for 1.4 billion speakers.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Awards Section -->
+  <section id="awards" class="section">
+    <div class="section-container">
+      <div class="section-header">
+        <h2 class="section-title fade-in-up">Awards & Recognition</h2>
+        <p class="section-subtitle fade-in-up stagger-1">
+          Recognition for excellence in AI research and academic achievements.
+        </p>
+      </div>
+      <div class="awards-grid">
+        <div class="award-card fade-in-up stagger-2">
+          <i class="fas fa-trophy award-icon"></i>
+          <h3 class="award-title">Research Excellence Awards</h3>
+          <div class="award-organization">Academic Excellence</div>
+          <p class="award-description">
+            Recognized for outstanding research contributions in AI and machine learning fields.
+          </p>
+        </div>
+        
+        <div class="award-card fade-in-up stagger-3">
+          <i class="fas fa-medal award-icon"></i>
+          <h3 class="award-title">Best Accessibility Innovation Award</h3>
+          <div class="award-organization">Accessibility & Innovation</div>
+          <p class="award-description">
+            Awarded for developing innovative accessibility technologies, particularly the American Sign Language detection system.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="section">
+    <div class="section-container">
+      <div class="section-header">
+        <h2 class="section-title fade-in-up">Contact</h2>
+        <p class="section-subtitle fade-in-up stagger-1">
+          Let's connect and collaborate on innovative AI projects.
+        </p>
+      </div>
+
+      <div class="contact-form-container">
+        <!-- Contact Information -->
+        <div class="contact-info-section">
+      <div class="contact-grid">
+        <div class="contact-card fade-in-up stagger-2">
+          <i class="fas fa-envelope contact-icon"></i>
+          <h3 class="contact-title">Email</h3>
+          <div class="contact-info">
+            <a href="mailto:nchennu@gmu.edu" class="contact-link">nchennu@gmu.edu</a>
+                <br>
+                <small style="color: var(--text-muted); font-size: 0.8rem;">University Email</small>
+          </div>
+        </div>
+        
+        <div class="contact-card fade-in-up stagger-3">
+          <i class="fab fa-linkedin contact-icon"></i>
+          <h3 class="contact-title">LinkedIn</h3>
+          <div class="contact-info">
+                <a href="https://www.linkedin.com/in/naga-venkata-sai-chennu" class="contact-link" target="_blank">
+                  linkedin.com/in/naga-venkata-sai-chennu
+            </a>
+          </div>
+        </div>
+        
+        
+          </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="contact-form-section">
+          <div class="contact-form-card fade-in-up stagger-2">
+            <h3 class="contact-form-title">
+              <i class="fas fa-paper-plane" style="color: var(--accent); margin-right: 0.5rem;"></i>
+              Send Message
+            </h3>
+            <p class="contact-form-subtitle">
+              Have a project in mind or want to discuss AI opportunities? I'd love to hear from you!
+            </p>
+
+            <form id="contact-form">
+              <div class="form-group">
+                <label for="name" class="form-label">Name *</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  class="form-input"
+                  placeholder="Your full name"
+                  required
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="email" class="form-label">Email *</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  class="form-input"
+                  placeholder="your.email@example.com"
+                  required
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="subject" class="form-label">Subject *</label>
+                <input
+                  type="text"
+                  id="subject"
+                  name="subject"
+                  class="form-input"
+                  placeholder="What's this about?"
+                  required
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="message" class="form-label">Message *</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  class="form-textarea"
+                  placeholder="Tell me about your project or idea..."
+                  required
+                ></textarea>
+              </div>
+
+              <button type="submit" class="form-submit-btn" id="submit-btn">
+                <i class="fas fa-paper-plane" style="margin-right: 0.5rem;"></i>
+                Send Message
+              </button>
+
+              <div id="form-message" class="form-message"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <script>
-    // Initialize EmailJS with your user ID
-    (function(){
-      emailjs.init("VglYTFzhGHWcgcH53"); // Replace with your actual user ID from EmailJS
+    // Smooth scrolling
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      const navbar = document.querySelector('.navbar');
+      if (window.scrollY > 100) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+
+      // Scroll progress bar
+      const scrollProgress = document.querySelector('.scroll-progress-bar');
+      const scrollTop = window.pageYOffset;
+      const docHeight = document.body.offsetHeight - window.innerHeight;
+      const scrollPercent = (scrollTop / docHeight) * 100;
+      scrollProgress.style.width = scrollPercent + '%';
+    });
+
+    // Animation observer
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.animationPlayState = 'running';
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-in-up').forEach(el => {
+      el.style.animationPlayState = 'paused';
+      observer.observe(el);
+    });
+
+    // Contact Form Handling
+    const contactForm = document.getElementById('contact-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const formMessage = document.getElementById('form-message');
+
+    function showMessage(message, type) {
+      formMessage.textContent = message;
+      formMessage.className = `form-message ${type} show`;
+
+      // Hide message after 5 seconds
+      setTimeout(() => {
+        formMessage.classList.remove('show');
+      }, 5000);
+    }
+
+    function setLoading(loading) {
+      submitBtn.disabled = loading;
+      submitBtn.innerHTML = loading ?
+        '<i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i>Sending...' :
+        '<i class="fas fa-paper-plane" style="margin-right: 0.5rem;"></i>Send Message';
+    }
+
+    // Initialize EmailJS
+    (function() {
+      // Your EmailJS credentials
+      const publicKey = "XojTkI8VQhaaGw5kT"; // <-- Your public key
+      const serviceId = "service_ulxjer5"; // <-- Your service ID
+
+      emailjs.init({
+        publicKey: publicKey,
+      });
+      console.log('✅ EmailJS initialized successfully!');
+      console.log('📧 Service ID:', serviceId);
+      console.log('🔑 Public Key configured');
     })();
 
-    // Attach event listener to the contact form
-    document.getElementById('contact-form').addEventListener('submit', function(event) {
-      event.preventDefault();
-      emailjs.sendForm('service_vw6kkb2', 'template_zvwzcpn', this) // Replace with your actual service and template IDs
-        .then(function() {
-          alert('Your message has been sent successfully!');
-          document.getElementById('contact-form').reset();
+    contactForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Basic validation
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const subject = document.getElementById('subject').value.trim();
+      const message = document.getElementById('message').value.trim();
+
+      if (!name || !email || !subject || !message) {
+        showMessage('Please fill in all required fields.', 'error');
+        return;
+      }
+
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showMessage('Please enter a valid email address.', 'error');
+        return;
+      }
+
+      setLoading(true);
+
+      // EmailJS configuration
+      const publicKey = "XojTkI8VQhaaGw5kT"; // <-- Your public key
+      const serviceId = "service_ulxjer5"; // <-- Your service ID
+      const templateId = "template_zvwzcpn"; // <-- Your template ID
+
+      // EmailJS parameters
+      const templateParams = {
+        // Match your EmailJS template variables
+        name: name,
+        email: email,
+        message: message,
+        title: subject,
+        // Backwards-compatible keys if the template expects these
+        from_name: name,
+        from_email: email,
+        subject: subject,
+        to_name: 'Naga Venkata Sai Chennu',
+        reply_to: email
+      };
+
+      emailjs.send(serviceId, templateId, templateParams)
+        .then(function(response) {
+          console.log('SUCCESS!', response.status, response.text);
+          showMessage('Thank you! Your message has been sent successfully. I\'ll get back to you soon!', 'success');
+          contactForm.reset();
         }, function(error) {
-          alert('Failed to send message, please try again later.');
+          console.error('FAILED...', error);
+          const errorMsg = (error && error.text) ? error.text : 'Unknown error';
+          showMessage(`Error sending message: ${errorMsg}. Please try again or email me directly.`, 'error');
+        })
+        .finally(function() {
+          setLoading(false);
         });
     });
 
-    AOS.init({
-      duration: 1000,
-      once: true,
-      offset: 120
+    // Real-time validation feedback
+    const inputs = document.querySelectorAll('.form-input, .form-textarea');
+    inputs.forEach(input => {
+      input.addEventListener('blur', function() {
+        if (this.value.trim() === '') {
+          this.style.borderColor = 'rgba(255, 136, 136, 0.5)';
+        } else {
+          this.style.borderColor = 'var(--glass-border)';
+        }
+      });
+
+      input.addEventListener('focus', function() {
+        this.style.borderColor = 'var(--accent)';
+      });
+    });
+
+    // Sticky CTA functionality
+    const stickyCta = document.getElementById('sticky-cta');
+    let lastScrollY = window.scrollY;
+
+    window.addEventListener('scroll', () => {
+      const currentScrollY = window.scrollY;
+
+      // Show sticky CTA after scrolling past hero section
+      if (currentScrollY > window.innerHeight * 0.8) {
+        stickyCta.classList.add('visible');
+      } else {
+        stickyCta.classList.remove('visible');
+      }
+
+      lastScrollY = currentScrollY;
+    });
+
+    // Mouse parallax effect
+    const heroOrb = document.querySelector('.hero-orb');
+    const hero = document.querySelector('.hero');
+
+    hero.addEventListener('mousemove', (e) => {
+      const rect = hero.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = (e.clientY - rect.top) / rect.height;
+      
+      const moveX = (x - 0.5) * 50;
+      const moveY = (y - 0.5) * 50;
+      
+      heroOrb.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.2)`;
+    });
+
+    hero.addEventListener('mouseleave', () => {
+      heroOrb.style.transform = 'translate(0, 0) scale(1)';
     });
   </script>
+  <!-- Sticky CTA Bar -->
+  <div class="sticky-cta" id="sticky-cta">
+    <div class="sticky-cta-buttons">
+      <a href="#projects" class="sticky-cta-btn">
+        <i class="fas fa-code"></i>
+        AI Projects
+      </a>
+      <a href="https://calendly.com/2000031637cseklu/meeting-with-venkat" class="sticky-cta-btn" target="_blank">
+        <i class="fas fa-calendar"></i>
+        Book Call
+      </a>
+      
+    </div>
+  </div>
+
 </body>
-</html>
+</html> 
