@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chennu Naga Venkata Sai — CS Graduate & Researcher</title>
-    <meta name="description" content="Master's in Computer Science at George Mason University. 5 peer-reviewed publications. New Grad May 2026. Seeking software engineering, ML/AI, and research roles.">
-    <meta name="keywords" content="Software Engineer, Machine Learning, Python, FastAPI, Research, George Mason University, New Grad 2026">
+    <title>Chennu Naga Venkata Sai — AI/ML Engineer & CS Researcher</title>
+    <meta name="description" content="AI/ML Engineer and Computer Science graduate researcher with 5 peer-reviewed publications (50+ citations). MS in Computer Science at George Mason University. NVIDIA Generative AI & 3x AWS Certified. New Grad May 2026.">
+    <meta name="keywords" content="AI Engineer, ML Engineer, Prompt Engineering, GenAI, LLMs, Claude API, Python, Deep Learning, NLP, George Mason University, New Grad 2026">
     <meta name="author" content="Chennu Naga Venkata Sai">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="Chennu Naga Venkata Sai — CS Graduate & Researcher">
-    <meta property="og:description" content="MS in Computer Science at George Mason University. 5 peer-reviewed publications. New Grad May 2026.">
+    <meta property="og:title" content="Chennu Naga Venkata Sai — AI/ML Engineer & CS Researcher">
+    <meta property="og:description" content="AI/ML Engineer with 5 peer-reviewed publications (50+ citations). MS CS at George Mason University. NVIDIA & 3x AWS Certified. New Grad May 2026.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://nagavenkatasai7.github.io/portfolio/">
     <meta property="og:image" content="https://nagavenkatasai7.github.io/portfolio/img.JPG">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Chennu Naga Venkata Sai — CS Graduate & Researcher">
-    <meta name="twitter:description" content="MS CS @ George Mason University. 5 peer-reviewed publications. New Grad May 2026.">
+    <meta name="twitter:title" content="Chennu Naga Venkata Sai — AI/ML Engineer & CS Researcher">
+    <meta name="twitter:description" content="AI/ML Engineer with 5 publications (50+ citations). MS CS @ George Mason. NVIDIA & 3x AWS Certified. New Grad May 2026.">
 
     <link rel="canonical" href="https://nagavenkatasai7.github.io/portfolio/">
 
@@ -29,7 +29,7 @@
         "name": "Chennu Naga Venkata Sai",
         "url": "https://nagavenkatasai7.github.io/portfolio/",
         "image": "https://nagavenkatasai7.github.io/portfolio/img.JPG",
-        "jobTitle": "Graduate Research Assistant",
+        "jobTitle": "AI/ML Engineer & Graduate Research Assistant",
         "alumniOf": [
             {
                 "@type": "CollegeOrUniversity",
@@ -37,11 +37,11 @@
             },
             {
                 "@type": "CollegeOrUniversity",
-                "name": "KL Deemed to be University"
+                "name": "KL University (Koneru Lakshmaiah Education Foundation)"
             }
         ],
         "sameAs": [
-            "https://www.linkedin.com/in/naga-venkata-sai-chennu",
+            "https://www.linkedin.com/in/nagavenkatasaichennu",
             "https://github.com/Nagavenkatasai7",
             "https://orcid.org/0009-0000-8252-8682"
         ]
@@ -385,7 +385,7 @@
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 32px;
             text-align: center;
         }
@@ -588,6 +588,153 @@
             border-color: var(--gray-400);
         }
 
+        .project-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            background: var(--green-100);
+            color: var(--green-700);
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            margin-top: 6px;
+            cursor: pointer;
+            transition: all 0.2s var(--transition);
+        }
+
+        .project-badge:hover {
+            background: var(--green-700);
+            color: var(--white);
+        }
+
+        /* ===== COPYRIGHT MODAL ===== */
+        .copyright-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .copyright-overlay.active {
+            display: flex;
+        }
+
+        .copyright-modal {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 48px;
+            max-width: 560px;
+            width: 90%;
+            position: relative;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        .copyright-modal * {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .copyright-modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: var(--gray-100);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .copyright-modal-close:hover {
+            background: var(--gray-200);
+        }
+
+        .copyright-modal-close svg {
+            width: 18px;
+            height: 18px;
+            color: var(--gray-600);
+        }
+
+        .copyright-modal-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--green-100);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .copyright-modal-icon svg {
+            width: 28px;
+            height: 28px;
+            color: var(--green-700);
+        }
+
+        .copyright-modal h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+
+        .copyright-modal-subtitle {
+            font-size: 0.9rem;
+            color: var(--gray-500);
+            margin-bottom: 28px;
+        }
+
+        .copyright-detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .copyright-detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .copyright-detail-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray-500);
+        }
+
+        .copyright-detail-value {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            text-align: right;
+        }
+
+        .copyright-watermark {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--gray-100);
+            font-size: 0.72rem;
+            color: var(--gray-300);
+            letter-spacing: 0.05em;
+        }
+
         /* ===== EXPERIENCE ===== */
         .experience-list {
             max-width: 720px;
@@ -695,6 +842,60 @@
             color: var(--gray-400);
             font-weight: 600;
             margin-top: 4px;
+        }
+
+        .publication-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: var(--blue-600);
+            color: var(--white);
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        /* ===== CERTIFICATIONS ===== */
+        .certifications-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-width: 720px;
+        }
+
+        .cert-card {
+            padding: 24px;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 14px;
+            transition: all 0.2s var(--transition);
+        }
+
+        .cert-card:hover {
+            border-color: var(--gray-300);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .cert-name {
+            font-size: 0.95rem;
+            font-weight: 650;
+            color: var(--gray-900);
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .cert-issuer {
+            font-size: 0.84rem;
+            color: var(--blue-600);
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .cert-date {
+            font-size: 0.78rem;
+            color: var(--gray-400);
+            font-weight: 500;
         }
 
         /* ===== EDUCATION ===== */
@@ -937,6 +1138,10 @@
                 grid-template-columns: 1fr;
             }
 
+            .certifications-grid {
+                grid-template-columns: 1fr;
+            }
+
             .contact-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -986,7 +1191,7 @@
                 padding: 24px 0;
             }
 
-            .project-card, .skill-category, .about-highlight {
+            .project-card, .skill-category, .about-highlight, .cert-card {
                 break-inside: avoid;
             }
         }
@@ -1004,9 +1209,10 @@
                 <li><a href="#projects">Projects</a></li>
                 <li><a href="#experience">Experience</a></li>
                 <li><a href="#publications">Publications</a></li>
+                <li><a href="#certifications">Certifications</a></li>
                 <li><a href="#education">Education</a></li>
                 <li><a href="#contact">Contact</a></li>
-                <li><a href="Nagavenkatasai-chennu-resume.pdf" class="nav-resume" download>
+                <li><a href="Naga_Venkata_Sai_Chennu_Career_Fair_Resume.pdf" class="nav-resume" download>
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     Resume
                 </a></li>
@@ -1027,9 +1233,9 @@
                     <span class="hero-badge-dot"></span>
                     Available for full-time roles — New Grad May 2026
                 </div>
-                <h1>Master's in Computer Science. 5 peer-reviewed publications.</h1>
+                <h1>AI/ML Engineer. 5 publications. 50+ citations.</h1>
                 <p class="hero-description">
-                    Graduate Research Assistant at George Mason University with a strong foundation in Python, machine learning, and full-stack development. I build end-to-end applications from concept to deployment and communicate complex technical ideas clearly.
+                    AI/ML Engineer and Computer Science graduate researcher with expertise in LLM interpretability, multilingual NLP, and AI-driven automation. Built production AI pipelines processing 1,000+ documents using Claude API. NVIDIA Generative AI certified with 3 AWS certifications.
                 </p>
                 <div class="hero-meta">
                     <span class="hero-meta-item">
@@ -1038,7 +1244,7 @@
                     </span>
                     <span class="hero-meta-item">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-                        George Mason University &middot; GPA: 3.6/4.0
+                        George Mason University &middot; GPA: 3.52/4.0
                     </span>
                     <span class="hero-meta-item">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
@@ -1047,7 +1253,7 @@
                 </div>
                 <div class="hero-ctas">
                     <a href="#projects" class="btn btn-primary">View My Work</a>
-                    <a href="Nagavenkatasai-chennu-resume.pdf" class="btn btn-secondary" download>Download Resume</a>
+                    <a href="Naga_Venkata_Sai_Chennu_Career_Fair_Resume.pdf" class="btn btn-secondary" download>Download Resume</a>
                     <a href="mailto:chennunagavenkatasai@gmail.com" class="btn btn-secondary">Get In Touch</a>
                 </div>
             </div>
@@ -1063,12 +1269,16 @@
                     <div class="stat-label">Peer-Reviewed Publications</div>
                 </div>
                 <div class="stat-item fade-in">
-                    <div class="stat-number">3.6</div>
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Research Citations</div>
+                </div>
+                <div class="stat-item fade-in">
+                    <div class="stat-number">3.52</div>
                     <div class="stat-label">GPA at George Mason</div>
                 </div>
                 <div class="stat-item fade-in">
-                    <div class="stat-number">4</div>
-                    <div class="stat-label">Technical Projects</div>
+                    <div class="stat-number">6</div>
+                    <div class="stat-label">Professional Certifications</div>
                 </div>
                 <div class="stat-item fade-in">
                     <div class="stat-number">May '26</div>
@@ -1085,28 +1295,28 @@
                 <img src="img.JPG" alt="Chennu Naga Venkata Sai" class="about-photo fade-in">
                 <div class="about-text fade-in">
                     <p class="section-label">About</p>
-                    <h2 class="section-title">Research meets real-world engineering.</h2>
+                    <h2 class="section-title">Research meets real-world AI engineering.</h2>
                     <p>
-                        I'm pursuing my Master of Science in Computer Science at George Mason University, expected May 2026. As a Graduate Research Assistant at the Costella College of Business, I work under Dr. Saurabh Mishra and Dr. Jiang Hong on cross-disciplinary research bridging business analytics and AI/ML.
+                        I'm an AI/ML Engineer pursuing my Master of Science in Computer Science at George Mason University (GPA: 3.52, 27 credits completed), expected May 2026. As a Graduate Research Assistant at the Costello College of Business, I work under Dr. Saurabh Mishra (Marketing Analytics & AI) and Dr. Jiyeon Hong (AI Personas & Customer Experience) on cutting-edge research in AI-driven automation and LLM applications.
                     </p>
                     <p>
-                        I've authored 5 peer-reviewed publications in Scopus-indexed journals and IEEE conferences — spanning neural networks, blockchain, cybersecurity, ensemble methods, and speech processing. This research background drives how I approach software engineering: with rigor, curiosity, and clear communication.
+                        I've authored 5 peer-reviewed publications with 50+ citations and 1 registered copyright — spanning AI/ML, NLP, cybersecurity, blockchain, and speech processing. I've built production AI pipelines processing 1,000+ documents using Claude API and developed multi-agent research systems with RAG architectures.
                     </p>
                     <p>
-                        I'm proficient in leveraging AI tools for efficient development and rapid prototyping. I'm looking for full-time software engineering, ML/AI, or research roles starting May 2026.
+                        I hold NVIDIA Generative AI certification, 3 AWS certifications, and Red Hat certification. Seeking AI Engineering, Prompt Engineering, or GenAI Development roles starting May 2026.
                     </p>
                     <div class="about-highlights">
                         <div class="about-highlight">
                             <h4>Research & Publications</h4>
-                            <p>5 peer-reviewed publications demonstrating technical writing and deep learning abilities.</p>
+                            <p>5 peer-reviewed publications with 50+ citations and 1 registered copyright across AI/ML domains.</p>
                         </div>
                         <div class="about-highlight">
-                            <h4>Communication</h4>
-                            <p>Strong written and verbal skills. Able to explain complex technical concepts to diverse audiences.</p>
+                            <h4>Production AI Systems</h4>
+                            <p>Built AI pipelines processing 1,000+ documents with Claude API, multi-agent systems, and RAG architectures.</p>
                         </div>
                         <div class="about-highlight">
-                            <h4>Rapid Learning</h4>
-                            <p>Proven ability to quickly learn and apply new technologies, frameworks, and AI-assisted development tools.</p>
+                            <h4>Industry Certifications</h4>
+                            <p>NVIDIA Generative AI, 3x AWS Certified, Red Hat Certified, and Claude Code Certified.</p>
                         </div>
                     </div>
                 </div>
@@ -1119,59 +1329,76 @@
         <div class="container">
             <p class="section-label fade-in">Technical Skills</p>
             <h2 class="section-title fade-in">What I work with</h2>
-            <p class="section-subtitle fade-in">Technologies from my resume, coursework, and projects.</p>
+            <p class="section-subtitle fade-in">Technologies from my resume, research, and production projects.</p>
             <div class="skills-grid">
                 <div class="skill-category fade-in">
-                    <h3>Programming</h3>
+                    <h3>Languages</h3>
                     <div class="skill-tags">
-                        <span class="skill-tag">Python (Primary)</span>
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">Java</span>
                         <span class="skill-tag">JavaScript</span>
-                        <span class="skill-tag">TypeScript</span>
                         <span class="skill-tag">SQL</span>
+                        <span class="skill-tag">R</span>
                         <span class="skill-tag">HTML/CSS</span>
+                        <span class="skill-tag">Bash</span>
                     </div>
                 </div>
                 <div class="skill-category fade-in">
-                    <h3>ML / AI</h3>
+                    <h3>AI / ML</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">LLMs (GPT, Claude API)</span>
+                        <span class="skill-tag">Deep Learning</span>
+                        <span class="skill-tag">NLP</span>
+                        <span class="skill-tag">Neural Networks (ANN, CNN, RNN)</span>
+                        <span class="skill-tag">RAG Architectures</span>
+                        <span class="skill-tag">Predictive Analytics</span>
+                        <span class="skill-tag">Text Mining</span>
+                        <span class="skill-tag">Speech Processing</span>
+                    </div>
+                </div>
+                <div class="skill-category fade-in">
+                    <h3>Frameworks & Tools</h3>
                     <div class="skill-tags">
                         <span class="skill-tag">TensorFlow</span>
-                        <span class="skill-tag">NumPy</span>
-                        <span class="skill-tag">Pandas</span>
+                        <span class="skill-tag">PyTorch</span>
+                        <span class="skill-tag">FAISS</span>
+                        <span class="skill-tag">Pinecone</span>
+                        <span class="skill-tag">ChromaDB</span>
+                        <span class="skill-tag">Hugging Face</span>
                         <span class="skill-tag">Scikit-learn</span>
-                        <span class="skill-tag">ML Algorithms</span>
+                        <span class="skill-tag">Pandas</span>
+                        <span class="skill-tag">NumPy</span>
                     </div>
                 </div>
                 <div class="skill-category fade-in">
-                    <h3>Backend</h3>
+                    <h3>Cloud & Data</h3>
                     <div class="skill-tags">
-                        <span class="skill-tag">FastAPI</span>
+                        <span class="skill-tag">AWS (3x Certified)</span>
+                        <span class="skill-tag">Data Pipeline Design</span>
+                        <span class="skill-tag">ETL</span>
+                        <span class="skill-tag">SQL/NoSQL Databases</span>
                         <span class="skill-tag">REST APIs</span>
-                        <span class="skill-tag">Node.js</span>
-                    </div>
-                </div>
-                <div class="skill-category fade-in">
-                    <h3>Databases</h3>
-                    <div class="skill-tags">
-                        <span class="skill-tag">PostgreSQL</span>
-                        <span class="skill-tag">MongoDB</span>
-                        <span class="skill-tag">Redis</span>
-                    </div>
-                </div>
-                <div class="skill-category fade-in">
-                    <h3>Cloud / DevOps</h3>
-                    <div class="skill-tags">
-                        <span class="skill-tag">AWS (EC2, S3)</span>
                         <span class="skill-tag">Docker</span>
-                        <span class="skill-tag">Git</span>
                     </div>
                 </div>
                 <div class="skill-category fade-in">
-                    <h3>Tools</h3>
+                    <h3>Security</h3>
                     <div class="skill-tags">
-                        <span class="skill-tag">GitHub</span>
-                        <span class="skill-tag">Postman</span>
-                        <span class="skill-tag">Ollama</span>
-                        <span class="skill-tag">AI-Assisted Dev</span>
+                        <span class="skill-tag">AI-Based Cybersecurity</span>
+                        <span class="skill-tag">Network Security</span>
+                        <span class="skill-tag">DNS Anomaly Detection</span>
+                        <span class="skill-tag">Ethereum Blockchain</span>
+                        <span class="skill-tag">Smart Contracts</span>
+                    </div>
+                </div>
+                <div class="skill-category fade-in">
+                    <h3>Development</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Full-Stack (Python, Java)</span>
+                        <span class="skill-tag">Component-Based Architecture</span>
+                        <span class="skill-tag">Agile</span>
+                        <span class="skill-tag">Git</span>
+                        <span class="skill-tag">CI/CD</span>
                     </div>
                 </div>
             </div>
@@ -1181,96 +1408,94 @@
     <!-- Projects -->
     <section id="projects">
         <div class="container">
-            <p class="section-label fade-in">Technical Projects</p>
+            <p class="section-label fade-in">Key Projects</p>
             <h2 class="section-title fade-in">What I've built</h2>
-            <p class="section-subtitle fade-in">End-to-end applications from concept to deployment.</p>
+            <p class="section-subtitle fade-in">Production AI systems and research-driven engineering.</p>
             <div class="projects-grid">
 
-                <!-- Research Paper Discovery System -->
+                <!-- Multi-Agent AI Research Discovery Platform -->
                 <div class="project-card fade-in">
                     <div class="project-header">
-                        <h3>Research Paper Discovery System</h3>
-                        <div class="project-tech">Python, FastAPI, Machine Learning</div>
+                        <h3>Multi-Agent AI Research Discovery Platform</h3>
+                        <div class="project-tech">Python, RAG, FAISS, Pinecone, ChromaDB</div>
                     </div>
                     <div class="project-desc">
                         <ul>
-                            <li>Built an intelligent research paper recommendation system using NLP techniques and vector similarity search</li>
-                            <li>Implemented FastAPI backend with RESTful API endpoints for paper search and recommendations</li>
+                            <li>Designed a 23-agent research automation system using Mixture of Experts (MoE) architecture for automated literature discovery and analysis</li>
+                            <li>Integrated RAG pipelines with vector databases (FAISS, Pinecone, ChromaDB) for multi-modal document retrieval and processing</li>
                         </ul>
                     </div>
                     <div class="project-footer">
                         <div class="skill-tags">
                             <span class="skill-tag">Python</span>
-                            <span class="skill-tag">FastAPI</span>
+                            <span class="skill-tag">RAG</span>
+                            <span class="skill-tag">MoE</span>
+                            <span class="skill-tag">Vector DB</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trademark Analysis Pipeline -->
+                <div class="project-card fade-in">
+                    <div class="project-header">
+                        <h3>Trademark Analysis Pipeline (Claude API)</h3>
+                        <div class="project-tech">Python, Claude API, Document Processing</div>
+                    </div>
+                    <div class="project-desc">
+                        <ul>
+                            <li>Developed production-scale document processing system handling 1,000+ trademark cases with automated classification and data extraction</li>
+                            <li>Achieved significant cost optimization through prompt caching and efficient API usage patterns</li>
+                        </ul>
+                    </div>
+                    <div class="project-footer">
+                        <div class="skill-tags">
+                            <span class="skill-tag">Claude API</span>
+                            <span class="skill-tag">Python</span>
                             <span class="skill-tag">NLP</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DNS Anomaly Detection System -->
+                <div class="project-card fade-in">
+                    <div class="project-header">
+                        <h3>DNS Anomaly Detection System</h3>
+                        <div class="project-tech">Python, Machine Learning, Network Security</div>
+                    </div>
+                    <div class="project-desc">
+                        <ul>
+                            <li>Built ML-based DNS anomaly detection system applying network security principles to identify malicious DNS traffic patterns</li>
+                            <li>Course project for ISA 656 - Network Security at George Mason University</li>
+                        </ul>
+                    </div>
+                    <div class="project-footer">
+                        <div class="skill-tags">
                             <span class="skill-tag">ML</span>
-                        </div>
-                        <a href="https://github.com/Nagavenkatasai7/Research-Paper-Discovery-System" class="project-link" target="_blank" rel="noopener">GitHub &rarr;</a>
-                    </div>
-                </div>
-
-                <!-- AI-Powered Assistant -->
-                <div class="project-card fade-in">
-                    <div class="project-header">
-                        <h3>AI-Powered Assistant</h3>
-                        <div class="project-tech">Python, OpenAI API, FastAPI</div>
-                    </div>
-                    <div class="project-desc">
-                        <ul>
-                            <li>Developed a personal AI assistant using Python and modern AI APIs with conversation memory</li>
-                            <li>Built with FastAPI for efficient API handling and context management</li>
-                        </ul>
-                    </div>
-                    <div class="project-footer">
-                        <div class="skill-tags">
+                            <span class="skill-tag">Security</span>
                             <span class="skill-tag">Python</span>
-                            <span class="skill-tag">OpenAI API</span>
-                            <span class="skill-tag">FastAPI</span>
                         </div>
-                        <a href="https://github.com/Nagavenkatasai7/assistant" class="project-link" target="_blank" rel="noopener">GitHub &rarr;</a>
                     </div>
                 </div>
 
-                <!-- Prompt Hub Application -->
+                <!-- Dynamic Adaptive Data Transmission System -->
                 <div class="project-card fade-in">
                     <div class="project-header">
-                        <h3>Prompt Hub Application</h3>
-                        <div class="project-tech">TypeScript, React, Modern Frontend</div>
+                        <h3>Dynamic Adaptive Data Transmission System</h3>
+                        <div class="project-tech">RNN, BICM, QAM/PSK Signal Processing</div>
+                        <span class="project-badge" id="copyrightBadge" onclick="openCopyrightModal()">Copyright Registered</span>
                     </div>
                     <div class="project-desc">
                         <ul>
-                            <li>Created a web application for managing and optimizing AI prompts with responsive UI</li>
-                            <li>Built with React and TypeScript, implementing prompt versioning and organization features</li>
+                            <li>Co-authored system integrating Recurrent Neural Networks with Bit-Interleaved Coded Modulation for enhanced QAM and PSK signal processing</li>
+                            <li>Copyright L-142224/2024 registered with the Government of India</li>
                         </ul>
                     </div>
                     <div class="project-footer">
                         <div class="skill-tags">
-                            <span class="skill-tag">TypeScript</span>
-                            <span class="skill-tag">React</span>
+                            <span class="skill-tag">RNN</span>
+                            <span class="skill-tag">Deep Learning</span>
+                            <span class="skill-tag">Signal Processing</span>
                         </div>
-                        <a href="https://github.com/Nagavenkatasai7/prompt-hub" class="project-link" target="_blank" rel="noopener">GitHub &rarr;</a>
-                    </div>
-                </div>
-
-                <!-- Project Manager Tool -->
-                <div class="project-card fade-in">
-                    <div class="project-header">
-                        <h3>Project Manager Tool</h3>
-                        <div class="project-tech">Python, Full-Stack Development</div>
-                    </div>
-                    <div class="project-desc">
-                        <ul>
-                            <li>Developed a project management application with task tracking and team collaboration features</li>
-                            <li>Implemented using Python backend with database integration</li>
-                        </ul>
-                    </div>
-                    <div class="project-footer">
-                        <div class="skill-tags">
-                            <span class="skill-tag">Python</span>
-                            <span class="skill-tag">Full-Stack</span>
-                            <span class="skill-tag">Database</span>
-                        </div>
-                        <a href="https://github.com/Nagavenkatasai7/project-manager" class="project-link" target="_blank" rel="noopener">GitHub &rarr;</a>
                     </div>
                 </div>
 
@@ -1283,22 +1508,37 @@
         <div class="container">
             <p class="section-label fade-in">Research Experience</p>
             <h2 class="section-title fade-in">Where I work</h2>
-            <p class="section-subtitle fade-in">Cross-disciplinary research at the intersection of business and AI.</p>
+            <p class="section-subtitle fade-in">Cross-disciplinary research at the intersection of AI, marketing, and customer experience.</p>
             <div class="experience-list">
 
                 <div class="experience-item fade-in">
                     <div class="experience-header">
                         <span class="experience-role">Graduate Research Assistant</span>
-                        <span class="experience-date">Aug 2024 – Present</span>
+                        <span class="experience-date">Aug 2025 – Present</span>
                     </div>
-                    <div class="experience-company">Costella College of Business, George Mason University</div>
-                    <div class="experience-advisors">Advisors: Dr. Saurabh Mishra (Chairperson) &amp; Dr. Jiang Hong (PhD)</div>
+                    <div class="experience-company">Costello College of Business, George Mason University</div>
+                    <div class="experience-advisors">Advisors: Dr. Saurabh Mishra (Marketing Analytics & AI) &amp; Dr. Jiyeon Hong (AI Personas & Customer Experience)</div>
                     <div class="experience-desc">
                         <ul>
-                            <li>Accelerated a 12-month dataset project to 4 months by designing an AI-powered automation pipeline using Claude API and visual intelligence for trademark analysis — demonstrating strategic problem-solving (80/20 rule)</li>
-                            <li>Building a comprehensive company opposition dataset using Factiva, leveraging Python scripting and API integrations for data extraction and processing</li>
-                            <li>Conducting research on Emotional Intelligence of Large Language Models, exploring how LLMs process and respond to emotional contexts</li>
-                            <li>Collaborating with faculty on cross-disciplinary research bridging business analytics and AI/ML applications</li>
+                            <li>Built an AI automation pipeline analyzing 1,000+ trademark opposition cases using Claude API for visual intelligence, document classification, and structured data extraction</li>
+                            <li>Constructed structured datasets from Factiva and proprietary sources for NLP-based marketing analytics and statistical modeling</li>
+                            <li>Conducting literature review on AI-driven personas, studying how LLMs generate adaptive, context-aware agents for customer engagement and personalization</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="experience-item fade-in">
+                    <div class="experience-header">
+                        <span class="experience-role">Undergraduate Research Assistant</span>
+                        <span class="experience-date">May 2022 – May 2024</span>
+                    </div>
+                    <div class="experience-company">Dept. of CSE, KL University, India</div>
+                    <div class="experience-desc">
+                        <ul>
+                            <li>Published 4 Scopus-indexed journal articles and 1 IEEE conference paper across AI/ML, NLP, cybersecurity, and blockchain over 2 years</li>
+                            <li>First-authored studies on AI-based cybersecurity risk mitigation and ensemble ML methods for predictive healthcare analytics</li>
+                            <li>Co-authored research on psychological stress detection using ANN/CatBoost and Ethereum blockchain-based land registration systems</li>
+                            <li>Presented speech quality assessment research for Indian languages at IEEE ICICT 2023, Tribhuvan University, Nepal</li>
                         </ul>
                     </div>
                 </div>
@@ -1312,45 +1552,93 @@
         <div class="container">
             <p class="section-label fade-in">Publications (5)</p>
             <h2 class="section-title fade-in">Peer-reviewed research</h2>
-            <p class="section-subtitle fade-in">Published in Scopus-indexed journals and IEEE conferences.</p>
+            <p class="section-subtitle fade-in">5 peer-reviewed publications | 50+ citations | Scopus Author ID: 58404553900</p>
             <div class="publications-list">
 
                 <div class="publication-item fade-in">
-                    <div class="publication-title">Comparative Analysis of Psychological Stress Detection: A Study of Artificial Neural Networks and Cat Boost Algorithm</div>
-                    <div class="publication-journal">International Journal of Intelligent Systems and Applications in Engineering</div>
+                    <div class="publication-title">Assessing the Effectiveness of Artificial Intelligence Techniques in Mitigating Cyber Security Risks <span class="publication-badge">First Author</span></div>
+                    <div class="publication-journal">International Journal of Intelligent Systems and Applications in Engineering, 11(4)</div>
+                    <div class="publication-year">2023</div>
+                </div>
+
+                <div class="publication-item fade-in">
+                    <div class="publication-title">Enhancing Hairfall Prediction: A Comparative Analysis of Individual Algorithms and An Ensemble Method <span class="publication-badge">First Author</span></div>
+                    <div class="publication-journal">International Journal on Recent and Innovation Trends in Computing and Communication, 11(6s)</div>
+                    <div class="publication-year">2023</div>
+                </div>
+
+                <div class="publication-item fade-in">
+                    <div class="publication-title">Comparative Analysis of Psychological Stress Detection: A Study of Artificial Neural Networks and CatBoost Algorithm</div>
+                    <div class="publication-journal">International Journal of Intelligent Systems and Applications in Engineering, 12(1)</div>
                     <div class="publication-year">2024</div>
                 </div>
 
                 <div class="publication-item fade-in">
                     <div class="publication-title">A Novel Strategy for Streamlining Land Registration using Ethereum Blockchain</div>
-                    <div class="publication-journal">International Journal of Intelligent Systems and Applications in Engineering</div>
-                    <div class="publication-year">2023</div>
-                </div>
-
-                <div class="publication-item fade-in">
-                    <div class="publication-title">Assessing the Effectiveness of Artificial Intelligence Techniques in Mitigating Cybersecurity Risks</div>
-                    <div class="publication-journal">International Journal of Intelligent Systems and Applications in Engineering</div>
-                    <div class="publication-year">2023</div>
-                </div>
-
-                <div class="publication-item fade-in">
-                    <div class="publication-title">Enhancing Hairfall Prediction: A Comparative Analysis of Individual Algorithms and An Ensemble Method</div>
-                    <div class="publication-journal">International Journal on Recent and Innovation Trends in Computing and Communication</div>
+                    <div class="publication-journal">International Journal of Intelligent Systems and Applications in Engineering, 11(4)</div>
                     <div class="publication-year">2023</div>
                 </div>
 
                 <div class="publication-item fade-in">
                     <div class="publication-title">Speech Quality Assessment and Control in Indian Languages</div>
-                    <div class="publication-journal">6th International Conference on Inventive Computation Technologies (ICICT)</div>
-                    <div class="publication-year">2023</div>
+                    <div class="publication-journal">IEEE ICICT 2023 — 6th International Conference on Inventive Computation Technologies, Tribhuvan University, Nepal</div>
+                    <div class="publication-year">2023 &middot; DOI: 10.1109/ICICT57646.2023</div>
                 </div>
 
             </div>
         </div>
     </section>
 
+    <!-- Certifications -->
+    <section id="certifications">
+        <div class="container">
+            <p class="section-label fade-in">Professional Certifications</p>
+            <h2 class="section-title fade-in">Industry credentials</h2>
+            <p class="section-subtitle fade-in">NVIDIA, AWS, Red Hat, and Anthropic certified.</p>
+            <div class="certifications-grid">
+
+                <a href="https://www.credly.com/badges/872528da-8ea5-4efe-9e46-8bf599831274/linked_in_profile" class="cert-card fade-in" target="_blank" rel="noopener">
+                    <div class="cert-name">NVIDIA Certified Associate: Generative AI and LLMs</div>
+                    <div class="cert-issuer">NVIDIA</div>
+                    <div class="cert-date">Feb 2026 &middot; Verify &rarr;</div>
+                </a>
+
+                <a href="https://www.credly.com/badges/b83ddb08-8a1f-42be-a0f1-8cf63652d43c/linked_in_profile" class="cert-card fade-in" target="_blank" rel="noopener">
+                    <div class="cert-name">AWS Certified AI Practitioner</div>
+                    <div class="cert-issuer">Amazon Web Services</div>
+                    <div class="cert-date">Nov 2025 &middot; Verify &rarr;</div>
+                </a>
+
+                <div class="cert-card fade-in">
+                    <div class="cert-name">AWS Certified Cloud Practitioner (CLF-C01)</div>
+                    <div class="cert-issuer">Amazon Web Services</div>
+                    <div class="cert-date">2022</div>
+                </div>
+
+                <div class="cert-card fade-in">
+                    <div class="cert-name">AWS Certified Developer Associate</div>
+                    <div class="cert-issuer">Amazon Web Services</div>
+                    <div class="cert-date">2022</div>
+                </div>
+
+                <div class="cert-card fade-in">
+                    <div class="cert-name">Red Hat Certified Enterprise Application Developer (EX 183)</div>
+                    <div class="cert-issuer">Red Hat</div>
+                    <div class="cert-date">2022</div>
+                </div>
+
+                <a href="https://verify.skilljar.com/c/8hsq5c9qc9i5" class="cert-card fade-in" target="_blank" rel="noopener">
+                    <div class="cert-name">Claude Code Certification</div>
+                    <div class="cert-issuer">Anthropic</div>
+                    <div class="cert-date">Dec 2025 &middot; Verify &rarr;</div>
+                </a>
+
+            </div>
+        </div>
+    </section>
+
     <!-- Education -->
-    <section id="education">
+    <section id="education" style="background: var(--gray-50); border-top: 1px solid var(--gray-100); border-bottom: 1px solid var(--gray-100);">
         <div class="container">
             <p class="section-label fade-in">Education</p>
             <h2 class="section-title fade-in">Academic background</h2>
@@ -1360,14 +1648,15 @@
                 <div class="education-item fade-in">
                     <div class="education-degree">Master of Science in Computer Science</div>
                     <div class="education-school">George Mason University, Fairfax, VA</div>
-                    <div class="education-details">Expected: May 2026 &middot; GPA: 3.6/4.0</div>
-                    <div class="education-coursework">Relevant Coursework: Advanced Data Structures, Machine Learning, Software Engineering, Database Management, Network Security</div>
+                    <div class="education-details">Aug 2024 – May 2026 &middot; GPA: 3.52/4.0 &middot; 27 credits completed</div>
+                    <div class="education-coursework">Key Courses: Network Security (A-), Software Engineering for WWW (A), Component-Based Software Dev (A-), Database Systems, Data Mining, Analysis of Algorithms</div>
                 </div>
 
                 <div class="education-item fade-in">
-                    <div class="education-degree">Bachelor of Technology in Computer Science and Engineering</div>
-                    <div class="education-school">KL Deemed to be University, Andhra Pradesh, India</div>
-                    <div class="education-details">May 2024</div>
+                    <div class="education-degree">Bachelor of Technology in Computer Science & Engineering</div>
+                    <div class="education-school">KL University (Koneru Lakshmaiah Education Foundation), Andhra Pradesh, India</div>
+                    <div class="education-details">May 2020 – May 2024 &middot; CGPA: 8.29/10.0</div>
+                    <div class="education-coursework">Key Courses: Machine Learning (A+), AI for Data Science (A), Data Structures (A+), Algorithms (A+), Computer Networks & Security (A)</div>
                 </div>
 
             </div>
@@ -1379,7 +1668,7 @@
         <div class="container">
             <p class="section-label fade-in">Contact</p>
             <h2 class="section-title fade-in">Get in touch</h2>
-            <p class="section-subtitle fade-in">Open to full-time opportunities starting May 2026.</p>
+            <p class="section-subtitle fade-in">Open to AI Engineering, Prompt Engineering, or GenAI Development roles starting May 2026.</p>
             <div class="contact-grid">
                 <a href="mailto:chennunagavenkatasai@gmail.com" class="contact-card fade-in">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
@@ -1391,7 +1680,7 @@
                     <div class="contact-card-label">Phone</div>
                     <div class="contact-card-value">(571) 546-6207</div>
                 </a>
-                <a href="https://www.linkedin.com/in/naga-venkata-sai-chennu" class="contact-card fade-in" target="_blank" rel="noopener">
+                <a href="https://www.linkedin.com/in/nagavenkatasaichennu" class="contact-card fade-in" target="_blank" rel="noopener">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
                     <div class="contact-card-label">LinkedIn</div>
                     <div class="contact-card-value">Connect</div>
@@ -1417,8 +1706,49 @@
             <p class="fade-in">New Grad May 2026 &middot; MS in Computer Science &middot; F-1 OPT Eligible (36 months authorization)</p>
             <div class="hero-ctas" style="justify-content: center;">
                 <a href="mailto:chennunagavenkatasai@gmail.com" class="btn btn-primary">Send Email</a>
-                <a href="Nagavenkatasai-chennu-resume.pdf" class="btn btn-secondary" download>Download Resume</a>
+                <a href="Naga_Venkata_Sai_Chennu_Career_Fair_Resume.pdf" class="btn btn-secondary" download>Download Resume</a>
             </div>
+        </div>
+    </div>
+
+    <!-- Copyright Modal -->
+    <div class="copyright-overlay" id="copyrightModal" oncontextmenu="return false;">
+        <div class="copyright-modal">
+            <button class="copyright-modal-close" onclick="closeCopyrightModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <div class="copyright-modal-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M14.5 9a3.5 3.5 0 1 0 0 6"/></svg>
+            </div>
+            <h3>Registered Copyright</h3>
+            <p class="copyright-modal-subtitle">Intellectual property registered with the Government of India.</p>
+            <div>
+                <div class="copyright-detail-row">
+                    <span class="copyright-detail-label">Registration No.</span>
+                    <span class="copyright-detail-value">L-142224/2024</span>
+                </div>
+                <div class="copyright-detail-row">
+                    <span class="copyright-detail-label">Title</span>
+                    <span class="copyright-detail-value">Dynamic Adaptive Data Transmission System</span>
+                </div>
+                <div class="copyright-detail-row">
+                    <span class="copyright-detail-label">Technology</span>
+                    <span class="copyright-detail-value">RNN + BICM for QAM/PSK</span>
+                </div>
+                <div class="copyright-detail-row">
+                    <span class="copyright-detail-label">Type</span>
+                    <span class="copyright-detail-value">Literary / Software Work</span>
+                </div>
+                <div class="copyright-detail-row">
+                    <span class="copyright-detail-label">Registered</span>
+                    <span class="copyright-detail-value">January 2024</span>
+                </div>
+                <div class="copyright-detail-row">
+                    <span class="copyright-detail-label">Jurisdiction</span>
+                    <span class="copyright-detail-value">Government of India</span>
+                </div>
+            </div>
+            <div class="copyright-watermark">PROTECTED DOCUMENT &middot; VIEW ONLY &middot; NO REPRODUCTION PERMITTED</div>
         </div>
     </div>
 
@@ -1426,9 +1756,9 @@
     <footer class="footer">
         <div class="container">
             <div class="footer-inner">
-                <span class="footer-copy">&copy; 2025 Chennu Naga Venkata Sai</span>
+                <span class="footer-copy">&copy; 2026 Chennu Naga Venkata Sai</span>
                 <div class="footer-links">
-                    <a href="https://www.linkedin.com/in/naga-venkata-sai-chennu" target="_blank" rel="noopener">LinkedIn</a>
+                    <a href="https://www.linkedin.com/in/nagavenkatasaichennu" target="_blank" rel="noopener">LinkedIn</a>
                     <a href="https://github.com/Nagavenkatasai7" target="_blank" rel="noopener">GitHub</a>
                     <a href="https://orcid.org/0009-0000-8252-8682" target="_blank" rel="noopener">ORCID</a>
                     <a href="mailto:chennunagavenkatasai@gmail.com">Email</a>
@@ -1468,6 +1798,37 @@
         }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
         document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Copyright modal
+        function openCopyrightModal() {
+            document.getElementById('copyrightModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeCopyrightModal() {
+            document.getElementById('copyrightModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        window.openCopyrightModal = openCopyrightModal;
+        window.closeCopyrightModal = closeCopyrightModal;
+
+        document.getElementById('copyrightModal').addEventListener('click', function(e) {
+            if (e.target === this) closeCopyrightModal();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeCopyrightModal();
+            // Block Print Screen and common screenshot shortcuts when modal is open
+            if (document.getElementById('copyrightModal').classList.contains('active')) {
+                if (e.key === 'PrintScreen' || (e.metaKey && e.shiftKey && (e.key === '3' || e.key === '4' || e.key === '5'))) {
+                    e.preventDefault();
+                }
+            }
+        });
+
+        // Prevent drag on modal content
+        document.querySelector('.copyright-modal').addEventListener('dragstart', function(e) {
+            e.preventDefault();
+        });
 
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
