@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Chips & Tags</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 24px 32px; background: var(--bg-page); display: flex; flex-direction: column; gap: 14px; font-family: var(--font-sans); }
+  .lbl { font-family: var(--font-mono); font-size: 10px; color: var(--ink-4); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+  .row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { display: inline-flex; align-items: center; padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: 500; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink-2); }
+  .chip-outline { background: transparent; color: var(--accent); border-color: var(--accent); }
+  .chip-accent { background: var(--accent-tint); color: var(--accent); border-color: transparent; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 9999px; font-size: 12px; border: 1px solid var(--line-strong); color: var(--ink-2); background: var(--surface); }
+  .pill .dot { width: 6px; height: 6px; border-radius: 9999px; background: var(--success); }
+</style>
+</head>
+<body>
+  <div>
+    <div class="lbl">Tech tags</div>
+    <div class="row">
+      <span class="chip">Python</span><span class="chip">Claude API</span><span class="chip">RAG</span><span class="chip">FAISS</span><span class="chip">PyTorch</span><span class="chip-outline chip">Vector DB</span>
+    </div>
+  </div>
+  <div>
+    <div class="lbl">Status pill</div>
+    <div class="row">
+      <span class="pill"><span class="dot"></span>Available for full-time roles — New Grad May 2026</span>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Color — Neutrals</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 24px; background: var(--bg-page); }
+  .row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+  .swatch { border: 1px solid var(--line); border-radius: var(--radius-md); overflow: hidden; background: var(--surface); }
+  .chip { height: 72px; }
+  .label { padding: 8px 10px; }
+  .name { font-size: 12px; font-weight: 600; color: var(--ink); }
+  .hex { font-family: var(--font-mono); font-size: 10px; color: var(--ink-3); margin-top: 2px; }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="swatch"><div class="chip" style="background:#FFFFFF;border-bottom:1px solid var(--line)"></div><div class="label"><div class="name">Surface</div><div class="hex">#FFFFFF</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#F3F2EC"></div><div class="label"><div class="name">Surface 2</div><div class="hex">#F3F2EC</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#E8E6DE"></div><div class="label"><div class="name">Surface 3</div><div class="hex">#E8E6DE</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#E5E3DB"></div><div class="label"><div class="name">Line</div><div class="hex">#E5E3DB</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#CFCCC1"></div><div class="label"><div class="name">Line Strong</div><div class="hex">#CFCCC1</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#8A8A92"></div><div class="label"><div class="name">Ink 4</div><div class="hex">#8A8A92</div></div></div>
+  </div>
+</body>
+</html>

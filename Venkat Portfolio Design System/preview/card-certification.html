@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Certification Card</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 22px; background: var(--bg-page); font-family: var(--font-sans); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .cert { border: 1px solid var(--line); border-radius: 8px; padding: 16px; background: var(--surface); display: flex; gap: 12px; align-items: flex-start; }
+  .badge { width: 36px; height: 36px; border-radius: 50%; background: var(--success-tint); color: var(--success); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 16px; }
+  .col { flex: 1; min-width: 0; }
+  .title { font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.35; }
+  .org { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+  .meta { font-family: var(--font-mono); font-size: 10px; color: var(--accent); margin-top: 6px; letter-spacing: 0.02em; }
+</style>
+</head>
+<body>
+  <div class="grid">
+    <div class="cert"><div class="badge">✓</div><div class="col"><div class="title">NVIDIA Certified: Generative AI & LLMs</div><div class="org">NVIDIA</div><div class="meta">Feb 2026 · Verify →</div></div></div>
+    <div class="cert"><div class="badge">✓</div><div class="col"><div class="title">AWS Certified AI Practitioner</div><div class="org">Amazon Web Services</div><div class="meta">Nov 2025 · Verify →</div></div></div>
+  </div>
+</body>
+</html>

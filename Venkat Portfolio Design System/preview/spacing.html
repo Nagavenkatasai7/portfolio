@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Spacing Scale</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 22px 28px; background: var(--bg-page); }
+  .row { display: flex; align-items: center; gap: 14px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+  .row:last-child { border-bottom: 0; }
+  .name { font-family: var(--font-mono); font-size: 11px; color: var(--ink); width: 54px; }
+  .val { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); width: 52px; }
+  .bar { height: 14px; background: var(--accent); border-radius: 2px; }
+</style>
+</head>
+<body>
+  <div class="row"><span class="name">--sp-1</span><span class="val">4</span><span class="bar" style="width: 4px;"></span></div>
+  <div class="row"><span class="name">--sp-2</span><span class="val">8</span><span class="bar" style="width: 8px;"></span></div>
+  <div class="row"><span class="name">--sp-3</span><span class="val">12</span><span class="bar" style="width: 12px;"></span></div>
+  <div class="row"><span class="name">--sp-4</span><span class="val">16</span><span class="bar" style="width: 16px;"></span></div>
+  <div class="row"><span class="name">--sp-5</span><span class="val">24</span><span class="bar" style="width: 24px;"></span></div>
+  <div class="row"><span class="name">--sp-6</span><span class="val">32</span><span class="bar" style="width: 32px;"></span></div>
+  <div class="row"><span class="name">--sp-7</span><span class="val">48</span><span class="bar" style="width: 48px;"></span></div>
+  <div class="row"><span class="name">--sp-8</span><span class="val">64</span><span class="bar" style="width: 64px;"></span></div>
+  <div class="row"><span class="name">--sp-9</span><span class="val">96</span><span class="bar" style="width: 96px;"></span></div>
+</body>
+</html>

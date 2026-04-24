@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Nav & Wordmark</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 22px 28px; background: var(--bg-page); font-family: var(--font-sans); }
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .wordmark { font-family: var(--font-serif); font-weight: 500; font-size: 18px; letter-spacing: -0.01em; color: var(--ink); }
+  .wordmark .dot { color: var(--accent); }
+  .links { display: flex; gap: 22px; }
+  .links a { font-size: 13px; color: var(--ink-2); text-decoration: none; font-weight: 500; }
+  .links a.active { color: var(--accent); }
+  .resume { font-size: 13px; border: 1px solid var(--line-strong); padding: 7px 14px; border-radius: 6px; color: var(--ink); }
+</style>
+</head>
+<body>
+  <div class="nav">
+    <div class="wordmark">Venkat Chennu<span class="dot">.</span></div>
+    <div class="links">
+      <a class="active">About</a><a>Projects</a><a>Research</a><a>Publications</a><a>Contact</a>
+    </div>
+    <a class="resume">Resume ↗</a>
+  </div>
+</body>
+</html>

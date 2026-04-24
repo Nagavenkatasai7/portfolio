@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Radii & Shadows</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 26px 32px; background: var(--bg-page); display: flex; flex-direction: column; gap: 20px; }
+  .group { display: flex; gap: 14px; align-items: flex-end; }
+  .box { width: 88px; height: 68px; background: var(--surface); border: 1px solid var(--line); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 6px; font-family: var(--font-mono); font-size: 10px; color: var(--ink-3); }
+  .lbl { font-family: var(--font-mono); font-size: 10px; color: var(--ink-4); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+  .section { }
+</style>
+</head>
+<body>
+  <div class="section">
+    <div class="lbl">Corner Radii</div>
+    <div class="group">
+      <div class="box" style="border-radius: 2px;">2</div>
+      <div class="box" style="border-radius: 4px;">4</div>
+      <div class="box" style="border-radius: 6px;">6</div>
+      <div class="box" style="border-radius: 8px;">8</div>
+      <div class="box" style="border-radius: 12px;">12</div>
+      <div class="box" style="border-radius: 9999px; width:68px;">full</div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="lbl">Elevation</div>
+    <div class="group">
+      <div class="box" style="border-radius:8px; box-shadow: 0 1px 2px rgba(15,15,18,0.04);">sm</div>
+      <div class="box" style="border-radius:8px; box-shadow: 0 4px 12px rgba(15,15,18,0.08);">md</div>
+      <div class="box" style="border-radius:8px; box-shadow: 0 12px 32px rgba(15,15,18,0.12);">lg</div>
+      <div class="box" style="border-radius:8px; box-shadow: 0 24px 64px rgba(15,15,18,0.16);">xl</div>
+    </div>
+  </div>
+</body>
+</html>

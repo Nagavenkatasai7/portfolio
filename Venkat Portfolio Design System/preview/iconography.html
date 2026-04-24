@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Iconography</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 22px 28px; background: var(--bg-page); font-family: var(--font-sans); }
+  .lbl { font-family: var(--font-mono); font-size: 10px; color: var(--ink-4); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+  .grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 14px; }
+  .tile { border: 1px solid var(--line); border-radius: 6px; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: var(--surface); color: var(--ink-2); }
+  .tile svg { width: 22px; height: 22px; stroke-width: 1.75; }
+</style>
+</head>
+<body>
+  <div class="lbl">Lucide · 1.75 stroke · currentColor</div>
+  <div class="grid">
+    <div class="tile"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12h16m-6-6l6 6-6 6"/></svg></div>
+    <div class="tile"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7l9 6 9-6M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7M3 7l2-2h14l2 2"/></svg></div>
+    <div class="tile"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 2l9 5-9 5-9-5 9-5zm0 13l9-5m-9 5l-9-5m9 5v7"/></svg></div>
+    <div class="tile"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg></div>
+    <div class="tile"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 2l2.4 7.4H22l-6.2 4.5L18.2 22 12 17.3 5.8 22l2.4-8.1L2 9.4h7.6L12 2z"/></svg></div>
+    <div class="tile"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 3v12m0 0a3 3 0 106 0m-6 0V3m12 0v8m0 0a3 3 0 10-6 0"/></svg></div>
+    <div class="tile"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM8 20h8M12 16v4"/></svg></div>
+    <div class="tile"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7h18M3 12h18M3 17h12"/></svg></div>
+  </div>
+</body>
+</html>

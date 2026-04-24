@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Brand Wordmark</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 36px 32px; background: var(--bg-page); font-family: var(--font-sans); display: flex; flex-direction: column; gap: 22px; }
+  .mark-lg { font-family: var(--font-serif); font-weight: 400; font-size: 48px; color: var(--ink); letter-spacing: -0.02em; line-height: 1; }
+  .mark-lg .accent { color: var(--accent); }
+  .mark-sm { font-family: var(--font-serif); font-weight: 500; font-size: 20px; color: var(--ink); letter-spacing: -0.01em; }
+  .monogram { font-family: var(--font-serif); font-weight: 500; font-size: 22px; width: 44px; height: 44px; border-radius: 50%; background: var(--ink); color: var(--canvas); display: inline-flex; align-items: center; justify-content: center; letter-spacing: -0.02em; }
+  .row { display: flex; gap: 18px; align-items: center; }
+  .lbl { font-family: var(--font-mono); font-size: 10px; color: var(--ink-4); letter-spacing: 0.08em; text-transform: uppercase; width: 100px; }
+</style>
+</head>
+<body>
+  <div class="row"><div class="lbl">Primary</div><div class="mark-lg">Venkat Chennu<span class="accent">.</span></div></div>
+  <div class="row"><div class="lbl">Compact</div><div class="mark-sm">Venkat Chennu<span style="color:var(--accent)">.</span></div><div class="monogram">VC</div></div>
+</body>
+</html>

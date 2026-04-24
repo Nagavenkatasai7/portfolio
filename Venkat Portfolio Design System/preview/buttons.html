@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Buttons</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin: 0; padding: 26px 32px; background: var(--bg-page); display: flex; flex-direction: column; gap: 16px; font-family: var(--font-sans); }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .lbl { font-family: var(--font-mono); font-size: 10px; color: var(--ink-4); letter-spacing: 0.08em; text-transform: uppercase; width: 88px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; border: 1px solid transparent; transition: all 160ms var(--ease); font-family: inherit; }
+  .btn-primary { background: var(--ink); color: #fff; }
+  .btn-primary:hover { background: #000; }
+  .btn-outline { background: transparent; color: var(--ink); border-color: var(--line-strong); }
+  .btn-outline:hover { background: var(--surface-2); }
+  .btn-ghost { background: transparent; color: var(--accent); }
+  .btn-ghost:hover { color: var(--accent-hover); text-decoration: underline; }
+  .arr { font-size: 14px; }
+</style>
+</head>
+<body>
+  <div class="row">
+    <span class="lbl">Primary</span>
+    <button class="btn btn-primary">View My Work</button>
+    <button class="btn btn-primary">Download Resume <span class="arr">↓</span></button>
+  </div>
+  <div class="row">
+    <span class="lbl">Outline</span>
+    <button class="btn btn-outline">Get In Touch</button>
+    <button class="btn btn-outline">Verify <span class="arr">↗</span></button>
+  </div>
+  <div class="row">
+    <span class="lbl">Ghost / Link</span>
+    <button class="btn btn-ghost">Read publication <span class="arr">→</span></button>
+  </div>
+</body>
+</html>
