@@ -1114,7 +1114,7 @@
     .hero-grid {
       position: relative;
       z-index: 1;
-      grid-template-columns: minmax(0, 1fr) minmax(360px, 520px);
+      grid-template-columns: minmax(0, 0.92fr) minmax(430px, 620px);
       gap: clamp(30px, 5vw, 70px);
       align-items: center;
     }
@@ -1218,6 +1218,9 @@
 
     .signal-board {
       position: relative;
+      width: 100%;
+      max-width: 620px;
+      justify-self: end;
       overflow: hidden;
       border: 1px solid rgba(251, 246, 233, 0.16);
       background:
@@ -1277,21 +1280,25 @@
 
     .portrait-module {
       display: grid;
-      grid-template-columns: 170px minmax(0, 1fr);
-      gap: 18px;
-      align-items: stretch;
-      padding: 18px;
+      grid-template-columns: minmax(218px, 0.9fr) minmax(0, 1fr);
+      gap: 22px;
+      align-items: start;
+      padding: 22px;
     }
 
     .portrait-wrap {
       overflow: hidden;
       border: 1px solid rgba(251, 246, 233, 0.16);
       background: #fff;
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22);
     }
 
     .portrait-wrap img {
-      height: 100%;
-      min-height: 188px;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      object-position: center 24%;
       filter: saturate(1.02) contrast(1.03);
     }
 
