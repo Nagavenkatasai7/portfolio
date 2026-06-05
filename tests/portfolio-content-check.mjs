@@ -1,0 +1,38 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+
+const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+
+const mustInclude = [
+  "Business Systems Analyst – AI Automation",
+  "What we did",
+  "How we did it",
+  "Impact created",
+  "AI Business Request Intake & Jira Automation System",
+  "AI Automation ROI & Process-Optimization Platform",
+  "Healthcare Workflow Automation & EMR Data-Extraction System",
+  "Product Master-Data Automation & Data-Quality Control System",
+  "AI-Powered Revenue-Operations Automation Dashboard",
+  "https://ai-business-request-intake.vercel.app",
+  "https://ai-automation-roi.vercel.app",
+  "https://healthcare-emr-extraction.vercel.app",
+  "https://product-master-data-qc.vercel.app",
+  "https://revops-automation-dashboard.vercel.app",
+  "profile.png",
+  "nchennu@gmu.edu",
+  "cal.com/nagavenkatasaichennu-c-h24tx0/15min",
+];
+
+for (const expected of mustInclude) {
+  assert.ok(html.includes(expected), `Missing expected portfolio content: ${expected}`);
+}
+
+const sectionIds = ["about", "proof", "projects", "experience", "skills", "research", "contact"];
+for (const id of sectionIds) {
+  assert.match(html, new RegExp(`<section[^>]+id="${id}"`), `Missing #${id} section`);
+}
+
+const liveProjectLinkCount = (html.match(/class="project-link"/g) ?? []).length;
+assert.ok(liveProjectLinkCount >= 5, "Expected at least five live project links");
+
+console.log("Portfolio content checks passed.");
