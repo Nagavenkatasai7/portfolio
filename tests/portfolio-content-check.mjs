@@ -44,5 +44,6 @@ for (const id of sectionIds) {
 
 const liveProjectLinkCount = (html.match(/class="project-link"/g) ?? []).length;
 assert.ok(liveProjectLinkCount >= 5, "Expected at least five live project links");
+assert.doesNotMatch(html, /case study/i, "Project placeholders should not use the phrase case study");
 
 console.log("Portfolio content checks passed.");
