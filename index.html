@@ -630,135 +630,219 @@
       color: #fff;
     }
 
+    /* ============================================================
+       PROJECT CARDS — 2-up vertical gallery (Luminous)
+       Drop-in REPLACEMENT for the old 3-column project-card CSS
+       (former index.html v4 lines ~633-788, .projects-grid through
+       .project-link:focus-visible). Full uncropped 16:10 screenshot
+       on top; 7 screenshot-less cards get a matching CSS placeholder.
+       ============================================================ */
+
+    /* ---- Grid: 2-up, collapses to 1-up under 860px ---- */
     .projects-grid {
       display: grid;
-      gap: 18px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px;
+    }
+    @media (max-width: 860px) {
+      .projects-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
     }
 
+    /* ---- Card: vertical column, media on top, content below ---- */
     .project-card {
-      display: grid;
-      grid-template-columns: minmax(240px, 0.72fr) minmax(0, 1fr) minmax(210px, 0.42fr);
-      border: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
       background: var(--surface);
-      transition: opacity 180ms var(--ease), transform 180ms var(--ease), box-shadow 180ms var(--ease), border-color 180ms var(--ease);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;                    /* clips media to radius; NOT the offset shadow */
+      transition: transform 0.35s var(--ease),
+                  box-shadow 0.35s var(--ease),
+                  border-color 0.35s var(--ease);
     }
 
-    .project-card.is-hidden {
-      display: none;
+    /* REQUIRED: category filter JS toggles .is-hidden — keep this rule
+       (.project-card.is-hidden out-specifies .project-card's display:flex) */
+    .project-card.is-hidden { display: none; }
+
+    .project-card:hover,
+    .project-card:focus-within {
+      transform: translate(-3px, -3px);
+      box-shadow: 8px 8px 0 var(--lime);   /* signature hard offset */
+      border-color: var(--ink);
     }
 
-    .project-card:hover {
-      border-color: rgba(23, 20, 17, 0.34);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow);
+    /* ---- Media: full, UNCROPPED screenshot on a tinted mat ---- */
+    .project-media {
+      display: block;
+      position: relative;
+      aspect-ratio: 1000 / 625;            /* exact 16:10 of the shots -> no crop */
+      background: var(--paper-2);          /* mat / safety backdrop */
+      border-bottom: 1px solid var(--line);
+      overflow: hidden;
+      text-decoration: none;               /* live media is an <a> */
     }
-
-    .project-top,
-    .project-bottom {
-      padding: 24px;
+    .project-media img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;                   /* ratio matches -> whole image shows */
+      object-position: center top;
+      transition: transform 0.5s var(--ease);
     }
+    .project-card:hover .project-media img { transform: scale(1.03); }
 
-    .project-top {
-      border-right: 1px solid var(--line);
+    /* ---- Placeholder media for the 7 screenshot-less cards ---- */
+    .project-media--placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--paper-2) 0%, var(--surface) 100%);
     }
+    .project-media--placeholder::before {           /* dashed inset frame */
+      content: "";
+      position: absolute;
+      inset: 14px;
+      border: 1px dashed var(--line);
+      border-radius: calc(var(--radius) - 4px);
+      pointer-events: none;
+    }
+    .project-media--placeholder::after {            /* signature lime corner tick */
+      content: "";
+      position: absolute;
+      left: 14px;
+      top: 14px;
+      width: 26px;
+      height: 26px;
+      background: var(--lime);
+      border-bottom-right-radius: var(--radius);
+    }
+    .project-media .media-mono {                    /* centered mono label */
+      position: relative;
+      z-index: 1;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 6px 12px;
+    }
+    .project-media .media-mono::before { content: "\2039 "; color: var(--teal); }
+    .project-media .media-mono::after  { content: " \203A"; color: var(--teal); }
 
+    /* ---- Content: header ---- */
+    .project-top { padding: 22px 24px 4px; }
     .project-kicker {
-      color: var(--coral);
       font-family: var(--mono);
       font-size: 0.72rem;
       font-weight: 900;
       letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--coral);                 /* matches site-wide .eyebrow convention */
       line-height: 1.4;
-      text-transform: uppercase;
+      margin: 0 0 8px;
     }
-
     .project-top h3 {
-      margin-top: 10px;
-      font-size: 1.36rem;
+      font-family: var(--sans);
+      font-size: 1.25rem;
       line-height: 1.2;
-    }
-
-    .project-summary {
-      margin-top: 12px;
-      color: var(--muted);
-      font-size: 0.94rem;
-    }
-
-    .case-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      min-height: 100%;
-    }
-
-    .case-block {
-      padding: 22px;
-      border-right: 1px solid var(--line);
-    }
-
-    .case-block:last-child {
-      border-right: 0;
-    }
-
-    .case-label {
       color: var(--ink);
-      font-size: 0.74rem;
-      font-weight: 950;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      margin: 0 0 8px;
     }
-
-    .case-block p {
-      margin-top: 10px;
+    .project-summary {
+      font-size: 0.95rem;
+      line-height: 1.55;
       color: var(--ink-soft);
-      font-size: 0.9rem;
-      line-height: 1.62;
+      margin: 0;
     }
 
-    .project-bottom {
+    /* ---- Case content: compact divided stacked list (no 3 columns) ---- */
+    .case-grid {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      gap: 18px;
-      border-left: 1px solid var(--line);
+      padding: 16px 24px 4px;
+    }
+    .case-block {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3px;
+      padding: 12px 0;
+      border-top: 1px solid var(--line);
+    }
+    .case-block:first-child { border-top: none; padding-top: 4px; }
+    .case-label {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .case-block p {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--ink-soft);
+      margin: 0;
     }
 
+    /* ---- Bottom: tags + pill CTA, pinned to base ---- */
+    .project-bottom {
+      margin-top: auto;
+      padding: 16px 24px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
     .tag-list {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
+      margin: 0;
+      padding: 0;
       list-style: none;
     }
-
     .tag {
-      border: 1px solid var(--line);
-      background: var(--paper);
+      font-family: var(--mono);
+      font-size: 0.72rem;
       color: var(--ink-soft);
-      padding: 5px 8px;
-      font-size: 0.74rem;
-      font-weight: 900;
-      line-height: 1;
+      background: var(--paper-2);
+      border: 1px solid var(--line);
+      border-radius: 999px;                 /* pill motif */
+      padding: 4px 11px;
     }
-
     .project-link {
-      align-self: stretch;
-      min-height: 42px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+      align-self: flex-start;
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--ink);
+      text-decoration: none;
+      background: var(--lime);
       border: 1px solid var(--ink);
-      background: var(--ink);
-      color: #fff;
-      padding: 10px;
-      font-size: 0.84rem;
-      font-weight: 950;
-      transition: background 160ms var(--ease), color 160ms var(--ease), transform 160ms var(--ease);
+      border-radius: 999px;                 /* pill motif */
+      padding: 8px 18px;
+      transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+    }
+    .project-link:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+    .project-link:focus-visible {
+      outline: 2px solid var(--teal);
+      outline-offset: 2px;
     }
 
-    .project-link:hover,
-    .project-link:focus-visible {
-      background: var(--lime);
-      color: var(--ink);
-      transform: translateY(-1px);
+    /* ---- Accessibility: respect reduced motion ---- */
+    @media (prefers-reduced-motion: reduce) {
+      .project-card,
+      .project-media img,
+      .project-link { transition: none; }
+      .project-card:hover,
+      .project-card:focus-within { transform: none; }
+      .project-card:hover .project-media img { transform: none; }
     }
 
     .experience-list {
@@ -974,22 +1058,8 @@
       .skills-grid,
       .research-grid,
       .education-grid,
-      .contact-grid,
-      .project-card,
-      .case-grid {
+      .contact-grid {
         grid-template-columns: 1fr;
-      }
-
-      .project-top,
-      .project-bottom,
-      .case-block {
-        border: 0;
-        border-bottom: 1px solid var(--line);
-      }
-
-      .project-bottom,
-      .case-block:last-child {
-        border-bottom: 0;
       }
     }
 
@@ -1077,6 +1147,7 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="chatbot.css">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -1292,10 +1363,12 @@
           <button class="filter-button" type="button" data-filter="healthcare">Healthcare</button>
           <button class="filter-button" type="button" data-filter="revops">RevOps</button>
           <button class="filter-button" type="button" data-filter="research">Research</button>
+          <button class="filter-button" type="button" data-filter="ai">AI &amp; Agents</button>
         </div>
 
         <div class="projects-grid">
           <article class="project-card reveal" data-category="software">
+            <div class="project-media project-media--placeholder" aria-hidden="true"><span class="media-mono">PAYMENTS SYSTEM</span></div>
             <div class="project-top">
               <p class="project-kicker">Multi-tenant SaaS + payments architecture</p>
               <h3>SmartRemit — Multi-Tenant Payments Platform</h3>
@@ -1326,6 +1399,7 @@
           </article>
 
           <article class="project-card reveal" data-category="software">
+            <div class="project-media project-media--placeholder" aria-hidden="true"><span class="media-mono">EDGE AI AGENT</span></div>
             <div class="project-top">
               <p class="project-kicker">Edge AI + Linux runtime stability</p>
               <h3>JetBot — Edge AI Agent on Jetson</h3>
@@ -1356,6 +1430,7 @@
           </article>
 
           <article class="project-card reveal" data-category="software">
+            <div class="project-media project-media--placeholder" aria-hidden="true"><span class="media-mono">CUDA KERNEL</span></div>
             <div class="project-top">
               <p class="project-kicker">C++ systems + performance profiling</p>
               <h3>CUDA Matrix-Multiplication Kernel</h3>
@@ -1386,6 +1461,9 @@
           </article>
 
           <article class="project-card reveal" data-category="automation">
+            <a class="project-media" href="https://ai-business-request-intake.vercel.app" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+              <img src="public/projects/jira-automation.jpg" alt="" loading="lazy" width="1000" height="625">
+            </a>
             <div class="project-top">
               <p class="project-kicker">Request intake + Jira automation</p>
               <h3>AI Business Request Intake & Jira Automation System</h3>
@@ -1417,6 +1495,9 @@
           </article>
 
           <article class="project-card reveal" data-category="automation">
+            <a class="project-media" href="https://ai-automation-roi.vercel.app" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+              <img src="public/projects/automation-roi.jpg" alt="" loading="lazy" width="1000" height="625">
+            </a>
             <div class="project-top">
               <p class="project-kicker">Automation ROI + process optimization</p>
               <h3>AI Automation ROI & Process-Optimization Platform</h3>
@@ -1447,6 +1528,9 @@
           </article>
 
           <article class="project-card reveal" data-category="healthcare">
+            <a class="project-media" href="https://healthcare-emr-extraction.vercel.app" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+              <img src="public/projects/healthcare-emr.jpg" alt="" loading="lazy" width="1000" height="625">
+            </a>
             <div class="project-top">
               <p class="project-kicker">Healthcare workflow + EMR extraction</p>
               <h3>Healthcare Workflow Automation & EMR Data-Extraction System</h3>
@@ -1477,6 +1561,9 @@
           </article>
 
           <article class="project-card reveal" data-category="data">
+            <a class="project-media" href="https://product-master-data-qc.vercel.app" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+              <img src="public/projects/master-data.jpg" alt="" loading="lazy" width="1000" height="625">
+            </a>
             <div class="project-top">
               <p class="project-kicker">Product master data + quality control</p>
               <h3>Product Master-Data Automation & Data-Quality Control System</h3>
@@ -1507,6 +1594,9 @@
           </article>
 
           <article class="project-card reveal" data-category="revops">
+            <a class="project-media" href="https://revops-automation-dashboard.vercel.app" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+              <img src="public/projects/revops.jpg" alt="" loading="lazy" width="1000" height="625">
+            </a>
             <div class="project-top">
               <p class="project-kicker">Revenue operations + CRM risk scoring</p>
               <h3>AI-Powered Revenue-Operations Automation Dashboard</h3>
@@ -1537,6 +1627,7 @@
           </article>
 
           <article class="project-card reveal" data-category="research">
+            <div class="project-media project-media--placeholder" aria-hidden="true"><span class="media-mono">LLM OPS</span></div>
             <div class="project-top">
               <p class="project-kicker">LLM operations + research enablement</p>
               <h3>LLM Forge: Domain-Specific LLM Fine-Tuning Platform</h3>
@@ -1562,7 +1653,205 @@
                 <li class="tag">LoRA</li>
                 <li class="tag">Pydantic</li>
               </ul>
-              <span class="project-link" aria-label="Internal research project">Research system</span>
+              <a class="project-link" href="https://github.com/Nagavenkatasai7/llm-forge" target="_blank" rel="noopener">View on GitHub</a>
+            </div>
+          </article>
+
+          <article class="project-card reveal" data-category="ai">
+            <a class="project-media" href="https://intellidoc-nexus.vercel.app" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+              <img src="public/projects/intellidoc.jpg" alt="" loading="lazy" width="1000" height="625">
+            </a>
+            <div class="project-top">
+              <p class="project-kicker">Multi-agent RAG + document intelligence</p>
+              <h3>IntelliDoc-Nexus — Document Intelligence Platform</h3>
+              <p class="project-summary">A production-grade multi-agent platform that ingests, understands, and answers questions over complex documents with citations.</p>
+            </div>
+            <div class="case-grid">
+              <div class="case-block">
+                <span class="case-label">What we did</span>
+                <p>Built a document-intelligence platform where specialized agents parse, retrieve, and reason over uploaded documents to answer questions with sources.</p>
+              </div>
+              <div class="case-block">
+                <span class="case-label">How we did it</span>
+                <p>Orchestrated a multi-agent RAG pipeline — chunking, embeddings, vector search, and reranking — behind a Python backend deployed on Vercel.</p>
+              </div>
+              <div class="case-block">
+                <span class="case-label">Impact created</span>
+                <p>Turned static document piles into a queryable knowledge surface, showing end-to-end ownership of a production AI system.</p>
+              </div>
+            </div>
+            <div class="project-bottom">
+              <ul class="tag-list">
+                <li class="tag">Python</li>
+                <li class="tag">Multi-Agent</li>
+                <li class="tag">RAG</li>
+                <li class="tag">Vercel</li>
+              </ul>
+              <a class="project-link" href="https://intellidoc-nexus.vercel.app" target="_blank" rel="noopener">Open live app</a>
+            </div>
+          </article>
+
+          <article class="project-card reveal" data-category="ai">
+            <div class="project-media project-media--placeholder" aria-hidden="true"><span class="media-mono">LORA PIPELINE</span></div>
+            <div class="project-top">
+              <p class="project-kicker">LLM fine-tuning + LoRA/QLoRA</p>
+              <h3>LoRA Fine-Tuning Pipeline</h3>
+              <p class="project-summary">An end-to-end pipeline for fine-tuning LLMs with LoRA/QLoRA, from dataset preparation to evaluation.</p>
+            </div>
+            <div class="case-grid">
+              <div class="case-block">
+                <span class="case-label">What we did</span>
+                <p>Built a reproducible fine-tuning pipeline covering dataset preparation, training, and evaluation of adapted language models.</p>
+              </div>
+              <div class="case-block">
+                <span class="case-label">How we did it</span>
+                <p>Used LoRA/QLoRA parameter-efficient methods, structured configs, and evaluation hooks to keep runs repeatable and inexpensive.</p>
+              </div>
+              <div class="case-block">
+                <span class="case-label">Impact created</span>
+                <p>Showed the ability to take base models to domain-specific behavior efficiently on constrained GPU budgets.</p>
+              </div>
+            </div>
+            <div class="project-bottom">
+              <ul class="tag-list">
+                <li class="tag">Python</li>
+                <li class="tag">LoRA</li>
+                <li class="tag">QLoRA</li>
+                <li class="tag">PEFT</li>
+              </ul>
+              <a class="project-link" href="https://github.com/Nagavenkatasai7/llm-finetuning-lora-pipeline" target="_blank" rel="noopener">View on GitHub</a>
+            </div>
+          </article>
+
+          <article class="project-card reveal" data-category="ai">
+            <div class="project-media project-media--placeholder" aria-hidden="true"><span class="media-mono">ADK AGENTS</span></div>
+            <div class="project-top">
+              <p class="project-kicker">Multi-agent orchestration (Google ADK)</p>
+              <h3>Google ADK Multi-Agent Workflow</h3>
+              <p class="project-summary">A multi-agent workflow system built on Google's Agent Development Kit (ADK).</p>
+            </div>
+            <div class="case-grid">
+              <div class="case-block">
+                <span class="case-label">What we did</span>
+                <p>Designed a workflow where multiple cooperating agents decompose and complete a task end-to-end.</p>
+              </div>
+              <div class="case-block">
+                <span class="case-label">How we did it</span>
+                <p>Implemented agent roles, tool integrations, and orchestration on the Google Agent Development Kit.</p>
+              </div>
+              <div class="case-block">
+                <span class="case-label">Impact created</span>
+                <p>Explored modern agent frameworks and coordination patterns beyond single-prompt LLM calls.</p>
+              </div>
+            </div>
+            <div class="project-bottom">
+              <ul class="tag-list">
+                <li class="tag">Python</li>
+                <li class="tag">Google ADK</li>
+                <li class="tag">Multi-Agent</li>
+                <li class="tag">Orchestration</li>
+              </ul>
+              <a class="project-link" href="https://github.com/Nagavenkatasai7/google-adk-multi-agent-workflow" target="_blank" rel="noopener">View on GitHub</a>
+            </div>
+          </article>
+
+          <article class="project-card reveal" data-category="ai">
+            <div class="project-media project-media--placeholder" aria-hidden="true"><span class="media-mono">RESEARCH AGENT</span></div>
+            <div class="project-top">
+              <p class="project-kicker">Multi-agent research assistant</p>
+              <h3>Research-Paper Discovery System</h3>
+              <p class="project-summary">An AI system that discovers, analyzes, and summarizes academic papers via a multi-agent architecture.</p>
+            </div>
+            <div class="case-grid">
+              <div class="case-block">
+                <span class="case-label">What we did</span>
+                <p>Built a research assistant that searches for relevant papers, extracts key findings, and synthesizes them for the user.</p>
+              </div>
+              <div class="case-block">
+                <span class="case-label">How we did it</span>
+                <p>Coordinated multiple agents over search, retrieval, and summarization with a RAG backbone.</p>
+              </div>
+              <div class="case-block">
+                <span class="case-label">Impact created</span>
+                <p>Compressed literature-review effort — Naga's own publication background applied as a reusable tool.</p>
+              </div>
+            </div>
+            <div class="project-bottom">
+              <ul class="tag-list">
+                <li class="tag">Python</li>
+                <li class="tag">Multi-Agent</li>
+                <li class="tag">RAG</li>
+                <li class="tag">Research</li>
+              </ul>
+              <a class="project-link" href="https://github.com/Nagavenkatasai7/Research-Paper-Discovery-System" target="_blank" rel="noopener">View on GitHub</a>
+            </div>
+          </article>
+
+          <article class="project-card reveal" data-category="ai">
+            <a class="project-media" href="https://resume-maker-coral-alpha.vercel.app" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+              <img src="public/projects/resume-tailor.jpg" alt="" loading="lazy" width="1000" height="625">
+            </a>
+            <div class="project-top">
+              <p class="project-kicker">AI resume optimization (ATS)</p>
+              <h3>Resume Tailor — AI Resume Optimization</h3>
+              <p class="project-summary">An AI tool that tailors a resume to a target job description and optimizes it to be ATS-compliant.</p>
+            </div>
+            <div class="case-grid">
+              <div class="case-block">
+                <span class="case-label">What we did</span>
+                <p>Built a tool that takes a resume plus a job description and rewrites it into an ATS-compliant, role-targeted resume.</p>
+              </div>
+              <div class="case-block">
+                <span class="case-label">How we did it</span>
+                <p>Used LLM-driven analysis to match keywords, restructure content, and score ATS-compliance behind a fast web UI.</p>
+              </div>
+              <div class="case-block">
+                <span class="case-label">Impact created</span>
+                <p>Turns a generic resume into a targeted, ATS-friendly application in minutes — AI applied to the job-search problem itself.</p>
+              </div>
+            </div>
+            <div class="project-bottom">
+              <ul class="tag-list">
+                <li class="tag">AI</li>
+                <li class="tag">LLM</li>
+                <li class="tag">ATS</li>
+                <li class="tag">Vercel</li>
+              </ul>
+              <a class="project-link" href="https://resume-maker-coral-alpha.vercel.app" target="_blank" rel="noopener">Open live app</a>
+            </div>
+          </article>
+
+          <article class="project-card reveal" data-category="ai">
+            <a class="project-media" href="https://passportpathways.vercel.app" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
+              <img src="public/projects/passport.jpg" alt="" loading="lazy" width="1000" height="625">
+            </a>
+            <div class="project-top">
+              <p class="project-kicker">Citizenship & immigration intelligence</p>
+              <h3>PassportPathways — Citizenship Intelligence Platform</h3>
+              <p class="project-summary">An interactive platform for exploring citizenship pathways, passport power rankings, investment routes, and immigration strategies across 190+ countries.</p>
+            </div>
+            <div class="case-grid">
+              <div class="case-block">
+                <span class="case-label">What we did</span>
+                <p>Built a platform that helps global citizens compare passports, discover citizenship-by-investment routes, and plan immigration strategies across 190+ countries.</p>
+              </div>
+              <div class="case-block">
+                <span class="case-label">How we did it</span>
+                <p>Aggregated country and passport datasets into interactive rankings, pathway explorers, and strategy views behind a responsive web app on Vercel.</p>
+              </div>
+              <div class="case-block">
+                <span class="case-label">Impact created</span>
+                <p>Turned scattered immigration data into a single, explorable decision tool for a real-world, high-stakes problem.</p>
+              </div>
+            </div>
+            <div class="project-bottom">
+              <ul class="tag-list">
+                <li class="tag">Web App</li>
+                <li class="tag">Data</li>
+                <li class="tag">Intelligence</li>
+                <li class="tag">Vercel</li>
+              </ul>
+              <a class="project-link" href="https://passportpathways.vercel.app" target="_blank" rel="noopener">Open live app</a>
             </div>
           </article>
         </div>
@@ -1906,5 +2195,9 @@
       });
     });
   </script>
+
+  <!-- Ask Naga — AI chatbot widget -->
+  <div id="naga-chat-root"></div>
+  <script src="chatbot.js" defer></script>
 </body>
 </html>

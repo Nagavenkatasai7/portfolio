@@ -1,0 +1,30 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    { "source": "/intellidoc", "destination": "https://intellidoc-nexus.vercel.app", "permanent": false },
+    { "source": "/jira-automation", "destination": "https://ai-business-request-intake.vercel.app", "permanent": false },
+    { "source": "/automation-roi", "destination": "https://ai-automation-roi.vercel.app", "permanent": false },
+    { "source": "/healthcare-emr", "destination": "https://healthcare-emr-extraction.vercel.app", "permanent": false },
+    { "source": "/master-data", "destination": "https://product-master-data-qc.vercel.app", "permanent": false },
+    { "source": "/revops", "destination": "https://revops-automation-dashboard.vercel.app", "permanent": false },
+    { "source": "/resume-tailor", "destination": "https://resume-maker-coral-alpha.vercel.app", "permanent": false },
+    { "source": "/passport", "destination": "https://passportpathways.vercel.app", "permanent": false },
+    { "source": "/llm-forge", "destination": "https://github.com/Nagavenkatasai7/llm-forge", "permanent": false },
+    { "source": "/lora-pipeline", "destination": "https://github.com/Nagavenkatasai7/llm-finetuning-lora-pipeline", "permanent": false },
+    { "source": "/adk-agents", "destination": "https://github.com/Nagavenkatasai7/google-adk-multi-agent-workflow", "permanent": false },
+    { "source": "/paper-discovery", "destination": "https://github.com/Nagavenkatasai7/Research-Paper-Discovery-System", "permanent": false },
+    { "source": "/rag-scratch", "destination": "https://github.com/Nagavenkatasai7/rag-from-scratch", "permanent": false },
+    { "source": "/learning-agent", "destination": "https://github.com/Nagavenkatasai7/learning-agent", "permanent": false },
+    { "source": "/vlm-eval", "destination": "https://github.com/Nagavenkatasai7/vlm-eval-immersive-analytics", "permanent": false }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "geolocation=(), microphone=(), camera=()" }
+      ]
+    }
+  ]
+}

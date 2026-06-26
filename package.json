@@ -1,0 +1,10 @@
+{
+  "name": "naga-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Naga Venkata Sai Chennu — portfolio with an 'Ask Naga' AI chatbot (OpenRouter).",
+  "scripts": {
+    "dev": "node scripts/dev-server.mjs"
+  }
+}

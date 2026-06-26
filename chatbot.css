@@ -1,0 +1,297 @@
+/* ============================================================
+   "Ask Naga" chatbot widget — styled to the portfolio's Luminous
+   tokens (defined in index.html :root). Namespaced under .naga-*.
+   ============================================================ */
+
+.naga {
+  --naga-z: 9999;
+  position: fixed;
+  z-index: var(--naga-z);
+  font-family: var(--sans);
+}
+
+/* ---------- Launcher ---------- */
+.naga-fab {
+  position: fixed;
+  right: clamp(16px, 4vw, 32px);
+  bottom: clamp(16px, 4vw, 32px);
+  z-index: var(--naga-z);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 10px 20px 10px 12px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 6px 6px 0 var(--lime);
+  transition: transform 160ms var(--ease), box-shadow 160ms var(--ease);
+}
+.naga-fab:hover,
+.naga-fab:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 8px 8px 0 var(--lime);
+}
+.naga-fab__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 2px solid var(--lime);
+  flex: none;
+}
+.naga-fab__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--lime);
+  box-shadow: 0 0 0 0 rgba(202, 255, 96, 0.7);
+  animation: naga-pulse 2.4s var(--ease) infinite;
+}
+@keyframes naga-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(202, 255, 96, 0.6); }
+  70% { box-shadow: 0 0 0 8px rgba(202, 255, 96, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(202, 255, 96, 0); }
+}
+.naga-fab.is-hidden { display: none; }
+
+/* ---------- Panel ---------- */
+.naga-panel {
+  position: fixed;
+  right: clamp(16px, 4vw, 32px);
+  bottom: clamp(16px, 4vw, 32px);
+  z-index: var(--naga-z);
+  width: min(390px, calc(100vw - 32px));
+  height: min(640px, calc(100vh - 64px));
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1.5px solid var(--ink);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transform-origin: bottom right;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px) scale(0.98);
+  pointer-events: none;
+  transition: opacity 220ms var(--ease), transform 220ms var(--ease), visibility 0s linear 220ms;
+}
+.naga-panel.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+  transition: opacity 220ms var(--ease), transform 220ms var(--ease), visibility 0s;
+}
+
+/* ---------- Header ---------- */
+.naga-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 14px 14px 16px;
+  background: var(--paper-2);
+  border-bottom: 1.5px solid var(--ink);
+}
+.naga-head__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 2px solid var(--ink);
+  flex: none;
+}
+.naga-head__meta { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+.naga-head__name {
+  font-weight: 800;
+  font-size: 0.98rem;
+  color: var(--ink);
+}
+.naga-head__status {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.naga-head__status::before {
+  content: "";
+  width: 7px; height: 7px;
+  border-radius: 999px;
+  background: var(--teal);
+}
+.naga-head__close {
+  margin-left: auto;
+  width: 34px; height: 34px;
+  display: grid; place-items: center;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 160ms var(--ease), transform 160ms var(--ease);
+}
+.naga-head__close:hover { background: var(--lime); transform: rotate(90deg); }
+
+/* ---------- Message list ---------- */
+.naga-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 16px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scrollbar-width: thin;
+}
+.naga-intro {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+.naga-intro h4 { margin: 0 0 4px; font-size: 1rem; color: var(--ink); font-weight: 800; }
+.naga-intro p { margin: 0; font-size: 0.88rem; color: var(--ink-soft); line-height: 1.55; }
+
+.naga-msg {
+  max-width: 86%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+.naga-msg.user {
+  align-self: flex-end;
+  background: var(--ink);
+  color: #fff;
+  border-bottom-right-radius: 5px;
+}
+.naga-msg.bot {
+  align-self: flex-start;
+  background: var(--paper-2);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--lime);
+  border-bottom-left-radius: 5px;
+}
+.naga-msg.bot.is-error {
+  border-left-color: var(--coral);
+  background: #fbeae4;
+}
+
+/* typing indicator */
+.naga-typing { display: inline-flex; gap: 5px; padding: 4px 2px; }
+.naga-typing span {
+  width: 7px; height: 7px; border-radius: 999px;
+  background: var(--muted);
+  animation: naga-bounce 1.2s var(--ease) infinite;
+}
+.naga-typing span:nth-child(2) { animation-delay: 0.15s; }
+.naga-typing span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes naga-bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+  30% { transform: translateY(-5px); opacity: 1; }
+}
+
+/* ---------- Quick prompt chips ---------- */
+.naga-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 4px 2px 6px;
+}
+.naga-chip {
+  border: 1.5px solid var(--ink);
+  background: var(--surface);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 7px 13px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 160ms var(--ease), transform 160ms var(--ease);
+}
+.naga-chip:hover { background: var(--lime); transform: translateY(-1px); }
+
+/* ---------- Composer ---------- */
+.naga-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 12px 14px;
+  border-top: 1.5px solid var(--ink);
+  background: var(--paper-2);
+}
+.naga-input {
+  flex: 1;
+  resize: none;
+  max-height: 120px;
+  min-height: 44px;
+  padding: 11px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  outline: none;
+  transition: border-color 160ms var(--ease), box-shadow 160ms var(--ease);
+}
+.naga-input:focus { border-color: var(--ink); box-shadow: 0 0 0 3px rgba(202, 255, 96, 0.55); }
+.naga-input::placeholder { color: var(--muted); }
+.naga-send {
+  flex: none;
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--lime);
+  cursor: pointer;
+  transition: transform 160ms var(--ease), box-shadow 160ms var(--ease), opacity 160ms var(--ease);
+}
+.naga-send:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 4px 4px 0 var(--lime); }
+.naga-send:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ---------- Footer disclaimer ---------- */
+.naga-foot {
+  padding: 0 14px 10px;
+  background: var(--paper-2);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.03em;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+/* ---------- Mobile: bottom sheet ---------- */
+@media (max-width: 520px) {
+  .naga-panel {
+    right: 0; bottom: 0;
+    width: 100vw;
+    height: 88vh;
+    border-radius: 20px 20px 0 0;
+    border-bottom: none;
+  }
+  .naga-fab span.naga-fab__label { display: none; }
+  .naga-fab { padding: 10px; }
+  /* lock background scroll while the bottom-sheet is open */
+  body.naga-lock { overflow: hidden; }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .naga-fab, .naga-panel, .naga-send, .naga-chip, .naga-head__close,
+  .naga-fab__dot, .naga-typing span { transition: none !important; animation: none !important; }
+}
