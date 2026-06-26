@@ -6,7 +6,21 @@
 
 import { SYSTEM_PROMPT } from './_persona.mjs';
 
-export const MODEL = 'nvidia/nemotron-3-ultra-550b-a55b:free';
+// Ordered fallback chain of *free* OpenRouter models. The first one that
+// streams real content wins. Free pools are frequently capacity-exhausted
+// (HTTP 502 "ResourceExhausted") — relying on a single model means the chat
+// silently goes dark, so we degrade gracefully down this list instead.
+// Each entry may carry per-model request tweaks (e.g. `reasoning`).
+export const MODELS = [
+  // Fast, reliable, and free — the everyday primary.
+  { id: 'openai/gpt-oss-120b:free', reasoning: { effort: 'low' } },
+  // The originally-chosen model; used whenever it has capacity.
+  { id: 'nvidia/nemotron-3-ultra-550b-a55b:free', reasoning: { effort: 'low' } },
+  // Last-resort instruct model (no reasoning phase).
+  { id: 'google/gemma-4-31b-it:free' },
+];
+export const MODEL = MODELS[0].id; // back-compat for callers importing MODEL
+
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 const MAX_TURNS = 12;        // cap conversation history sent upstream
@@ -21,11 +35,17 @@ export function sanitizeHistory(raw) {
     .map((m) => ({ role: m.role, content: m.content.slice(0, MAX_MSG_CHARS) }));
 }
 
-// Async generator that yields { type: 'content', text } chunks.
+// Stream a single model. Async generator yielding { type: 'content', text }.
 // Throws an Error with .status set on a non-2xx upstream response.
-export async function* streamChat(history, { apiKey, referer, title, signal } = {}) {
-  const turns = sanitizeHistory(history);
-  if (turns.length === 0) throw Object.assign(new Error('No messages'), { status: 400 });
+async function* streamOne(model, turns, { apiKey, referer, title, signal }) {
+  const payload = {
+    model: model.id,
+    stream: true,
+    max_tokens: 800,
+    temperature: 0.4,
+    messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...turns],
+  };
+  if (model.reasoning) payload.reasoning = model.reasoning; // keep reasoning models snappy
 
   const res = await fetch(OPENROUTER_URL, {
     method: 'POST',
@@ -37,14 +57,7 @@ export async function* streamChat(history, { apiKey, referer, title, signal } = 
       'HTTP-Referer': referer || 'https://nagavenkatasai7.github.io/portfolio',
       'X-Title': title || 'Naga Portfolio Chat',
     },
-    body: JSON.stringify({
-      model: MODEL,
-      stream: true,
-      max_tokens: 800,
-      temperature: 0.4,
-      reasoning: { effort: 'low' }, // it's a reasoning model — keep it snappy
-      messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...turns],
-    }),
+    body: JSON.stringify(payload),
   });
 
   if (!res.ok || !res.body) {
@@ -76,6 +89,13 @@ export async function* streamChat(history, { apiKey, referer, title, signal } = 
       } catch {
         continue; // ignore keep-alive comments / partial frames
       }
+      // OpenRouter surfaces mid-stream upstream failures as an `error` frame
+      // with a 200 outer status — treat it as a model failure so we fall back.
+      if (json?.error) {
+        throw Object.assign(new Error(json.error.message || 'upstream stream error'), {
+          status: json.error.code || 502,
+        });
+      }
       const delta = json?.choices?.[0]?.delta ?? {};
       // We only surface the final answer text; the model's `reasoning`
       // deltas are intentionally dropped.
@@ -84,4 +104,35 @@ export async function* streamChat(history, { apiKey, referer, title, signal } = 
       }
     }
   }
+}
+
+// Async generator that yields { type: 'content', text } chunks, walking the
+// MODELS fallback chain until one produces content. Only falls back while no
+// content has been streamed yet — once a model is producing tokens we commit
+// to it. Throws the last error (with .status) if every model fails/empties.
+export async function* streamChat(history, opts = {}) {
+  const turns = sanitizeHistory(history);
+  if (turns.length === 0) throw Object.assign(new Error('No messages'), { status: 400 });
+
+  let lastErr = null;
+  for (const model of MODELS) {
+    let produced = 0;
+    try {
+      for await (const chunk of streamOne(model, turns, opts)) {
+        produced += chunk.text.length;
+        yield chunk;
+      }
+    } catch (err) {
+      if (err?.name === 'AbortError') throw err;      // client hung up — don't retry
+      if (produced > 0) return;                       // already answered; can't switch mid-stream
+      lastErr = err;
+      continue;                                       // try the next model
+    }
+    if (produced > 0) return;                         // success
+    // Stream ended cleanly but yielded nothing (e.g. all-reasoning, no answer):
+    // record and try the next model.
+    lastErr = Object.assign(new Error(`Model ${model.id} returned no content`), { status: 502 });
+  }
+
+  throw lastErr || Object.assign(new Error('All models returned no content'), { status: 502 });
 }

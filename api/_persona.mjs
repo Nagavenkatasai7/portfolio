@@ -29,7 +29,6 @@ EXPERIENCE
   * Evaluated ANN vs. CatBoost and integrated the higher-performing CatBoost model (89% accuracy, 91% precision) into a web-based analytics dashboard.
 
 PROJECTS
-- SmartRemit — Multi-Tenant Payments Platform (TypeScript, NestJS, Next.js, PostgreSQL): a multi-tenant SaaS backend connecting licensed money-service partners to end users through a conversational bot. Built on object-oriented NestJS services with a partner-abstraction layer, idempotent transaction handling, and clear service boundaries so new corridors can be added without destabilizing the platform.
 - JetBot — Edge AI Agent on Jetson (Python, SQLite/FTS5, systemd, Linux): a Telegram-controlled AI agent deployed on Jetson Orin Nano edge hardware, with SQLite/FTS5 full-text search and human-approval gates guarding destructive actions; hardened with systemd and cgroups v2 resource isolation to balance LLM inference on constrained edge compute.
 - CUDA Matrix-Multiplication Kernel (C++, CUDA): a tiled matrix-multiplication kernel profiled against the cuBLAS baseline; tuned shared-memory usage and thread-block sizing to improve arithmetic intensity, measuring the speed/occupancy tradeoff at each step.
 

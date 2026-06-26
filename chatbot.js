@@ -6,12 +6,18 @@
 (function () {
   "use strict";
 
-  var ENDPOINT = "/api/chat";
+  // The chat API only runs on Vercel. When this page is served from GitHub
+  // Pages (static, no serverless), call the Vercel deployment cross-origin;
+  // everywhere else the API is same-origin.
+  var API_ORIGIN = "https://chennunagavenkatasai.com";
+  var ENDPOINT = /(^|\.)github\.io$/.test(location.hostname)
+    ? API_ORIGIN + "/api/chat"
+    : "/api/chat";
   var AVATAR = "profile.png";
   var STORE_KEY = "naga-chat-history";
   var QUICK_PROMPTS = [
     "What is llm-forge?",
-    "Tell me about SmartRemit",
+    "Walk me through IntelliDoc-Nexus",
     "What are your strongest skills?",
     "Are you open to roles?"
   ];
