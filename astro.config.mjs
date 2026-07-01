@@ -10,5 +10,7 @@ import vercel from '@astrojs/vercel';
 // is a no-op on @vercel/analytics >= 1.4. We render <Analytics/> in BaseLayout (Phase 9).
 export default defineConfig({
   site: 'https://chennunagavenkatasai.com',
-  adapter: vercel(),
+  // maxDuration (seconds) covers the weekly AI draft cron, which can run long.
+  // 300s is the Vercel fluid-compute ceiling (valid on Hobby).
+  adapter: vercel({ maxDuration: 300 }),
 });

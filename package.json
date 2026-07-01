@@ -15,6 +15,7 @@
     "test:content": "node tests/portfolio-content-check.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.109.0",
     "@astrojs/vercel": "^11.0.0",
     "@neondatabase/serverless": "^1.1.0",
     "@upstash/ratelimit": "^2.0.8",
