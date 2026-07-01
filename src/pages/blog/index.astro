@@ -1,0 +1,103 @@
+---
+export const prerender = false;
+
+import BlogLayout from '../../layouts/BlogLayout.astro';
+import { listPublished, type Post } from '../../lib/posts';
+
+let posts: Post[] = [];
+let dbError = false;
+try {
+  posts = await listPublished();
+} catch {
+  dbError = true;
+}
+
+function fmt(date: string | null): string {
+  if (!date) return '';
+  return new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
+// Public + cacheable at the edge, revalidated in the background.
+Astro.response.headers.set(
+  'Cache-Control',
+  'public, s-maxage=60, stale-while-revalidate=600'
+);
+---
+
+<BlogLayout
+  title="Blog — Naga Venkata Sai Chennu"
+  description="Writing on software engineering, test automation, and AI systems."
+  canonicalPath="/blog"
+>
+  <div class="container blog-list">
+    <span class="eyebrow">Writing</span>
+    <h1>Blog</h1>
+    {dbError && <p class="muted">Posts are temporarily unavailable.</p>}
+    {!dbError && posts.length === 0 && <p class="muted">No posts yet — check back soon.</p>}
+    <ul class="post-list">
+      {
+        posts.map((p) => (
+          <li>
+            <a href={`/blog/${p.slug}`}>
+              <h2>{p.title}</h2>
+              {p.excerpt && <p>{p.excerpt}</p>}
+              <span class="meta">{fmt(p.published_at)}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <style>
+    .blog-list {
+      padding-block: var(--sp-9);
+      max-width: var(--prose);
+    }
+    .blog-list h1 {
+      margin-block: var(--sp-2) var(--sp-7);
+    }
+    .muted {
+      color: var(--ink-3);
+    }
+    .post-list {
+      display: grid;
+      gap: var(--sp-3);
+    }
+    .post-list a {
+      display: block;
+      padding: var(--sp-5);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow var(--dur-med) var(--ease),
+        transform var(--dur-med) var(--ease), border-color var(--dur-med) var(--ease);
+    }
+    .post-list a:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+      border-color: var(--line-strong);
+    }
+    .post-list h2 {
+      font-size: var(--text-xl);
+      font-family: var(--font-sans);
+      font-weight: var(--fw-semibold);
+      color: var(--ink);
+    }
+    .post-list p {
+      color: var(--ink-3);
+      font-size: var(--text-sm);
+      margin-block: var(--sp-2);
+    }
+    .post-list .meta {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--ink-4);
+    }
+  </style>
+</BlogLayout>

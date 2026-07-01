@@ -1,0 +1,10 @@
+---
+export const prerender = false;
+
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import PostEditor from '../../../components/admin/PostEditor.astro';
+---
+
+<AdminLayout title="New Post" active="posts">
+  <PostEditor />
+</AdminLayout>

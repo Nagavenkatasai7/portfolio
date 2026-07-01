@@ -1,0 +1,143 @@
+---
+import type { Post } from '../../lib/posts';
+
+interface Props {
+  post?: Post | null;
+}
+const { post = null } = Astro.props;
+---
+
+<form id="postForm" class="post-form" data-id={post?.id ?? ''}>
+  <label>
+    Title
+    <input name="title" type="text" required value={post?.title ?? ''} />
+  </label>
+  <label>
+    Slug <span class="hint">(optional — auto-generated from title)</span>
+    <input name="slug" type="text" value={post?.slug ?? ''} placeholder="my-post-title" />
+  </label>
+  <label>
+    Excerpt
+    <textarea name="excerpt" rows="2">{post?.excerpt ?? ''}</textarea>
+  </label>
+  <label>
+    Cover image URL
+    <input name="cover_image" type="text" value={post?.cover_image ?? ''} />
+  </label>
+  <label>
+    Tags <span class="hint">(comma-separated)</span>
+    <input name="tags" type="text" value={post?.tags?.join(', ') ?? ''} />
+  </label>
+  <label>
+    Status
+    <select name="status">
+      <option value="draft" selected={!post || post.status === 'draft'}>Draft</option>
+      <option value="published" selected={post?.status === 'published'}>Published</option>
+      <option value="archived" selected={post?.status === 'archived'}>Archived</option>
+    </select>
+  </label>
+  <label>
+    Body <span class="hint">(Markdown)</span>
+    <textarea name="body_md" rows="18" required>{post?.body_md ?? ''}</textarea>
+  </label>
+  <div class="form-actions">
+    <button type="submit" class="button button-primary">Save</button>
+    <a class="button button-outline" href="/admin-dashboard/posts">Cancel</a>
+  </div>
+  <p id="formError" class="form-error" role="alert"></p>
+</form>
+
+<script>
+  const form = document.getElementById('postForm') as HTMLFormElement | null;
+  const errEl = document.getElementById('formError');
+  if (form) {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (errEl) errEl.textContent = '';
+      const fd = new FormData(form);
+      const id = form.dataset.id;
+      const payload: Record<string, unknown> = {
+        title: fd.get('title'),
+        slug: fd.get('slug'),
+        excerpt: fd.get('excerpt'),
+        cover_image: fd.get('cover_image'),
+        tags: String(fd.get('tags') ?? '')
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean),
+        status: fd.get('status'),
+        body_md: fd.get('body_md'),
+      };
+      const method = id ? 'PUT' : 'POST';
+      if (id) payload.id = id;
+      try {
+        const res = await fetch('/api/posts', {
+          method,
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) {
+          window.location.href = '/admin-dashboard/posts';
+        } else {
+          const data = (await res.json().catch(() => ({}))) as { error?: string };
+          if (errEl) errEl.textContent = data.error ? `Error: ${data.error}` : 'Save failed.';
+        }
+      } catch {
+        if (errEl) errEl.textContent = 'Network error — please retry.';
+      }
+    });
+  }
+</script>
+
+<style>
+  .post-form {
+    display: grid;
+    gap: var(--sp-4);
+    max-width: 760px;
+  }
+  .post-form label {
+    display: grid;
+    gap: var(--sp-2);
+    font-size: var(--text-sm);
+    font-weight: var(--fw-medium);
+    color: var(--ink-2);
+  }
+  .hint {
+    font-weight: var(--fw-regular);
+    color: var(--ink-4);
+  }
+  .post-form input,
+  .post-form textarea,
+  .post-form select {
+    font: inherit;
+    font-weight: var(--fw-regular);
+    padding: var(--sp-3);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    color: var(--ink);
+    width: 100%;
+  }
+  .post-form textarea {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    resize: vertical;
+  }
+  .post-form input:focus,
+  .post-form textarea:focus,
+  .post-form select:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-color: var(--accent);
+  }
+  .form-actions {
+    display: flex;
+    gap: var(--sp-3);
+    margin-top: var(--sp-2);
+  }
+  .form-error {
+    color: var(--danger);
+    font-size: var(--text-sm);
+    min-height: 1.2em;
+  }
+</style>

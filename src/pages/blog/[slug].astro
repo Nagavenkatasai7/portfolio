@@ -1,0 +1,115 @@
+---
+export const prerender = false;
+
+import BlogLayout from '../../layouts/BlogLayout.astro';
+import { getPublishedBySlug, incrementViews, type Post } from '../../lib/posts';
+
+const { slug } = Astro.params;
+
+let post: Post | null = null;
+try {
+  post = slug ? await getPublishedBySlug(slug) : null;
+} catch {
+  post = null;
+}
+
+if (!post) {
+  return new Response('Not found', { status: 404 });
+}
+
+// Fire-and-forget view counter; never block rendering on it.
+incrementViews(post.id).catch(() => {});
+
+Astro.response.headers.set(
+  'Cache-Control',
+  'public, s-maxage=60, stale-while-revalidate=600'
+);
+
+const published = post.published_at
+  ? new Date(post.published_at).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  : '';
+---
+
+<BlogLayout
+  title={`${post.title} — Naga Venkata Sai Chennu`}
+  description={post.excerpt ?? ''}
+  canonicalPath={`/blog/${post.slug}`}
+>
+  <article class="container post">
+    <a class="back" href="/blog">← All posts</a>
+    <h1>{post.title}</h1>
+    <p class="post-meta">{published}</p>
+    {/* body_html is sanitized at write time (renderMarkdown -> sanitizeContentHtml). */}
+    <div class="post-body" set:html={post.body_html ?? ''} />
+  </article>
+
+  <style>
+    .post {
+      padding-block: var(--sp-8) var(--sp-9);
+      max-width: var(--prose);
+    }
+    .back {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+    }
+    .post h1 {
+      margin-block: var(--sp-4) var(--sp-2);
+    }
+    .post-meta {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--ink-4);
+      margin-bottom: var(--sp-6);
+    }
+    .post-body {
+      font-size: var(--text-md);
+      line-height: var(--lh-relaxed);
+      color: var(--ink-2);
+    }
+    .post-body :global(h2) {
+      font-family: var(--font-serif);
+      font-size: var(--text-2xl);
+      margin-block: var(--sp-6) var(--sp-3);
+    }
+    .post-body :global(h3) {
+      margin-block: var(--sp-5) var(--sp-2);
+    }
+    .post-body :global(p) {
+      margin-block: var(--sp-4);
+    }
+    .post-body :global(ul),
+    .post-body :global(ol) {
+      margin-block: var(--sp-4);
+      padding-left: var(--sp-5);
+    }
+    .post-body :global(li) {
+      margin-block: var(--sp-2);
+      list-style: disc;
+    }
+    .post-body :global(pre) {
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      padding: var(--sp-4);
+      overflow-x: auto;
+      font-size: var(--text-sm);
+    }
+    .post-body :global(a) {
+      text-decoration: underline;
+    }
+    .post-body :global(img) {
+      border-radius: var(--radius-md);
+      margin-block: var(--sp-4);
+    }
+    .post-body :global(blockquote) {
+      border-left: 3px solid var(--accent);
+      padding-left: var(--sp-4);
+      color: var(--ink-3);
+      margin-block: var(--sp-4);
+    }
+  </style>
+</BlogLayout>

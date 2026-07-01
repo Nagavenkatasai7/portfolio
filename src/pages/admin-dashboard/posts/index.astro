@@ -1,0 +1,129 @@
+---
+export const prerender = false;
+
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { listAll, type Post } from '../../../lib/posts';
+
+let posts: Post[] = [];
+let dbError = false;
+try {
+  posts = await listAll();
+} catch {
+  dbError = true;
+}
+---
+
+<AdminLayout title="Blog Posts" active="posts">
+  <div class="head">
+    <p class="count">{posts.length} post{posts.length === 1 ? '' : 's'}</p>
+    <a class="button button-primary" href="/admin-dashboard/posts/new">New post</a>
+  </div>
+
+  {dbError && <p class="notice">Database not configured yet — add DATABASE_URL to enable posts.</p>}
+
+  {
+    !dbError && posts.length > 0 && (
+      <table class="posts-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Updated</th>
+            <th>Views</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody>
+          {posts.map((p) => (
+            <tr>
+              <td>
+                <strong>{p.title}</strong>
+                <span class="slug">/blog/{p.slug}</span>
+              </td>
+              <td>
+                <span class={`badge ${p.status}`}>{p.status}</span>
+              </td>
+              <td class="mono">{new Date(p.updated_at).toLocaleDateString('en-US')}</td>
+              <td class="mono">{p.view_count}</td>
+              <td>
+                <a href={`/admin-dashboard/posts/${p.id}`}>Edit</a>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )
+  }
+  {!dbError && posts.length === 0 && <p class="notice">No posts yet. Create your first one.</p>}
+
+  <style>
+    .head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--sp-5);
+    }
+    .count {
+      color: var(--ink-3);
+      font-size: var(--text-sm);
+    }
+    .notice {
+      color: var(--ink-3);
+    }
+    .posts-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .posts-table th,
+    .posts-table td {
+      text-align: left;
+      padding: var(--sp-3) var(--sp-4);
+      border-bottom: 1px solid var(--line);
+      font-size: var(--text-sm);
+      vertical-align: middle;
+    }
+    .posts-table th {
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+      color: var(--ink-3);
+    }
+    .posts-table tr:last-child td {
+      border-bottom: none;
+    }
+    .slug {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--ink-4);
+    }
+    .mono {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--ink-3);
+    }
+    .badge {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line-strong);
+      text-transform: capitalize;
+    }
+    .badge.published {
+      color: var(--success);
+      border-color: var(--success);
+      background: var(--success-tint);
+    }
+    .badge.draft {
+      color: var(--ink-3);
+    }
+    .badge.archived {
+      color: var(--ink-4);
+    }
+  </style>
+</AdminLayout>

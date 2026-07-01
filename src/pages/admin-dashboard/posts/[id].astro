@@ -1,0 +1,62 @@
+---
+export const prerender = false;
+
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import PostEditor from '../../../components/admin/PostEditor.astro';
+import { getById, type Post } from '../../../lib/posts';
+
+const { id } = Astro.params;
+let post: Post | null = null;
+try {
+  post = id ? await getById(id) : null;
+} catch {
+  post = null;
+}
+
+if (!post) {
+  return new Response('Not found', { status: 404 });
+}
+---
+
+<AdminLayout title="Edit Post" active="posts">
+  <PostEditor post={post} />
+  <div class="danger-zone">
+    <button id="deleteBtn" class="button button-outline" data-id={post.id} type="button">
+      Delete this post
+    </button>
+    <p id="deleteError" class="form-error" role="alert"></p>
+  </div>
+
+  <script>
+    const btn = document.getElementById('deleteBtn') as HTMLButtonElement | null;
+    const errEl = document.getElementById('deleteError');
+    btn?.addEventListener('click', async () => {
+      if (!window.confirm('Delete this post permanently?')) return;
+      const id = btn.dataset.id;
+      try {
+        const res = await fetch(`/api/posts?id=${encodeURIComponent(id ?? '')}`, {
+          method: 'DELETE',
+        });
+        if (res.ok) {
+          window.location.href = '/admin-dashboard/posts';
+        } else if (errEl) {
+          errEl.textContent = 'Delete failed.';
+        }
+      } catch {
+        if (errEl) errEl.textContent = 'Network error — please retry.';
+      }
+    });
+  </script>
+
+  <style>
+    .danger-zone {
+      margin-top: var(--sp-7);
+      padding-top: var(--sp-5);
+      border-top: 1px solid var(--line);
+    }
+    .form-error {
+      color: var(--danger);
+      font-size: var(--text-sm);
+    }
+  </style>
+</AdminLayout>
