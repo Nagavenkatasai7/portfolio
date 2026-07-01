@@ -9,6 +9,7 @@ import { startSubscription, setResendContactId } from '../../../lib/subscribers'
 import { createResendContact } from '../../../lib/audience';
 import { sendEmail } from '../../../lib/resend';
 import { confirmationEmail } from '../../../lib/emails';
+import { logEvent } from '../../../lib/analytics';
 import { PUBLIC_SITE_URL } from '../../../lib/env';
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
@@ -93,5 +94,6 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ error: 'send unavailable' }, 502);
   }
 
+  await logEvent('subscribe', { meta: { source: data.source } });
   return json(FRIENDLY);
 };

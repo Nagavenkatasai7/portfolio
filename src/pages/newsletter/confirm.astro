@@ -3,6 +3,7 @@ export const prerender = false;
 
 import { confirmByToken } from '../../lib/subscribers';
 import { setResendSubscribed } from '../../lib/audience';
+import { logEvent } from '../../lib/analytics';
 import { clientIp } from '../../lib/http';
 
 let token = Astro.url.searchParams.get('token') ?? '';
@@ -25,6 +26,7 @@ if (Astro.request.method === 'POST') {
           contactId: res.resendContactId,
           subscribed: true,
         });
+        await logEvent('confirm');
         return Astro.redirect('/subscribed');
       }
       if (res.result === 'already') return Astro.redirect('/subscribed');

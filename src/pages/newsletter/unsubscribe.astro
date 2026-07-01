@@ -3,6 +3,7 @@ export const prerender = false;
 
 import { unsubscribeByToken } from '../../lib/subscribers';
 import { setResendSubscribed } from '../../lib/audience';
+import { logEvent } from '../../lib/analytics';
 
 let token = Astro.url.searchParams.get('token') ?? '';
 let state: 'prompt' | 'error' = 'prompt';
@@ -21,6 +22,7 @@ if (Astro.request.method === 'POST') {
           contactId: res.resendContactId,
           subscribed: false,
         });
+        await logEvent('unsubscribe', { meta: { via: 'link' } });
         return Astro.redirect('/unsubscribed');
       }
       if (res.result === 'already') return Astro.redirect('/unsubscribed');

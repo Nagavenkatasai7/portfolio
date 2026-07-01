@@ -10,6 +10,7 @@ import {
   markIssueFailed,
 } from '../../../lib/issues';
 import { sendBroadcast } from '../../../lib/broadcast';
+import { logEvent } from '../../../lib/analytics';
 
 const SendSchema = z.object({ id: z.string().min(1) });
 
@@ -54,5 +55,6 @@ export const POST: APIRoute = async (context) => {
   } catch {
     /* broadcast sent; status update is best-effort */
   }
+  await logEvent('newsletter_sent', { issueId: issue.id });
   return json({ ok: true, broadcastId: result.id });
 };

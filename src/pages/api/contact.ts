@@ -7,6 +7,7 @@ import { checkRateLimit } from '../../lib/ratelimit';
 import { verifyTurnstile } from '../../lib/turnstile';
 import { sql } from '../../lib/db';
 import { sendEmail } from '../../lib/resend';
+import { logEvent } from '../../lib/analytics';
 import { CONTACT_TO } from '../../lib/env';
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
@@ -90,5 +91,6 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ error: 'send unavailable' }, 502);
   }
 
+  await logEvent('contact_submit');
   return json({ ok: true });
 };

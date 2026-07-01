@@ -2,8 +2,16 @@
 export const prerender = false;
 
 import AdminLayout from '../../layouts/AdminLayout.astro';
+import { getStats, type Stats } from '../../lib/analytics';
 
 const user = Astro.locals.user;
+
+let stats: Stats | null = null;
+try {
+  stats = await getStats();
+} catch {
+  stats = null;
+}
 
 // Show which owner-provided integrations are wired up (presence only — never
 // the secret values). Helps track Phase 0 setup progress from inside the app.
@@ -28,6 +36,19 @@ const shortcuts = [
   <p class="greeting">
     Signed in as <strong>{user?.email}</strong>. This dashboard is private to you.
   </p>
+
+  {
+    stats && (
+      <div class="stat-grid">
+        <div class="stat"><span class="n">{stats.confirmed}</span><span class="l">Confirmed subscribers</span></div>
+        <div class="stat"><span class="n">{stats.pending}</span><span class="l">Pending confirmation</span></div>
+        <div class="stat"><span class="n">{stats.issuesSent}</span><span class="l">Issues sent</span></div>
+        <div class="stat"><span class="n">{stats.opens30}</span><span class="l">Email opens (30d)</span></div>
+        <div class="stat"><span class="n">{stats.clicks30}</span><span class="l">Email clicks (30d)</span></div>
+        <div class="stat"><span class="n">{stats.messages}</span><span class="l">Contact messages</span></div>
+      </div>
+    )
+  }
 
   <div class="panels">
     <section class="panel">
@@ -59,6 +80,33 @@ const shortcuts = [
     .greeting {
       color: var(--ink-3);
       margin-bottom: var(--sp-6);
+    }
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: var(--sp-4);
+      margin-bottom: var(--sp-6);
+    }
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      padding: var(--sp-4);
+      box-shadow: var(--shadow-sm);
+    }
+    .stat .n {
+      display: block;
+      font-family: var(--font-serif);
+      font-weight: var(--fw-light);
+      font-size: var(--text-3xl);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat .l {
+      display: block;
+      margin-top: var(--sp-2);
+      font-size: var(--text-xs);
+      color: var(--ink-3);
     }
     .panels {
       display: grid;

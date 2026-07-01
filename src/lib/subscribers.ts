@@ -160,6 +160,35 @@ export interface UnsubResult {
   resendContactId?: string | null;
 }
 
+/** Sync a subscriber's status from an external event (Resend webhook). */
+export async function setStatusByEmail(
+  email: string,
+  status: SubscriberStatus
+): Promise<void> {
+  await sql`
+    UPDATE subscribers SET
+      status = ${status},
+      unsubscribed_at = CASE WHEN ${status} = 'unsubscribed' THEN now() ELSE unsubscribed_at END,
+      updated_at = now()
+    WHERE email = ${email}`;
+}
+
+export interface SubscriberRow {
+  id: string;
+  email: string;
+  status: SubscriberStatus;
+  signup_source: string | null;
+  created_at: string;
+  confirmed_at: string | null;
+  unsubscribed_at: string | null;
+}
+
+export async function listSubscribers(): Promise<SubscriberRow[]> {
+  return (await sql`
+    SELECT id, email, status, signup_source, created_at, confirmed_at, unsubscribed_at
+    FROM subscribers ORDER BY created_at DESC LIMIT 1000`) as unknown as SubscriberRow[];
+}
+
 export async function unsubscribeByToken(token: string): Promise<UnsubResult> {
   const h = hashTokenHex(token);
   const rows = await sql`

@@ -20,11 +20,14 @@
     "@neondatabase/serverless": "^1.1.0",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.0",
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
     "astro": "^7.0.4",
     "jose": "^6.2.3",
     "marked": "^18.0.5",
     "resend": "^6.16.0",
     "sanitize-html": "^2.17.5",
+    "svix": "^1.96.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {

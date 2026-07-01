@@ -1,0 +1,110 @@
+---
+export const prerender = false;
+
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { listSubscribers, type SubscriberRow } from '../../lib/subscribers';
+
+let subs: SubscriberRow[] = [];
+let dbError = false;
+try {
+  subs = await listSubscribers();
+} catch {
+  dbError = true;
+}
+const confirmed = subs.filter((s) => s.status === 'confirmed').length;
+
+function fmt(d: string | null): string {
+  return d ? new Date(d).toLocaleDateString('en-US') : '—';
+}
+---
+
+<AdminLayout title="Subscribers" active="subscribers">
+  {dbError && <p class="notice">Database not configured yet.</p>}
+  {
+    !dbError && (
+      <p class="summary">
+        {subs.length} total · {confirmed} confirmed
+      </p>
+    )
+  }
+
+  {
+    !dbError && subs.length > 0 && (
+      <table class="subs">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Source</th>
+            <th>Joined</th>
+            <th>Confirmed</th>
+          </tr>
+        </thead>
+        <tbody>
+          {subs.map((s) => (
+            <tr>
+              <td class="email">{s.email}</td>
+              <td><span class={`badge ${s.status}`}>{s.status}</span></td>
+              <td class="mono">{s.signup_source ?? '—'}</td>
+              <td class="mono">{fmt(s.created_at)}</td>
+              <td class="mono">{fmt(s.confirmed_at)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )
+  }
+  {!dbError && subs.length === 0 && <p class="notice">No subscribers yet.</p>}
+
+  <style>
+    .notice,
+    .summary {
+      color: var(--ink-3);
+      font-size: var(--text-sm);
+      margin-bottom: var(--sp-4);
+    }
+    .subs {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .subs th,
+    .subs td {
+      text-align: left;
+      padding: var(--sp-3) var(--sp-4);
+      border-bottom: 1px solid var(--line);
+      font-size: var(--text-sm);
+    }
+    .subs th {
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-wide);
+      color: var(--ink-3);
+    }
+    .email {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+    }
+    .mono {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--ink-3);
+    }
+    .badge {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line-strong);
+      text-transform: capitalize;
+    }
+    .badge.confirmed { color: var(--success); border-color: var(--success); background: var(--success-tint); }
+    .badge.pending { color: var(--warning); }
+    .badge.unsubscribed,
+    .badge.bounced,
+    .badge.complained { color: var(--ink-4); }
+  </style>
+</AdminLayout>
