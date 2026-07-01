@@ -1,0 +1,33 @@
+---
+import { site, heroLead } from '../data/content';
+---
+<header class="hero" id="top">
+  <div class="container hero-layout">
+    <div class="hero-copy reveal">
+      <span class="eyebrow">{site.heroEyebrow}</span>
+      <h1>Scalable <span class="accent">software</span> with AI systems judgment built in.</h1>
+      <p class="lead">{heroLead}</p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="#projects">See project impact</a>
+        <a class="button button-outline" href={site.resume} download>Download resume</a>
+        <a class="button button-ghost" href={site.calendar} target="_blank" rel="noopener">
+          Book 15 minutes →
+        </a>
+      </div>
+    </div>
+    <div class="hero-visual reveal">
+      <div class="portrait-stage">
+        <img src="/profile.png" alt={site.name} width="640" height="800" />
+      </div>
+      <div class="signal-sheet">
+        <span class="eyebrow">Role target</span>
+        <strong>{site.roleTarget}</strong>
+        <p class="meta">{site.signalLine}</p>
+      </div>
+      <div class="availability-card">
+        <strong><span class="dot"></span>Available</strong>
+        <p class="meta">{site.availability}</p>
+      </div>
+    </div>
+  </div>
+</header>

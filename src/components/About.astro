@@ -1,0 +1,28 @@
+---
+import SectionHead from './SectionHead.astro';
+import { aboutStory, principles } from '../data/content';
+---
+<section id="about">
+  <div class="container">
+    <SectionHead
+      eyebrow="About"
+      title="Built for the space between software engineering and AI systems."
+      copy="Engineering depth, quality you can measure, and AI used with judgment."
+    />
+    <div class="about-grid">
+      <div class="story reveal">
+        {aboutStory.map((p) => <p>{p}</p>)}
+      </div>
+      <ul class="principles reveal">
+        {
+          principles.map((pr) => (
+            <li>
+              <strong>{pr.title}</strong>
+              <span>{pr.body}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>

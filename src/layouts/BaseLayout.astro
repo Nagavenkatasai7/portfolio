@@ -1,0 +1,85 @@
+---
+import '../styles/global.css';
+import { site } from '../data/content';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonicalPath?: string;
+  image?: string;
+  /** Set false on app pages (admin) that should not be indexed. */
+  noindex?: boolean;
+}
+
+const {
+  title = `${site.name} — Software Engineer`,
+  description = site.description,
+  canonicalPath = '/',
+  image = '/profile.png',
+  noindex = false,
+} = Astro.props;
+
+const canonical = new URL(canonicalPath, site.url).href;
+const imageUrl = new URL(image, site.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  url: site.url,
+  image: imageUrl,
+  email: `mailto:${site.email}`,
+  jobTitle: site.roleTarget,
+  alumniOf: [
+    { '@type': 'CollegeOrUniversity', name: 'George Mason University' },
+    { '@type': 'CollegeOrUniversity', name: 'KL University' },
+  ],
+  sameAs: [site.links.linkedin, site.links.github, site.links.orcid],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Mark JS available before paint so scroll-reveal degrades gracefully. -->
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta
+      name="keywords"
+      content="Software Engineer, Test Automation, AI-Assisted Development, Scalable Systems, Business Systems Analyst – AI Automation, Salesforce"
+    />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={imageUrl} />
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#fafaf7" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

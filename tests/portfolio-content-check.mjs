@@ -1,7 +1,18 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
-const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+// Validates the BUILT homepage. Run `npm run build` first, then this check
+// (see the `test:content` npm script).
+//
+// Astro serializes interpolated text, so a literal "&" in content may be
+// emitted as "&amp;" or "&#38;". Decode those back so the brand-content
+// assertions match regardless of serialization — the intent (these strings
+// appear on the page) is preserved.
+const raw = readFileSync(new URL("../dist/index.html", import.meta.url), "utf8");
+const html = raw
+  .replace(/&amp;/g, "&")
+  .replace(/&#38;/g, "&")
+  .replace(/&#x26;/gi, "&");
 
 const mustInclude = [
   "Business Systems Analyst – AI Automation",

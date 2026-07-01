@@ -1,0 +1,23 @@
+---
+import SectionHead from './SectionHead.astro';
+import { research } from '../data/content';
+---
+<section id="research" class="surface-band">
+  <div class="container">
+    <SectionHead
+      eyebrow="Research and publications"
+      title="Academic rigor behind the automation mindset."
+    />
+    <div class="research-grid">
+      {
+        research.map((r) => (
+          <article class="research-card card reveal">
+            <h3>{r.title}</h3>
+            <p>{r.body}</p>
+            <span class="research-meta">{r.meta}</span>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

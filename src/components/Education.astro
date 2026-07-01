@@ -1,0 +1,20 @@
+---
+import SectionHead from './SectionHead.astro';
+import { education } from '../data/content';
+---
+<section id="education">
+  <div class="container">
+    <SectionHead eyebrow="Education" title="Computer science foundation." />
+    <div class="education-grid">
+      {
+        education.map((ed) => (
+          <article class="education-card card reveal">
+            <h3>{ed.degree}</h3>
+            <p>{ed.school}</p>
+            <p class="meta">{ed.meta}</p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,128 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import Proof from '../components/Proof.astro';
+import About from '../components/About.astro';
+import Market from '../components/Market.astro';
+import Software from '../components/Software.astro';
+import Projects from '../components/Projects.astro';
+import Experience from '../components/Experience.astro';
+import Skills from '../components/Skills.astro';
+import Research from '../components/Research.astro';
+import Education from '../components/Education.astro';
+import Cta from '../components/Cta.astro';
+import Contact from '../components/Contact.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <Nav />
+  <main id="main">
+    <Hero />
+    <Proof />
+    <About />
+    <Market />
+    <Software />
+    <Projects />
+    <Experience />
+    <Skills />
+    <Research />
+    <Education />
+    <Cta />
+    <Contact />
+  </main>
+  <Footer />
+</BaseLayout>
+
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // --- Mobile nav toggle -----------------------------------------------------
+  const menuButton = document.getElementById('menuButton');
+  const navLinks = document.getElementById('navLinks');
+  const closeMenu = () => {
+    navLinks?.classList.remove('open');
+    document.body.classList.remove('menu-open');
+    menuButton?.setAttribute('aria-expanded', 'false');
+    menuButton?.setAttribute('aria-label', 'Open menu');
+  };
+  menuButton?.addEventListener('click', () => {
+    const open = navLinks?.classList.toggle('open') ?? false;
+    document.body.classList.toggle('menu-open', open);
+    menuButton.setAttribute('aria-expanded', String(open));
+    menuButton.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  });
+  navLinks?.querySelectorAll('a').forEach((a) => a.addEventListener('click', closeMenu));
+
+  // --- Smooth scroll with sticky-nav offset ----------------------------------
+  const navOffset = 82;
+  document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      const id = link.getAttribute('href');
+      if (!id || id === '#') return;
+      const target = document.querySelector(id);
+      if (!target) return;
+      event.preventDefault();
+      const top = target.getBoundingClientRect().top + window.scrollY - navOffset;
+      window.scrollTo({ top, behavior: reduceMotion ? 'auto' : 'smooth' });
+    });
+  });
+
+  // --- Scroll reveal ---------------------------------------------------------
+  const revealables = document.querySelectorAll('.reveal');
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    revealables.forEach((el) => el.classList.add('is-visible'));
+  } else {
+    const revealObserver = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -32px 0px' }
+    );
+    revealables.forEach((el) => revealObserver.observe(el));
+  }
+
+  // --- Scrollspy (active nav link) -------------------------------------------
+  const navAnchors = Array.from(
+    navLinks?.querySelectorAll<HTMLAnchorElement>('a[href^="#"]') ?? []
+  );
+  const spyTargets = navAnchors
+    .map((a) => document.querySelector(a.getAttribute('href') as string))
+    .filter((el): el is Element => Boolean(el));
+  if ('IntersectionObserver' in window && spyTargets.length) {
+    const spy = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const id = `#${entry.target.id}`;
+          navAnchors.forEach((a) =>
+            a.setAttribute('aria-current', a.getAttribute('href') === id ? 'true' : 'false')
+          );
+        });
+      },
+      { threshold: [0.18, 0.35, 0.55], rootMargin: '-20% 0px -68% 0px' }
+    );
+    spyTargets.forEach((t) => spy.observe(t));
+  }
+
+  // --- Project filtering -----------------------------------------------------
+  const filterButtons = document.querySelectorAll<HTMLButtonElement>('.filter-button');
+  const projectCards = document.querySelectorAll<HTMLElement>('.project-card');
+  filterButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const filter = button.dataset.filter ?? 'all';
+      filterButtons.forEach((b) => b.classList.toggle('is-active', b === button));
+      projectCards.forEach((card) => {
+        const show = filter === 'all' || card.dataset.category === filter;
+        card.classList.toggle('is-hidden', !show);
+      });
+    });
+  });
+</script>

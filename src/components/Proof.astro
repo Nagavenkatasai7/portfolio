@@ -1,0 +1,17 @@
+---
+import { proofStats } from '../data/content';
+---
+<section class="proof-strip" id="proof">
+  <div class="container">
+    <div class="proof-grid">
+      {
+        proofStats.map((s) => (
+          <div class="proof-item reveal">
+            <div class="proof-number">{s.number}</div>
+            <div class="proof-label">{s.label}</div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

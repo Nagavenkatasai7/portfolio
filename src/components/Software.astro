@@ -1,0 +1,23 @@
+---
+import SectionHead from './SectionHead.astro';
+import { softwareCards } from '../data/content';
+---
+<section id="software">
+  <div class="container">
+    <SectionHead
+      eyebrow="Salesforce fit"
+      title="Software engineering proof for trusted cloud products."
+      copy="The habits that make software dependable at scale."
+    />
+    <div class="market-grid">
+      {
+        softwareCards.map((c) => (
+          <article class="market-card reveal">
+            <h3>{c.title}</h3>
+            <p>{c.body}</p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

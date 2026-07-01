@@ -1,0 +1,25 @@
+---
+import { site, nav } from '../data/content';
+---
+<nav class="site-nav">
+  <div class="container nav-inner">
+    <a class="brand" href="#top" aria-label={site.name}>
+      <span class="brand-mark">{site.brandInitials}</span>
+      <span class="brand-name">{site.name}</span>
+    </a>
+    <button
+      class="menu-button"
+      id="menuButton"
+      type="button"
+      aria-expanded="false"
+      aria-controls="navLinks"
+      aria-label="Open menu"
+    >
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-links" id="navLinks">
+      {nav.map((l) => <a href={l.href}>{l.label}</a>)}
+      <a class="nav-cta" href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>

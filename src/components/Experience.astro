@@ -1,0 +1,25 @@
+---
+import SectionHead from './SectionHead.astro';
+import { experience } from '../data/content';
+---
+<section id="experience" class="surface-band">
+  <div class="container">
+    <SectionHead eyebrow="Experience" title="Where engineering quality became real." />
+    <div class="experience-list">
+      {
+        experience.map((e) => (
+          <article class="experience-item reveal">
+            <div class="experience-meta">
+              <div class="experience-role">{e.role}</div>
+              <div class="experience-company">{e.company}</div>
+              <p>{e.dates}</p>
+            </div>
+            <ul class="bullets">
+              {e.bullets.map((b) => <li>{b}</li>)}
+            </ul>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

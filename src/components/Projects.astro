@@ -1,0 +1,65 @@
+---
+import SectionHead from './SectionHead.astro';
+import { projects, projectFilters } from '../data/content';
+---
+<section id="projects">
+  <div class="container">
+    <SectionHead
+      eyebrow="Project atlas"
+      title="What we built, how we built it, and the impact created."
+      copy="Filter by the kind of work."
+    />
+    <div class="projects-toolbar" role="group" aria-label="Filter projects">
+      {
+        projectFilters.map((f, i) => (
+          <button
+            class={`filter-button${i === 0 ? ' is-active' : ''}`}
+            data-filter={f.value}
+            type="button"
+          >
+            {f.label}
+          </button>
+        ))
+      }
+    </div>
+    <div class="projects-grid">
+      {
+        projects.map((p) => (
+          <article class="project-card reveal" data-category={p.category}>
+            <div class="project-top">
+              <span class="project-kicker">{p.kicker}</span>
+              <h3>{p.title}</h3>
+              <p class="project-summary">{p.summary}</p>
+            </div>
+            <div class="case-grid">
+              <div class="case-block">
+                <span class="eyebrow">What we did</span>
+                <p>{p.did}</p>
+              </div>
+              <div class="case-block">
+                <span class="eyebrow">How we did it</span>
+                <p>{p.how}</p>
+              </div>
+              <div class="case-block">
+                <span class="eyebrow">Impact created</span>
+                <p>{p.impact}</p>
+              </div>
+            </div>
+            <div class="project-bottom">
+              <div class="tag-list">
+                {p.tags.map((t) => <span class="tag">{t}</span>)}
+              </div>
+              {p.link ? (
+                <a class="project-link" href={p.link.url} target="_blank" rel="noopener">
+                  {p.link.label} ↗
+                </a>
+              ) : p.spanLink ? (
+                <span class="project-link">{p.spanLink}</span>
+              ) : null}
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

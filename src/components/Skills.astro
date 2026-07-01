@@ -1,0 +1,22 @@
+---
+import SectionHead from './SectionHead.astro';
+import { skills } from '../data/content';
+---
+<section id="skills">
+  <div class="container">
+    <SectionHead eyebrow="Skills" title="Software engineering capability architecture." />
+    <div class="skills-grid">
+      {
+        skills.map((s) => (
+          <article class="skill-card card reveal">
+            <h3>{s.title}</h3>
+            <p>{s.body}</p>
+            <div class="tag-list">
+              {s.tags.map((t) => <span class="tag">{t}</span>)}
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

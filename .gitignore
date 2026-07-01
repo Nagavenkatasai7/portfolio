@@ -1,0 +1,16 @@
+# build output
+dist/
+.vercel/
+.astro/
+
+# dependencies
+node_modules/
+
+# environment (never commit real secrets)
+.env
+.env.*
+!.env.example
+
+# os / editor
+.DS_Store
+*.log

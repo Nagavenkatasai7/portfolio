@@ -1,0 +1,21 @@
+{
+  "name": "portfolio",
+  "type": "module",
+  "version": "2.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "astro": "astro",
+    "test:content": "node tests/portfolio-content-check.mjs"
+  },
+  "dependencies": {
+    "astro": "^7.0.4",
+    "@astrojs/vercel": "^11.0.0"
+  }
+}

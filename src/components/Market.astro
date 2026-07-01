@@ -1,0 +1,24 @@
+---
+import SectionHead from './SectionHead.astro';
+import { marketCards } from '../data/content';
+---
+<section id="market" class="surface-band">
+  <div class="container">
+    <SectionHead eyebrow="AI boom hub" title="Market-aligned, not trend-chasing." />
+    <div class="market-grid">
+      {
+        marketCards.map((c) => (
+          <article class="market-card reveal">
+            <h3>{c.title}</h3>
+            <p>{c.body}</p>
+            {c.source && (
+              <a class="source-link" href={c.source.url} target="_blank" rel="noopener">
+                {c.source.label} ↗
+              </a>
+            )}
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,47 @@
+---
+import SectionHead from './SectionHead.astro';
+import { site } from '../data/content';
+
+const cards = [
+  {
+    title: 'Email',
+    body: 'Best for roles and project inquiries.',
+    value: site.email,
+    href: `mailto:${site.email}`,
+  },
+  {
+    title: 'LinkedIn',
+    body: 'Connect and see my background.',
+    value: 'in/naga-venkata-sai-chennu',
+    href: site.links.linkedin,
+  },
+  {
+    title: 'GitHub',
+    body: 'Code, projects, and experiments.',
+    value: 'Nagavenkatasai7',
+    href: site.links.github,
+  },
+  {
+    title: 'Paper Decode',
+    body: 'My research-reading tool.',
+    value: 'paper-decode.lovable.app',
+    href: site.links.paperDecode,
+  },
+];
+---
+<section id="contact">
+  <div class="container">
+    <SectionHead eyebrow="Contact" title="Let us talk about software engineering work." />
+    <div class="contact-grid">
+      {
+        cards.map((c) => (
+          <a class="contact-card reveal" href={c.href} target="_blank" rel="noopener">
+            <h3>{c.title}</h3>
+            <p>{c.body}</p>
+            <span class="contact-value">{c.value}</span>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>
