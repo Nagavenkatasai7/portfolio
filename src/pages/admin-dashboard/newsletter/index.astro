@@ -1,0 +1,183 @@
+---
+export const prerender = false;
+
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import {
+  listIssues,
+  listUnusedNotes,
+  type Issue,
+  type NoteRow,
+} from '../../../lib/issues';
+
+let issues: Issue[] = [];
+let notes: NoteRow[] = [];
+let dbError = false;
+try {
+  issues = await listIssues();
+  notes = await listUnusedNotes();
+} catch {
+  dbError = true;
+}
+---
+
+<AdminLayout title="Newsletter" active="newsletter">
+  <div class="topline">
+    <button id="genBtn" class="button button-primary" type="button">
+      Generate this week's draft
+    </button>
+    <span id="genStatus" class="status" role="status" aria-live="polite"></span>
+  </div>
+
+  {dbError && <p class="notice">Database not configured yet.</p>}
+
+  <section class="panel">
+    <h2>Notes inbox</h2>
+    <p class="hint">Drop links/ideas here during the week — the AI folds unused notes into the next draft.</p>
+    <form id="noteForm" class="note-form">
+      <input name="content" type="text" placeholder="A link or idea for the next issue" required maxlength="2000" />
+      <input name="url" type="url" placeholder="https:// (optional)" />
+      <button class="button button-outline" type="submit">Add</button>
+    </form>
+    <ul class="notes">
+      {notes.map((n) => (
+        <li>
+          {n.content}
+          {n.url && (
+            <a href={n.url} target="_blank" rel="noopener"> ↗</a>
+          )}
+        </li>
+      ))}
+      {notes.length === 0 && <li class="hint">No pending notes.</li>}
+    </ul>
+  </section>
+
+  <section class="panel">
+    <h2>Issues</h2>
+    {issues.length === 0 && !dbError && <p class="hint">No issues yet — generate this week's draft.</p>}
+    {issues.length > 0 && (
+      <table class="issues">
+        <thead><tr><th>Week</th><th>Subject</th><th>Status</th><th /></tr></thead>
+        <tbody>
+          {issues.map((i) => (
+            <tr>
+              <td class="mono">{i.iso_week}</td>
+              <td>{i.subject ?? '(untitled)'}</td>
+              <td><span class={`badge ${i.status}`}>{i.status.replace('_', ' ')}</span></td>
+              <td><a href={`/admin-dashboard/newsletter/${i.id}`}>Review</a></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
+  </section>
+
+  <script>
+    const genBtn = document.getElementById('genBtn') as HTMLButtonElement | null;
+    const genStatus = document.getElementById('genStatus');
+    genBtn?.addEventListener('click', async () => {
+      genBtn.disabled = true;
+      if (genStatus) genStatus.textContent = 'Generating… this can take a minute.';
+      try {
+        const res = await fetch('/api/newsletter/generate', { method: 'POST' });
+        const data = (await res.json().catch(() => ({}))) as { issueId?: string; error?: string };
+        if (res.ok && data.issueId) {
+          window.location.href = `/admin-dashboard/newsletter/${data.issueId}`;
+        } else if (genStatus) {
+          genStatus.textContent = `Failed: ${data.error ?? 'unknown error'}`;
+          genBtn.disabled = false;
+        }
+      } catch {
+        if (genStatus) genStatus.textContent = 'Network error.';
+        genBtn.disabled = false;
+      }
+    });
+
+    const noteForm = document.getElementById('noteForm') as HTMLFormElement | null;
+    noteForm?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const fd = new FormData(noteForm);
+      const res = await fetch('/api/newsletter/notes', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ content: fd.get('content'), url: fd.get('url') || null }),
+      });
+      if (res.ok) window.location.reload();
+    });
+  </script>
+
+  <style>
+    .topline {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-4);
+      margin-bottom: var(--sp-5);
+    }
+    .status {
+      font-size: var(--text-sm);
+      color: var(--ink-3);
+    }
+    .notice,
+    .hint {
+      color: var(--ink-3);
+      font-size: var(--text-sm);
+    }
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      padding: var(--sp-5);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: var(--sp-5);
+    }
+    .panel h2 {
+      font-size: var(--text-md);
+      font-family: var(--font-sans);
+      font-weight: var(--fw-semibold);
+      margin-bottom: var(--sp-2);
+    }
+    .note-form {
+      display: flex;
+      gap: var(--sp-2);
+      margin: var(--sp-3) 0;
+      flex-wrap: wrap;
+    }
+    .note-form input {
+      font: inherit;
+      padding: var(--sp-2) var(--sp-3);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-md);
+      flex: 1;
+      min-width: 180px;
+    }
+    .notes {
+      display: grid;
+      gap: var(--sp-2);
+      font-size: var(--text-sm);
+    }
+    .issues {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .issues th,
+    .issues td {
+      text-align: left;
+      padding: var(--sp-3);
+      border-bottom: 1px solid var(--line);
+      font-size: var(--text-sm);
+    }
+    .mono {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+    }
+    .badge {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line-strong);
+    }
+    .badge.sent { color: var(--success); border-color: var(--success); background: var(--success-tint); }
+    .badge.failed { color: var(--danger); border-color: var(--danger); }
+    .badge.pending_review { color: var(--warning); }
+  </style>
+</AdminLayout>

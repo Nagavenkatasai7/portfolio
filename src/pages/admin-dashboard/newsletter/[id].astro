@@ -1,0 +1,194 @@
+---
+export const prerender = false;
+
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { getIssueById, type Issue } from '../../../lib/issues';
+
+const { id } = Astro.params;
+let issue: Issue | null = null;
+try {
+  issue = id ? await getIssueById(id) : null;
+} catch {
+  issue = null;
+}
+if (!issue) return new Response('Not found', { status: 404 });
+---
+
+<AdminLayout title="Review Issue" active="newsletter">
+  <p class="meta">
+    {issue.iso_week} · <span class={`badge ${issue.status}`}>{issue.status.replace('_', ' ')}</span>
+  </p>
+
+  <div class="editor-grid">
+    <form id="issueForm" class="issue-form" data-id={issue.id}>
+      <label>Subject<input name="subject" type="text" value={issue.subject ?? ''} maxlength="200" /></label>
+      <label>Preheader<input name="preheader" type="text" value={issue.preheader ?? ''} maxlength="300" /></label>
+      <label>HTML<textarea name="body_html" rows="16">{issue.body_html ?? ''}</textarea></label>
+      <label>Plaintext<textarea name="body_text" rows="8">{issue.body_text ?? ''}</textarea></label>
+      <div class="actions">
+        <button type="submit" class="button button-outline">Save</button>
+        <button id="testBtn" type="button" class="button button-outline">Send test to me</button>
+        <button id="sendBtn" type="button" class="button button-primary">Approve &amp; send</button>
+      </div>
+      <p id="issueStatus" class="status" role="status" aria-live="polite"></p>
+    </form>
+
+    <div class="preview">
+      <span class="eyebrow">Live preview (scripts disabled)</span>
+      <iframe id="previewFrame" sandbox="" title="Email preview" srcdoc={issue.body_html ?? ''}></iframe>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('issueForm') as HTMLFormElement | null;
+    const statusEl = document.getElementById('issueStatus');
+    const preview = document.getElementById('previewFrame') as HTMLIFrameElement | null;
+    const htmlField = form?.querySelector<HTMLTextAreaElement>('[name="body_html"]');
+    const testBtn = document.getElementById('testBtn') as HTMLButtonElement | null;
+    const sendBtn = document.getElementById('sendBtn') as HTMLButtonElement | null;
+    const id = form?.dataset.id ?? '';
+
+    const setStatus = (msg: string, kind = '') => {
+      if (statusEl) {
+        statusEl.textContent = msg;
+        statusEl.className = `status ${kind}`;
+      }
+    };
+
+    // Live preview from the (sandboxed) HTML textarea.
+    htmlField?.addEventListener('input', () => {
+      if (preview) preview.srcdoc = htmlField.value;
+    });
+
+    function payload() {
+      const fd = new FormData(form!);
+      return {
+        id,
+        subject: fd.get('subject'),
+        preheader: fd.get('preheader'),
+        body_html: fd.get('body_html'),
+        body_text: fd.get('body_text'),
+      };
+    }
+
+    form?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      setStatus('Saving…');
+      const res = await fetch('/api/newsletter/draft', {
+        method: 'PUT',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(payload()),
+      });
+      setStatus(res.ok ? 'Saved.' : 'Save failed.', res.ok ? 'ok' : 'err');
+    });
+
+    testBtn?.addEventListener('click', async () => {
+      setStatus('Sending test…');
+      const res = await fetch('/api/newsletter/test', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      setStatus(res.ok ? 'Test sent to your inbox.' : 'Test failed.', res.ok ? 'ok' : 'err');
+    });
+
+    sendBtn?.addEventListener('click', async () => {
+      if (!window.confirm('Send this issue to ALL confirmed subscribers now?')) return;
+      sendBtn.disabled = true;
+      setStatus('Sending broadcast…');
+      const res = await fetch('/api/newsletter/send', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      if (res.ok) {
+        setStatus('Sent! 🎉', 'ok');
+      } else {
+        setStatus(`Send failed: ${data.error ?? 'unknown'}`, 'err');
+        sendBtn.disabled = false;
+      }
+    });
+  </script>
+
+  <style>
+    .meta {
+      color: var(--ink-3);
+      font-size: var(--text-sm);
+      margin-bottom: var(--sp-5);
+    }
+    .badge {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line-strong);
+    }
+    .badge.sent { color: var(--success); border-color: var(--success); background: var(--success-tint); }
+    .badge.failed { color: var(--danger); border-color: var(--danger); }
+    .badge.pending_review { color: var(--warning); }
+    .editor-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--sp-5);
+      align-items: start;
+    }
+    .issue-form {
+      display: grid;
+      gap: var(--sp-3);
+    }
+    .issue-form label {
+      display: grid;
+      gap: var(--sp-2);
+      font-size: var(--text-sm);
+      font-weight: var(--fw-medium);
+    }
+    .issue-form input,
+    .issue-form textarea {
+      font: inherit;
+      font-weight: var(--fw-regular);
+      padding: var(--sp-3);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      width: 100%;
+    }
+    .issue-form textarea {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      resize: vertical;
+    }
+    .actions {
+      display: flex;
+      gap: var(--sp-3);
+      flex-wrap: wrap;
+    }
+    .status {
+      font-size: var(--text-sm);
+      color: var(--ink-3);
+      min-height: 1.2em;
+    }
+    .status.ok { color: var(--success); }
+    .status.err { color: var(--danger); }
+    .preview {
+      position: sticky;
+      top: var(--sp-4);
+    }
+    .preview iframe {
+      width: 100%;
+      height: 640px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: #fff;
+      margin-top: var(--sp-2);
+    }
+    @media (max-width: 900px) {
+      .editor-grid {
+        grid-template-columns: 1fr;
+      }
+      .preview {
+        position: static;
+      }
+    }
+  </style>
+</AdminLayout>

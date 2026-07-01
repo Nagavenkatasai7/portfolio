@@ -1,8 +1,8 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
-import { json } from '../../../lib/http';
-import { safeEqual } from '../../../lib/tokens';
+import { adminGate, json } from '../../../lib/http';
+import { isoWeek } from '../../../lib/week';
 import {
   getIssueByWeek,
   createIssue,
@@ -10,33 +10,21 @@ import {
   markNotesUsed,
 } from '../../../lib/issues';
 import { generateDraft } from '../../../lib/ai';
-import { isoWeek } from '../../../lib/week';
 
-export const GET: APIRoute = async ({ request }) => {
-  // FAIL CLOSED: the secret must be configured and long enough. Vercel Cron
-  // sends `Authorization: Bearer <CRON_SECRET>` automatically when CRON_SECRET
-  // is set. Compare constant-time; never degrade to "Bearer undefined".
-  const secret = process.env.CRON_SECRET;
-  if (!secret || secret.length < 16) {
-    return json({ error: 'not configured' }, 500);
-  }
-  const provided = request.headers.get('authorization') ?? '';
-  if (!safeEqual(provided, `Bearer ${secret}`)) {
-    return json({ error: 'unauthorized' }, 401);
-  }
+// Manual "Generate now" — same pipeline as the cron, admin-triggered.
+export const POST: APIRoute = async (context) => {
+  const auth = await adminGate(context);
+  if (auth instanceof Response) return auth;
 
   const week = isoWeek(new Date());
-
-  // Idempotent per ISO week — never generate twice.
   try {
     const existing = await getIssueByWeek(week);
-    if (existing) return json({ ok: true, week, skipped: 'exists' });
+    if (existing) return json({ ok: true, week, issueId: existing.id, existed: true });
   } catch {
     return json({ error: 'db unavailable' }, 503);
   }
 
   const notes = await listUnusedNotes().catch(() => []);
-
   let draft;
   let sources: unknown[] = [];
   try {
@@ -60,9 +48,7 @@ export const GET: APIRoute = async ({ request }) => {
       owner_notes: notes.length ? notes.map((n) => n.content).join('\n') : null,
       ai_sources: sources,
     });
-    if (notes.length) {
-      await markNotesUsed(notes.map((n) => n.id)).catch(() => {});
-    }
+    if (notes.length) await markNotesUsed(notes.map((n) => n.id)).catch(() => {});
     return json({ ok: true, week, issueId: issue.id });
   } catch {
     return json({ error: 'save failed' }, 500);

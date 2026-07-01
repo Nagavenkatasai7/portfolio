@@ -22,6 +22,19 @@ export function getAdmin(context: APIContext): Promise<SessionUser | null> {
   return verifySession(context.cookies.get(SESSION_COOKIE)?.value);
 }
 
+/**
+ * Admin gate for write endpoints: requires a valid admin session AND a matching
+ * Origin (CSRF). Returns the user, or a Response to short-circuit with.
+ */
+export async function adminGate(
+  context: APIContext
+): Promise<SessionUser | Response> {
+  const user = await getAdmin(context);
+  if (!user) return json({ error: 'unauthorized' }, 401);
+  if (!sameOrigin(context.request)) return json({ error: 'forbidden' }, 403);
+  return user;
+}
+
 function allowedOrigins(request: Request): Set<string> {
   const set = new Set<string>();
   try {
