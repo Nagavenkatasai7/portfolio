@@ -1,0 +1,124 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../data/content';
+---
+
+<BaseLayout
+  title="Privacy Policy — Naga Venkata Sai Chennu"
+  description="How this site collects, uses, and protects your data."
+  canonicalPath="/privacy"
+>
+  <main class="container prose">
+    <p class="back"><a href="/">← Back to site</a></p>
+    <h1>Privacy Policy</h1>
+    <p class="meta">Last updated: 2026</p>
+
+    <h2>Who is responsible</h2>
+    <p>
+      This site is operated by {site.name} ("I", "me"). For any privacy question or
+      request, email <a href={`mailto:${site.email}`}>{site.email}</a>.
+    </p>
+
+    <h2>What I collect and why</h2>
+    <ul>
+      <li>
+        <strong>Newsletter:</strong> your email address, the time and page you signed
+        up from, and a record of your consent (used to send the weekly newsletter you
+        asked for). I use double opt-in — no email is added until you confirm.
+      </li>
+      <li>
+        <strong>Contact form:</strong> your name, email, and message, so I can reply.
+      </li>
+      <li>
+        <strong>Analytics:</strong> privacy-friendly, cookieless page metrics and
+        aggregate newsletter open/click counts, to understand what's useful.
+      </li>
+      <li>
+        <strong>Security:</strong> IP address and user agent are recorded with
+        signups and messages to prevent abuse and evidence consent.
+      </li>
+    </ul>
+
+    <h2>Legal basis</h2>
+    <p>
+      Newsletter emails are sent on the basis of your <strong>consent</strong>, which
+      you can withdraw at any time via the unsubscribe link in every issue. Contact
+      replies and abuse prevention rely on legitimate interest.
+    </p>
+
+    <h2>Who processes your data (sub-processors)</h2>
+    <ul>
+      <li><strong>Vercel</strong> — hosting and privacy-friendly analytics</li>
+      <li><strong>Neon</strong> — database</li>
+      <li><strong>Resend</strong> — email delivery</li>
+      <li><strong>Anthropic</strong> — drafting newsletter content (no subscriber data is sent)</li>
+      <li><strong>Cloudflare Turnstile</strong> — bot/spam protection on forms</li>
+      <li><strong>Upstash</strong> — rate limiting</li>
+      <li><strong>Google</strong> — sign-in for the private admin area only</li>
+    </ul>
+
+    <h2>Retention</h2>
+    <p>
+      I keep subscriber records while you're subscribed and consent evidence for a
+      reasonable period afterward. Analytics events and contact messages are pruned
+      on a rolling schedule, and stored IP addresses are anonymized after a short
+      window. You can request deletion at any time.
+    </p>
+
+    <h2>Your rights</h2>
+    <p>
+      You can access, correct, or delete your data, and object to or restrict its
+      processing. To unsubscribe, use the link in any newsletter. For anything else,
+      email <a href={`mailto:${site.email}`}>{site.email}</a> and I'll action it.
+    </p>
+
+    <h2>Cookies</h2>
+    <p>
+      The public site uses no tracking cookies (analytics are cookieless). The admin
+      area uses a single strictly-necessary session cookie for sign-in.
+    </p>
+  </main>
+
+  <style>
+    .prose {
+      max-width: var(--prose);
+      padding-block: var(--sp-8) var(--sp-9);
+    }
+    .back {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+    }
+    .prose h1 {
+      margin-block: var(--sp-4) var(--sp-2);
+    }
+    .prose .meta {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--ink-4);
+      margin-bottom: var(--sp-6);
+    }
+    .prose h2 {
+      font-size: var(--text-xl);
+      font-family: var(--font-sans);
+      font-weight: var(--fw-semibold);
+      margin-block: var(--sp-6) var(--sp-3);
+    }
+    .prose p {
+      margin-block: var(--sp-3);
+      color: var(--ink-2);
+    }
+    .prose ul {
+      display: grid;
+      gap: var(--sp-2);
+      padding-left: var(--sp-5);
+      margin-block: var(--sp-3);
+    }
+    .prose li {
+      list-style: disc;
+      color: var(--ink-2);
+    }
+    .prose a {
+      text-decoration: underline;
+    }
+  </style>
+</BaseLayout>

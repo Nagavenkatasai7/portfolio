@@ -189,6 +189,15 @@ export async function listSubscribers(): Promise<SubscriberRow[]> {
     FROM subscribers ORDER BY created_at DESC LIMIT 1000`) as unknown as SubscriberRow[];
 }
 
+/** GDPR erasure: hard-delete a subscriber; returns the Resend contact id to clean up. */
+export async function deleteByEmail(
+  email: string
+): Promise<{ deleted: boolean; resendContactId: string | null }> {
+  const rows = await sql`DELETE FROM subscribers WHERE email = ${email} RETURNING resend_contact_id`;
+  const row = rows[0] as unknown as { resend_contact_id: string | null } | undefined;
+  return { deleted: Boolean(row), resendContactId: row?.resend_contact_id ?? null };
+}
+
 export async function unsubscribeByToken(token: string): Promise<UnsubResult> {
   const h = hashTokenHex(token);
   const rows = await sql`

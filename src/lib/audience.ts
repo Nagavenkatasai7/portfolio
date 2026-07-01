@@ -25,6 +25,23 @@ export async function createResendContact(email: string): Promise<string | null>
   }
 }
 
+export async function removeResendContact(opts: {
+  email: string;
+  contactId?: string | null;
+}): Promise<void> {
+  const id = audienceId();
+  if (!id) return;
+  try {
+    if (opts.contactId) {
+      await resend().contacts.remove({ id: opts.contactId, audienceId: id });
+    } else {
+      await resend().contacts.remove({ email: opts.email, audienceId: id });
+    }
+  } catch {
+    /* best-effort */
+  }
+}
+
 export async function setResendSubscribed(opts: {
   email: string;
   contactId?: string | null;

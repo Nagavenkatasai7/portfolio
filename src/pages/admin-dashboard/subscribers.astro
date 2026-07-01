@@ -38,6 +38,7 @@ function fmt(d: string | null): string {
             <th>Source</th>
             <th>Joined</th>
             <th>Confirmed</th>
+            <th />
           </tr>
         </thead>
         <tbody>
@@ -48,6 +49,7 @@ function fmt(d: string | null): string {
               <td class="mono">{s.signup_source ?? '—'}</td>
               <td class="mono">{fmt(s.created_at)}</td>
               <td class="mono">{fmt(s.confirmed_at)}</td>
+              <td><button class="del" type="button" data-email={s.email}>Delete</button></td>
             </tr>
           ))}
         </tbody>
@@ -56,7 +58,40 @@ function fmt(d: string | null): string {
   }
   {!dbError && subs.length === 0 && <p class="notice">No subscribers yet.</p>}
 
+  <script>
+    document.querySelectorAll<HTMLButtonElement>('.del').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const email = btn.dataset.email ?? '';
+        if (!window.confirm(`Permanently delete ${email}? This erases all their data.`)) return;
+        btn.disabled = true;
+        const res = await fetch('/api/subscribers/delete', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        if (res.ok) {
+          btn.closest('tr')?.remove();
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'Failed';
+        }
+      });
+    });
+  </script>
+
   <style>
+    .del {
+      font: inherit;
+      font-size: var(--text-xs);
+      color: var(--danger);
+      background: transparent;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius-sm);
+      padding: 2px 8px;
+    }
+    .del:hover {
+      border-color: var(--danger);
+    }
     .notice,
     .summary {
       color: var(--ink-3);
