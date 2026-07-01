@@ -18,11 +18,11 @@ CREATE TABLE IF NOT EXISTS subscribers (
   id                   uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   email                citext NOT NULL,
   status               subscriber_status NOT NULL DEFAULT 'pending',
-  -- double opt-in token (random 256-bit; store ONLY its SHA-256 hash)
-  token_hash           bytea,
+  -- double opt-in token (random 256-bit; store ONLY its SHA-256 hash, hex-encoded)
+  token_hash           text,
   token_expires_at     timestamptz,
   -- separate, unsubscribe-ONLY token (never reused for confirm)
-  unsub_token_hash     bytea,
+  unsub_token_hash     text,
   -- abuse control: throttle repeat confirmation emails
   last_confirm_sent_at timestamptz,
   confirm_send_count   integer NOT NULL DEFAULT 0,

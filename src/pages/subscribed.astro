@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Subscribed — Naga Venkata Sai Chennu"
+  canonicalPath="/subscribed"
+  noindex={true}
+>
+  <main class="landing">
+    <div class="landing-card">
+      <span class="eyebrow">Newsletter</span>
+      <h1>You're subscribed 🎉</h1>
+      <p>
+        Thanks for confirming. You'll get the weekly issue — tech tutorials and a
+        curated links roundup — straight to your inbox.
+      </p>
+      <a class="button button-primary" href="/">Back to site</a>
+    </div>
+  </main>
+
+  <style>
+    .landing {
+      min-height: 70vh;
+      display: grid;
+      place-items: center;
+      padding: var(--sp-8) var(--sp-4);
+    }
+    .landing-card {
+      max-width: 480px;
+      text-align: center;
+    }
+    .landing-card h1 {
+      font-size: var(--text-4xl);
+      margin-block: var(--sp-3) var(--sp-4);
+    }
+    .landing-card p {
+      color: var(--ink-3);
+      margin-bottom: var(--sp-6);
+    }
+  </style>
+</BaseLayout>

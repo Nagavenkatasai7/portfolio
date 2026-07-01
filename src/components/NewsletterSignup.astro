@@ -1,0 +1,144 @@
+---
+const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undefined;
+---
+
+<form id="newsletterForm" class="newsletter-form">
+  <div class="nl-row">
+    <input
+      name="email"
+      type="email"
+      required
+      placeholder="you@example.com"
+      aria-label="Email address"
+      autocomplete="email"
+      maxlength="200"
+    />
+    <button type="submit" class="button button-primary">Subscribe</button>
+  </div>
+
+  {/* Honeypot */}
+  <div class="hp" aria-hidden="true">
+    <label>Company<input name="company" type="text" tabindex="-1" autocomplete="off" /></label>
+  </div>
+
+  {siteKey && <div class="cf-turnstile" data-sitekey={siteKey} data-theme="light" />}
+
+  <p class="nl-consent">
+    Weekly, no spam. By subscribing you agree to the <a href="/privacy">privacy policy</a>.
+    Unsubscribe anytime.
+  </p>
+  <p id="nlStatus" class="nl-status" role="status" aria-live="polite"></p>
+</form>
+
+{
+  siteKey && (
+    <script
+      is:inline
+      src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+      async
+      defer
+    />
+  )
+}
+
+<script>
+  const loadedAt = Date.now();
+  const form = document.getElementById('newsletterForm') as HTMLFormElement | null;
+  const statusEl = document.getElementById('nlStatus');
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (statusEl) {
+      statusEl.textContent = 'Subscribing…';
+      statusEl.className = 'nl-status';
+    }
+    const fd = new FormData(form);
+    const tokenField = form.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]');
+    const payload = {
+      email: fd.get('email'),
+      company: fd.get('company'),
+      ts: loadedAt,
+      source: 'home',
+      turnstileToken: tokenField?.value ?? undefined,
+    };
+    try {
+      const res = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = (await res.json().catch(() => ({}))) as { message?: string };
+      if (res.ok) {
+        form.reset();
+        if (statusEl) {
+          statusEl.textContent = data.message ?? 'Check your inbox to confirm.';
+          statusEl.className = 'nl-status ok';
+        }
+      } else if (statusEl) {
+        statusEl.textContent = 'Something went wrong. Please try again.';
+        statusEl.className = 'nl-status err';
+      }
+    } catch {
+      if (statusEl) {
+        statusEl.textContent = 'Network error. Please try again.';
+        statusEl.className = 'nl-status err';
+      }
+    }
+  });
+</script>
+
+<style>
+  .newsletter-form {
+    max-width: 460px;
+  }
+  .nl-row {
+    display: flex;
+    gap: var(--sp-3);
+  }
+  .nl-row input {
+    flex: 1;
+    font: inherit;
+    padding: var(--sp-3) var(--sp-4);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .nl-row input:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-color: var(--accent);
+  }
+  .hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .cf-turnstile {
+    margin-top: var(--sp-3);
+  }
+  .nl-consent {
+    margin-top: var(--sp-3);
+    font-size: var(--text-xs);
+    color: var(--ink-4);
+  }
+  .nl-status {
+    margin-top: var(--sp-2);
+    font-size: var(--text-sm);
+    color: var(--ink-3);
+    min-height: 1.2em;
+  }
+  .nl-status.ok {
+    color: var(--success);
+  }
+  .nl-status.err {
+    color: var(--danger);
+  }
+  @media (max-width: 520px) {
+    .nl-row {
+      flex-direction: column;
+    }
+  }
+</style>

@@ -1,0 +1,40 @@
+---
+import NewsletterSignup from './NewsletterSignup.astro';
+---
+<section id="newsletter" class="surface-band">
+  <div class="container newsletter-band">
+    <div class="reveal">
+      <span class="eyebrow">Newsletter</span>
+      <h2>Weekly tutorials and a curated links roundup.</h2>
+      <p class="section-copy">
+        Practical software-engineering and AI notes, plus the best links I found
+        that week. One email a week — unsubscribe anytime.
+      </p>
+    </div>
+    <div class="reveal">
+      <NewsletterSignup />
+    </div>
+  </div>
+
+  <style>
+    .newsletter-band {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+      gap: var(--sp-7);
+      align-items: center;
+    }
+    .newsletter-band h2 {
+      margin-block: var(--sp-2) var(--sp-3);
+    }
+    .newsletter-band .section-copy {
+      color: var(--ink-3);
+      font-size: var(--text-md);
+      max-width: 46ch;
+    }
+    @media (max-width: 820px) {
+      .newsletter-band {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</section>
