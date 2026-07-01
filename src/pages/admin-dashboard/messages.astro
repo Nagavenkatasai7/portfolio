@@ -1,0 +1,93 @@
+---
+export const prerender = false;
+
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { sql } from '../../lib/db';
+
+interface Message {
+  id: string;
+  name: string;
+  email: string;
+  subject: string | null;
+  message: string;
+  is_spam: boolean;
+  created_at: string;
+}
+
+let messages: Message[] = [];
+let dbError = false;
+try {
+  messages = (await sql`
+    SELECT id, name, email, subject, message, is_spam, created_at
+    FROM contact_messages
+    ORDER BY created_at DESC
+    LIMIT 200`) as unknown as Message[];
+} catch {
+  dbError = true;
+}
+---
+
+<AdminLayout title="Messages" active="messages">
+  {dbError && <p class="notice">Database not configured yet.</p>}
+  {!dbError && messages.length === 0 && <p class="notice">No messages yet.</p>}
+
+  <div class="messages">
+    {
+      messages.map((m) => (
+        <article class="message">
+          <header class="message-head">
+            <strong>{m.name}</strong>
+            <a href={`mailto:${m.email}`}>{m.email}</a>
+            <span class="mono">{new Date(m.created_at).toLocaleString('en-US')}</span>
+          </header>
+          {m.subject && <p class="subject">{m.subject}</p>}
+          <p class="body">{m.message}</p>
+        </article>
+      ))
+    }
+  </div>
+
+  <style>
+    .notice {
+      color: var(--ink-3);
+    }
+    .messages {
+      display: grid;
+      gap: var(--sp-4);
+      max-width: 760px;
+    }
+    .message {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      padding: var(--sp-5);
+      box-shadow: var(--shadow-sm);
+    }
+    .message-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: var(--sp-3);
+      margin-bottom: var(--sp-3);
+    }
+    .message-head a {
+      font-size: var(--text-sm);
+    }
+    .mono {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--ink-4);
+      margin-left: auto;
+    }
+    .subject {
+      font-weight: var(--fw-semibold);
+      color: var(--ink);
+      margin-bottom: var(--sp-2);
+    }
+    .body {
+      color: var(--ink-2);
+      font-size: var(--text-sm);
+      white-space: pre-wrap;
+    }
+  </style>
+</AdminLayout>

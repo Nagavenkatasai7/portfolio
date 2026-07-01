@@ -1,0 +1,172 @@
+---
+// PUBLIC_ env is exposed to the client build. When absent (local dev), the
+// Turnstile widget is omitted and the endpoint skips captcha verification.
+const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undefined;
+---
+
+<form id="contactForm" class="contact-form">
+  <div class="field-row">
+    <label>
+      Name
+      <input name="name" type="text" required autocomplete="name" maxlength="120" />
+    </label>
+    <label>
+      Email
+      <input name="email" type="email" required autocomplete="email" maxlength="200" />
+    </label>
+  </div>
+  <label>
+    Subject
+    <input name="subject" type="text" maxlength="200" />
+  </label>
+  <label>
+    Message
+    <textarea name="message" rows="5" required maxlength="5000"></textarea>
+  </label>
+
+  {/* Honeypot — visually hidden; bots fill it, humans don't. */}
+  <div class="hp" aria-hidden="true">
+    <label>
+      Company
+      <input name="company" type="text" tabindex="-1" autocomplete="off" />
+    </label>
+  </div>
+
+  {siteKey && <div class="cf-turnstile" data-sitekey={siteKey} data-theme="light" />}
+
+  <div class="form-actions">
+    <button type="submit" class="button button-primary">Send message</button>
+    <span id="contactStatus" class="status" role="status" aria-live="polite"></span>
+  </div>
+</form>
+
+{
+  siteKey && (
+    <script
+      is:inline
+      src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+      async
+      defer
+    />
+  )
+}
+
+<script>
+  const loadedAt = Date.now();
+  const form = document.getElementById('contactForm') as HTMLFormElement | null;
+  const statusEl = document.getElementById('contactStatus');
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (statusEl) {
+      statusEl.textContent = 'Sending…';
+      statusEl.className = 'status';
+    }
+    const fd = new FormData(form);
+    const tokenField = form.querySelector<HTMLInputElement>(
+      '[name="cf-turnstile-response"]'
+    );
+    const payload = {
+      name: fd.get('name'),
+      email: fd.get('email'),
+      subject: fd.get('subject'),
+      message: fd.get('message'),
+      company: fd.get('company'),
+      ts: loadedAt,
+      turnstileToken: tokenField?.value ?? undefined,
+    };
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        form.reset();
+        if (statusEl) {
+          statusEl.textContent = 'Thanks — I’ll get back to you soon.';
+          statusEl.className = 'status ok';
+        }
+      } else {
+        if (statusEl) {
+          statusEl.textContent = 'Something went wrong. Please email me directly.';
+          statusEl.className = 'status err';
+        }
+      }
+    } catch {
+      if (statusEl) {
+        statusEl.textContent = 'Network error. Please email me directly.';
+        statusEl.className = 'status err';
+      }
+    }
+  });
+</script>
+
+<style>
+  .contact-form {
+    display: grid;
+    gap: var(--sp-4);
+    max-width: 640px;
+    margin-top: var(--sp-6);
+  }
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-4);
+  }
+  .contact-form label {
+    display: grid;
+    gap: var(--sp-2);
+    font-size: var(--text-sm);
+    font-weight: var(--fw-medium);
+    color: var(--ink-2);
+  }
+  .contact-form input,
+  .contact-form textarea {
+    font: inherit;
+    font-weight: var(--fw-regular);
+    padding: var(--sp-3);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    color: var(--ink);
+    width: 100%;
+  }
+  .contact-form textarea {
+    resize: vertical;
+  }
+  .contact-form input:focus,
+  .contact-form textarea:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-color: var(--accent);
+  }
+  .hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .form-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    flex-wrap: wrap;
+  }
+  .status {
+    font-size: var(--text-sm);
+    color: var(--ink-3);
+  }
+  .status.ok {
+    color: var(--success);
+  }
+  .status.err {
+    color: var(--danger);
+  }
+  @media (max-width: 620px) {
+    .field-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
