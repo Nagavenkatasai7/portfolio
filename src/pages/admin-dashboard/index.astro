@@ -1,0 +1,134 @@
+---
+export const prerender = false;
+
+import AdminLayout from '../../layouts/AdminLayout.astro';
+
+const user = Astro.locals.user;
+
+// Show which owner-provided integrations are wired up (presence only — never
+// the secret values). Helps track Phase 0 setup progress from inside the app.
+const integrations = [
+  { name: 'Database (Neon)', ok: Boolean(process.env.DATABASE_URL) },
+  { name: 'Email (Resend)', ok: Boolean(process.env.RESEND_API_KEY) },
+  { name: 'AI drafting (Anthropic)', ok: Boolean(process.env.ANTHROPIC_API_KEY) },
+  { name: 'Spam (Turnstile)', ok: Boolean(process.env.TURNSTILE_SECRET) },
+  { name: 'Rate limit (Upstash)', ok: Boolean(process.env.UPSTASH_REDIS_REST_URL) },
+  { name: 'Google OAuth', ok: Boolean(process.env.GOOGLE_CLIENT_ID) },
+];
+
+const shortcuts = [
+  { label: 'Write a blog post', href: '/admin-dashboard/posts' },
+  { label: 'View subscribers', href: '/admin-dashboard/subscribers' },
+  { label: 'Review newsletter draft', href: '/admin-dashboard/newsletter' },
+  { label: 'Read messages', href: '/admin-dashboard/messages' },
+];
+---
+
+<AdminLayout title="Overview" active="overview">
+  <p class="greeting">
+    Signed in as <strong>{user?.email}</strong>. This dashboard is private to you.
+  </p>
+
+  <div class="panels">
+    <section class="panel">
+      <h2>Integration status</h2>
+      <ul class="status-list">
+        {
+          integrations.map((i) => (
+            <li>
+              <span class={`dot ${i.ok ? 'ok' : 'off'}`} aria-hidden="true" />
+              <span class="status-name">{i.name}</span>
+              <span class={`state ${i.ok ? 'ok' : 'off'}`}>
+                {i.ok ? 'Connected' : 'Not configured'}
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="panel">
+      <h2>Shortcuts</h2>
+      <div class="shortcuts">
+        {shortcuts.map((s) => <a class="shortcut" href={s.href}>{s.label}</a>)}
+      </div>
+    </section>
+  </div>
+
+  <style>
+    .greeting {
+      color: var(--ink-3);
+      margin-bottom: var(--sp-6);
+    }
+    .panels {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--sp-5);
+    }
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      padding: var(--sp-5);
+      box-shadow: var(--shadow-sm);
+    }
+    .panel h2 {
+      font-size: var(--text-md);
+      font-family: var(--font-sans);
+      font-weight: var(--fw-semibold);
+      margin-bottom: var(--sp-4);
+    }
+    .status-list {
+      display: grid;
+      gap: var(--sp-3);
+    }
+    .status-list li {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      font-size: var(--text-sm);
+    }
+    .status-name {
+      flex: 1;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-full);
+      flex: none;
+    }
+    .dot.ok {
+      background: var(--success);
+    }
+    .dot.off {
+      background: var(--ink-4);
+    }
+    .state {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+    }
+    .state.ok {
+      color: var(--success);
+    }
+    .state.off {
+      color: var(--ink-4);
+    }
+    .shortcuts {
+      display: grid;
+      gap: var(--sp-2);
+    }
+    .shortcut {
+      display: block;
+      padding: var(--sp-3) var(--sp-4);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      font-size: var(--text-sm);
+      color: var(--ink);
+    }
+    .shortcut:hover {
+      border-color: var(--line-strong);
+      background: var(--surface-2);
+      color: var(--ink);
+    }
+  </style>
+</AdminLayout>

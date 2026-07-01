@@ -1,14 +1,26 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 
 // Validates the BUILT homepage. Run `npm run build` first, then this check
 // (see the `test:content` npm script).
 //
+// Once server routes exist, the Vercel adapter relocates prerendered pages to
+// .vercel/output/static/; a pure-static build keeps them in dist/. Check both.
+const candidates = [
+  new URL("../.vercel/output/static/index.html", import.meta.url),
+  new URL("../dist/index.html", import.meta.url),
+];
+const target = candidates.find((u) => existsSync(u));
+if (!target) {
+  console.error("Built homepage not found — run `npm run build` first.");
+  process.exit(1);
+}
+
 // Astro serializes interpolated text, so a literal "&" in content may be
 // emitted as "&amp;" or "&#38;". Decode those back so the brand-content
 // assertions match regardless of serialization — the intent (these strings
 // appear on the page) is preserved.
-const raw = readFileSync(new URL("../dist/index.html", import.meta.url), "utf8");
+const raw = readFileSync(target, "utf8");
 const html = raw
   .replace(/&amp;/g, "&")
   .replace(/&#38;/g, "&")
