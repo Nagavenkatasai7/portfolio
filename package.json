@@ -3,8 +3,19 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Naga Venkata Sai Chennu — portfolio with an 'Ask Naga' AI chatbot (OpenRouter).",
+  "description": "Naga Venkata Sai Chennu — portfolio (Next.js platform) with an 'Ask Naga' AI chatbot (OpenRouter).",
   "scripts": {
-    "dev": "node scripts/dev-server.mjs"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "dev:chatbot": "node scripts/dev-server.mjs"
+  },
+  "dependencies": {
+    "next": "15.5.20",
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
+  },
+  "overrides": {
+    "postcss": "8.5.16"
   }
 }

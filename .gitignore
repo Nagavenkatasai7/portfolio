@@ -8,6 +8,13 @@
 node_modules/
 dist/
 
+# Next.js
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
 # OS / editor
 .DS_Store
 *.log
+npm-debug.log*
