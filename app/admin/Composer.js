@@ -113,9 +113,13 @@ export default function Composer() {
     if (uploading) { setError('Wait for uploads to finish.'); return; }
     setBusy(true);
     const media = items.filter((i) => i.status === 'done').map((i) => i.descriptor);
+    // datetime-local is timezone-naive; interpret it in the BROWSER's local zone
+    // and send a real UTC ISO so the stored published_at matches the owner's intent.
+    let publishedIso;
+    if (publishedAt) { const d = new Date(publishedAt); if (!Number.isNaN(d.getTime())) publishedIso = d.toISOString(); }
     const payload = {
       kind, title, body_md: body, videoUrl, url: pasteUrl,
-      publishNow, published_at: publishedAt || undefined, media,
+      publishNow, published_at: publishedIso, media,
     };
     try {
       const res = await fetch('/api/content/create', {
