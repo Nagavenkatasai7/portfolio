@@ -183,3 +183,111 @@ Later phases: `/admin`, Supabase, an ingestion gate, X automation.
   never runs there).
   Scanning just the code added in this phase (`app/`) separately reports
   zero issues.
+
+# Platform (Phase B) — content backend, ingestion gate, /admin, real /blog
+
+Phase B adds the content platform: a Supabase-backed `content` model, an
+idempotent ingestion gate, a hand-rolled GitHub-OAuth `/admin`, and a real
+`/blog`. Everything fails closed when its env is unset, so the preview build
+is healthy even before the owner supplies secrets.
+
+## Supabase connection — ONE dashboard click still required
+
+The marketplace resource `supabase-citron-school` already exists in the team
+but is **not connected to any project**. The Vercel CLI cannot connect an
+*existing* resource: `vercel integration add` only *provisions a new* resource
+(which the task forbids), and `integration-resource` only has `disconnect`,
+no `connect`. So connection must be done once in the dashboard:
+
+> Vercel → Storage (or Integrations) → `supabase-citron-school` → **Connect
+> Project** → `portfolio` → all environments.
+
+**Watch the env-var collision:** this project already has a Neon integration
+(`neon-teal-queen`) that injects `POSTGRES_URL`, `POSTGRES_PRISMA_URL`,
+`POSTGRES_URL_NON_POOLING`, `PGHOST`, etc. Supabase injects the *same*
+`POSTGRES_*` names. Connect Supabase with a **custom env prefix** (or disconnect
+Neon from `portfolio` if it is unused here) so they don't clash. The app itself
+sidesteps this entirely — it uses `SUPABASE_URL` + `SUPABASE_ANON_KEY` +
+`SUPABASE_SERVICE_ROLE_KEY` over HTTPS, never a bare `POSTGRES_URL`. Only
+migrations use a raw connection string, and `scripts/apply-migrations.mjs`
+**refuses to run against a non-Supabase host**, so it can't touch the Neon DB.
+
+After connecting: `vercel env pull .env.local --environment=development`, then:
+
+```bash
+npm run db:migrate      # applies supabase/migrations/*.sql via psql (needs libpq)
+npm run db:rls-probe    # anon-key PostgREST probe: draft hidden, published visible
+npm run gate:verify     # Part A always; Part B live dedupe when creds present
+```
+
+## Env vars the owner must supply
+
+| Var | Used by | Where |
+| --- | --- | --- |
+| `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` | DB access (gate, /blog, /admin, limiter) | injected by connecting Supabase |
+| `GITHUB_OAUTH_CLIENT_ID`, `GITHUB_OAUTH_CLIENT_SECRET` | GitHub OAuth | GitHub OAuth App |
+| `ADMIN_GITHUB_ID` | admin identity (numeric id, string-compared) | `https://api.github.com/users/<login>` → `id` |
+| `SESSION_SECRET` | encrypted-JWT session key | `openssl rand -hex 32` |
+
+Set the auth vars on **Preview + Production** (and pull to `.env.local` for
+local). The **GitHub OAuth App callback URL** must point at
+`<deployment-origin>/api/auth/callback`:
+
+- Production: `https://chennunagavenkatasai.com/api/auth/callback`
+- Preview: `https://portfolio-git-platform-venkats-projects-d28f24e0.vercel.app/api/auth/callback`
+
+A single GitHub **OAuth App** allows only one callback URL; register a second
+OAuth App (or a GitHub *App*, which allows several) if you need both preview and
+production sign-in. The code derives `redirect_uri` from the request origin, so
+it adapts to whichever host is registered.
+
+## Schema + RLS (supabase/migrations/)
+
+- `content` — heterogeneous rows; dedupe key `UNIQUE (source, external_id)`;
+  index `(status, published_at desc)`; `updated_at` trigger.
+- RLS **on + forced**. anon/authenticated get SELECT only on published,
+  non-deleted rows, and only on non-internal columns (ingested_at/deleted_at
+  withheld by column grant). Public read is the `public_content` view
+  (`security_invoker = true`) — internal columns projected out. No anon write
+  anywhere; all writes go through the service-role `ingest_content` RPC.
+- `analytics_event`, `auth_rate_limit` — RLS on, **no** anon access (service
+  role only). The analytics write endpoint is a later phase.
+
+## Ingestion gate (lib/)
+
+`lib/canonical.js` (pure, unit-tested) canonicalizes URLs — lowercases
+protocol/host, drops `www.`, strips `utm_*`/`si`/`ref`/x's `s`&`t`/etc., sorts
+params, trims trailing slash — to build `external_id`. `lib/gate.js`
+(`import 'server-only'`) upserts via `ingest_content` (INSERT … ON CONFLICT
+(source, external_id) DO UPDATE), never resetting `published_at`. `POST
+/api/ingest` is admin-session gated, Origin-checked, and calls
+`revalidatePath('/blog')` on success.
+
+## Security headers / CSP (middleware.js + next.config.mjs)
+
+Two CSP profiles, because nonce CSP is incompatible with static prerender:
+`/admin/*` (dynamic) gets a strict `script-src 'self' 'nonce-…'
+'strict-dynamic'` (Next stamps every script — verified); `/blog` (static+ISR)
+uses `script-src 'self' 'unsafe-inline'` (documented compromise; its markdown
+bodies are sanitized server-side, so inline-script injection isn't a vector).
+Both add `object-src 'none'`, `frame-ancestors 'none'`, nosniff,
+strict-origin-when-cross-origin, X-Frame-Options DENY. `/api/*` headers come
+from `next.config.mjs`. The legacy `/` and its `vercel.json` headers are
+untouched.
+
+## Verification status
+
+Verified locally against `next build && next start`: build clean; `/`
+byte-identical to `public/index.html` (SHA-256 match); `/blog` renders the
+empty state with correct CSP; `/api/health` ok; `/api/ingest` without a session
+→ 401; `/admin` → 307 to `/admin/login`; `/api/auth/callback` with garbage →
+controlled fail-closed; gate canonicalization/dedupe unit tests pass; markdown
+sanitizer strips script/iframe/svg/style/`on*`/`javascript:`. **Pending the one
+Supabase dashboard click:** applying migrations, the live RLS probe, and the
+seeded-row `/blog` check (scripts are ready and one-command).
+
+## Later-phase upgrades noted, not done here
+
+- The team's unconnected Upstash Redis (`upstash-kv-green-branch`) is a better
+  home for the auth rate limiter than the Postgres table used now.
+- Decide Next 15 → 16 (clears the two pre-existing `next` CVEs).

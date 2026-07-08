@@ -16,6 +16,33 @@ const nextConfig = {
       { source: "/", destination: "/index.html" },
     ];
   },
+  // Security headers for the NEW app routes only. The page routes (/blog,
+  // /admin) get their CSP from middleware.js (nonce-based); here we add the
+  // non-CSP headers for them, and a locked-down CSP for /api (JSON, plus the
+  // controlled HTML error page from the OAuth callback — hence style-src is
+  // left inline-capable so that error page stays legible). The legacy static
+  // site at "/" is untouched: its headers stay in vercel.json.
+  async headers() {
+    const staticSecurity = [
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+      { key: "X-Frame-Options", value: "DENY" },
+    ];
+    return [
+      { source: "/blog/:path*", headers: staticSecurity },
+      { source: "/admin/:path*", headers: staticSecurity },
+      {
+        source: "/api/:path*",
+        headers: [
+          ...staticSecurity,
+          {
+            key: "Content-Security-Policy",
+            value: "default-src 'none'; frame-ancestors 'none'; base-uri 'none'; style-src 'unsafe-inline'",
+          },
+        ],
+      },
+    ];
+  },
   // Nothing in this app uses next/image (legacy images are plain static
   // files under public/; the /blog placeholder doesn't render images
   // either). Disabling image optimization removes the /_next/image route's
