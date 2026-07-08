@@ -10,6 +10,7 @@
     "start": "next start",
     "dev:chatbot": "node scripts/dev-server.mjs",
     "gate:verify": "node scripts/gate-verify.mjs",
+    "verify:phase-c": "node --conditions=react-server scripts/phase-c-verify.mjs",
     "db:migrate": "node scripts/apply-migrations.mjs",
     "db:rls-probe": "node scripts/rls-probe.mjs"
   },

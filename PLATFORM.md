@@ -318,3 +318,167 @@ strips script/iframe/svg/style/`on*`/`javascript:`.
 - The team's unconnected Upstash Redis (`upstash-kv-green-branch`) is a better
   home for the auth rate limiter than the Postgres table used now.
 - Decide Next 15 → 16 (clears the two pre-existing `next` CVEs).
+
+# Platform (Phase C) — /admin dashboard, composer, media uploads, polished /blog
+
+Phase C makes the platform usable end-to-end: a full `/admin` content dashboard,
+a composer that creates every content type, presigned direct-to-storage media
+uploads, and a `/blog` that renders each type well. Everything still fails
+closed when its env is unset, and **every admin write goes through
+`lib/gate.js`** — never a bare insert.
+
+## New migration
+
+- `supabase/migrations/0006_media_bucket.sql` — creates the **`media` Storage
+  bucket**: `public = true`, `allowed_mime_types` = jpeg/png/webp/gif + mp4/webm
+  (**no svg**), `file_size_limit` = 200 MB. Idempotent (`on conflict (id) do
+  update`). The object-read policy on `storage.objects` is best-effort (a DO
+  block that swallows `insufficient_privilege`) — on a *public* bucket anon read
+  is served regardless, and all writes are service-role / signed-token, so the
+  policy is documentation, not a functional requirement. No `comment on schema
+  storage` (the migrating role doesn't own that schema). Applied with the same
+  `npm run db:migrate` runner (needs `psql`/libpq); migrations 0001–0006 are all
+  idempotent, so re-running is safe. **RLS probe re-run after this migration:
+  6/6 still green.**
+
+## The write surface — all through `lib/gate.js`
+
+- `ingestContent(item)` (unchanged) — the dedupe upsert for **create + edit**.
+- `moderateContent(id, { status?, remove? })` (**new**) — the publish/unpublish
+  toggle and "Remove from blog" tombstone. The `ingest_content` RPC deliberately
+  never touches `deleted_at`/`published_at`, so a soft-delete can't go through
+  it; this is a targeted UPDATE on ONE row keyed by primary key (no dedupe/
+  duplication concern — the thing "never bare-insert" protects). Keeping it in
+  `lib/gate.js` keeps that module the single content-write chokepoint.
+- `getContentById(id)` (**new**) — service-role single-row read so an edit can
+  recover a row's identity (`source`/`external_id`/`type`/original
+  `published_at`) and re-ingest without duplicating it.
+
+## Admin API routes (each independently `requireAdmin` + same-origin)
+
+- `POST /api/content/create` — composer submit (blog/newsletter/video/image/
+  paste), builds the item via `lib/compose.js`, writes via `ingestContent`,
+  `revalidatePath('/blog')`. New items default **draft** unless `publishNow`.
+- `POST /api/content/update` — edit title/body/(video URL) of an existing row;
+  preserves identity + original `published_at`; re-ingests.
+- `POST /api/content/moderate` — publish / unpublish / remove (accepts the
+  dashboard's same-origin **form POST** → 303 back to `/admin`, or JSON).
+- `POST /api/media/sign` — validates the DECLARED file (mime allowlist + per-type
+  cap; svg rejected) and returns a **signed upload URL** (service role).
+- `POST /api/media/finalize` — after the browser PUTs bytes straight to Storage,
+  does a small **ranged GET + server-side content-sniff** (magic bytes) to catch
+  a lying Content-Type (e.g. svg bytes under `image/png`); on mismatch the object
+  is deleted and the upload rejected. Returns `{url,type,width,height}`.
+
+Auth ordering in every route: `requireAdmin` → 401 **before** the origin check,
+so an unauthenticated POST is always 401 (verified).
+
+## Composer — how to use it
+
+`/admin/compose` (linked from the dashboard's **+ New post**). Pick a type:
+
+- **Blog post** / **Newsletter** — title + markdown body. `external_id` is a
+  slug generated from the title (+ a short base36 suffix so identical titles
+  don't collide).
+- **Video** — title + a YouTube / Vimeo / direct `.mp4|.webm` URL. Parsed by
+  `lib/video.js`; `/blog` renders YouTube/Vimeo as a **privacy-friendly,
+  sandboxed** `youtube-nocookie` / `player.vimeo` iframe, direct files as
+  `<video>`. `external_id` = canonical video URL (auto-dedupes).
+- **Image** — title + drag-drop/browse image(s). Each file: `sign → direct PUT
+  to Storage → finalize (server sniff)`; only the **public URL + type +
+  dimensions** are stored in `content.media`. Images ≤ 10 MB; **no svg**.
+- **Paste URL** — a LinkedIn or X/Twitter post URL. Source is **auto-detected**
+  from the host (`linkedin_manual` / `x_manual`); `type='text'`; `external_id` =
+  the canonical URL (dedupe is automatic via the gate); optional title + note
+  (markdown) + optional images.
+
+Tick **Publish now** to go straight to published; otherwise it's a draft the
+owner publishes explicitly from the dashboard. Optional publish date (stored UTC).
+
+The dashboard (`/admin`) lists **all** statuses (published/draft/removed) with
+source, type, title, published_at (**UTC + the viewer's local time**), plus
+per-row **Edit / Publish↔Unpublish / Remove(→ Restore)**, status counts, session
+identity, and logout.
+
+## Media upload security (presigned, direct-to-storage)
+
+Bytes **never stream through a serverless function**. Enforcement layers:
+1. `sign` route: declared mime ∈ allowlist, per-type size cap (image ≤ 10 MB,
+   video ≤ 200 MB), **svg rejected**.
+2. Bucket: `allowed_mime_types` + `file_size_limit` reject a mismatched declared
+   type / oversize at the Storage layer.
+3. `finalize` route: **content-sniff of the real magic bytes** server-side —
+   svg/unknown/oversize ⇒ object deleted + 400. `nosniff` is set on all app
+   routes. Only the public URL + type + dimensions land in the DB.
+
+## CSP changes (middleware.js)
+
+- `/admin`: `connect-src` widened to the **Supabase origin** (the direct upload
+  target) and `img/media-src` allow `blob:` (local pre-upload previews). Script
+  policy stays strict nonce + `strict-dynamic`.
+- `/blog`: `frame-src` opened to exactly `https://www.youtube-nocookie.com` and
+  `https://player.vimeo.com` (the only embed hosts the controlled `VideoEmbed`
+  renders); `media-src` allows `https:` for direct `<video>`. Markdown is still
+  sanitized server-side (formatting only — no raw HTML/script/iframe/svg; the
+  sole iframe is the controlled embed component).
+
+## /blog rendering
+
+Reverse-chronological feed off `public_content` (published, non-deleted; ISR
+`revalidate=300` + on-demand `revalidatePath('/blog')` on every gate write).
+Each type renders natively — blog article, newsletter, LinkedIn/X post (note +
+"View on LinkedIn/X ↗"), video embed, image grid — with a **source chip + date**
+in the legacy "Luminous" palette (Georgia serif display, coral mono eyebrow, the
+offset-lime button shadow). Clean "No posts yet" empty state.
+
+## Verification (scripts/phase-c-verify.mjs — `npm run verify:phase-c`)
+
+Runs under `node --conditions=react-server` so it imports the **real**
+server-only `lib/gate.js`. **All 39 assertions PASS** against live Supabase:
+
+- **Build #1 (empty DB)** — `npm run build` clean; `/` **byte-identical** to
+  `public/index.html` (SHA-256, 85 314 bytes); `/admin` → 307 `/admin/login`;
+  `/api/ingest`, `/api/content/{create,update,moderate}`, `/api/media/{sign,
+  finalize}` all **401** without a session; `/blog` shows **"No posts yet"**.
+- **Seed one of each type** through `ingestContent`: blog, newsletter, video,
+  image (via the **real presigned → direct-PUT → sniff** flow: PUT 200, sniff
+  `image/png`, dims 1×1), `linkedin_manual`, `x_manual`, + a **draft**. Dedupe:
+  re-ingesting the X post with a different tracking param **updates the same
+  row** (created:false, count=1). Anon sees the 6 published rows via
+  `public_content` but **not** the draft.
+- **Build #2 (seeded DB)** — every published type renders (blog title + body,
+  newsletter, **youtube-nocookie embed**, **image public URL**, LinkedIn/X chips
+  + original links, all source chips); markdown **sanitized** (`<script>` and
+  `javascript:` stripped, `**bold**` kept); the **draft is absent**.
+- **Cleanup** — all test rows deleted (0 remain) and the test storage object is
+  gone (authoritative storage-API check, not the CDN URL which caches deletes).
+  DB + `media` bucket confirmed empty afterward.
+
+The harness does **cold builds** (clears `.next` first) because Next's on-disk
+Data Cache honours `/blog`'s `revalidate=300` and would otherwise reuse a prior
+build's read across builds — in production the gate's `revalidatePath('/blog')`
+busts that after every write, so this is a harness concern, not a product bug.
+
+`npm install` + `npm run build` clean; `npm audit` 0 vulnerabilities. **No new
+npm dependencies** were added (all new logic is pure JS on existing deps) — so
+Snyk SCA has nothing new to scan.
+
+## Security scan notes (Snyk Code, Phase C)
+
+Scanned after each change. Findings and disposition:
+
+- **SSRF (High), `app/api/media/finalize/route.js`** — `body.path` flowing into
+  `fetch`. **Fixed**: the path is rebuilt from **regex capture groups**
+  (`^(image|video)/\d{4}/\d{2}/[a-z0-9]{1,64}\.[a-z0-9]{1,5}$` — no scheme/host/
+  `..`/`@`/`:` survivable) and the final URL's origin is pinned to the trusted
+  Supabase origin over https before any request leaves the server. **Snyk now
+  reports this cleared.**
+- **DOM XSS (Medium), `app/admin/Composer.js`** — Snyk taints
+  `URL.createObjectURL(file)` flowing into an `<img>/<video src>`. **Reviewed
+  false positive**: the value is a browser-generated `blob:` URL (guarded with
+  `.startsWith('blob:')`), an `<img>/<video src>` is **not** a script-execution
+  sink, and the whole surface is admin-only (`requireAdmin`). A local upload
+  preview is legitimate UX; removing it to satisfy the taint tracker would add
+  no real security. Left in place with the guard.
+- **HTTP-not-HTTPS (Medium), `scripts/dev-server.mjs`** — **pre-existing**, not
+  Phase C code (a loopback-only local dev helper, documented under Phase A).
