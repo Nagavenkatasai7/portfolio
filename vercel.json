@@ -2,7 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "crons": [
-    { "path": "/api/cron/linkedin-sync", "schedule": "0 6 * * *" }
+    { "path": "/api/cron/linkedin-sync", "schedule": "0 6 * * *" },
+    { "path": "/api/cron/newsletter-send", "schedule": "0 13 * * *" }
   ],
   "redirects": [
     { "source": "/intellidoc", "destination": "https://intellidoc-nexus.vercel.app", "permanent": false },

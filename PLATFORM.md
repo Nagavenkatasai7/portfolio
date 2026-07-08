@@ -1173,3 +1173,146 @@ and **route-level** (cold build + `next start` with `RESEND_API_KEY` unset):
 subscribe → 503, a burst trips 429, honeypot → 200 with no row. Full teardown.
 The existing suites (`gate:verify`, `verify:phase-c/d/e`, `db:rls-probe`) still
 pass (Phase N1 is additive; it doesn't touch existing tables/CSP/crons/gate).
+
+# Platform (Phase N2) — "The Field Guide" newsletter: armed-queue sending, delivery webhook, admin studio
+
+Phase N2 turns the N1 signup list into a send pipeline: the admin studio
+(`/admin/newsletter`), the **armed-queue** automatic sender
+(`/api/cron/newsletter-send`), the Resend delivery webhook
+(`/api/newsletter/webhook`), and a per-recipient delivery ledger. Built on
+N1's `lib/newsletter.js` (tokens/suppression) + `lib/email/send.js` (the
+Resend call), plus one new chokepoint, `lib/newsletter_issues.js`. No new npm
+dependency — the webhook signature is verified with `node:crypto` only. See
+`RUNBOOK-NEWSLETTER.md` (Phase N2) for the enable steps.
+
+## Schema (`supabase/migrations/0011_newsletter_issues.sql`)
+
+Three tables, additive, same strict posture as 0010: RLS **enabled +
+forced**, **zero** policies, no anon/authenticated grant — service-role only.
+
+- `newsletter_issue_meta` — one row per issue, PK = the `content` row's id.
+  `subject`/`preheader`/`hero_image_url` + the **armed-queue** lifecycle
+  `status` CHECK in `('draft','approved','sending','sent')`, with
+  `approved_at`/`send_started_at`/`sent_at`/`audience_count` timestamps. A
+  partial index on `approved_at where status='approved'` makes "oldest
+  approved" an index-only lookup.
+- `newsletter_sends` — the per-recipient delivery ledger. `status` CHECK in
+  `('queued','sent','delivered','bounced','complained','failed')`,
+  `provider_message_id` (the Resend id the webhook matches on), `error_note`
+  on failure. `UNIQUE(issue_content_id, subscriber_id)` makes the audience
+  snapshot and every batch re-run idempotent.
+- `newsletter_links` — a link bin (`queued`/`used`/`discarded`) for Phase
+  N3's drafter; pure CRUD only in N2.
+- Seeds a second `sync_state` row named `'newsletter'` so the send cron
+  reuses the 0007 single-flight lock RPCs under a distinct name.
+- **Not yet applied:** authored but not run by the build environment (no
+  `psql`/Supabase creds there). The owner must run `npm run db:migrate`
+  before the studio or cron will work.
+
+## The chokepoint — `lib/newsletter_issues.js` (mirrors `lib/gate.js` / `lib/newsletter.js`)
+
+`import 'server-only'`; every DB access via `getServiceClient()`. All IO
+(`sendFn`, `now`) is dependency-injected so the verify script can drive the
+real write path with a mocked mailer and a fixed clock.
+
+- **Lifecycle:** `ensureIssueMeta` (upsert subject/preheader/hero without
+  touching status), `approveIssue` (draft→approved, atomic guard on
+  `status='draft'`), `disarmIssue` (approved→draft), `pickOldestApproved`
+  (oldest by `approved_at`), `startSending` (atomic approved→sending guard,
+  snapshots ACTIVE subscribers into `queued` ledger rows, records
+  `audience_count`, and publishes the content row so the "read in browser"
+  link resolves from the first batch).
+- **Batch sender**, `runSendBatch({ limit, sendFn, now })`: takes up to
+  `SEND_BATCH_LIMIT` (80) queued rows of the currently-sending issue, renders
+  the markdown **once** per batch (`prepareIssueContent`), sends
+  per-recipient with a freshly minted unsubscribe link each
+  (`renderIssueEmail`), records `provider_message_id`/status per row, never
+  throws (a per-row failure is recorded `failed` and skipped); when zero
+  queued rows remain it flips the issue to `sent`.
+- **`runNewsletterCron`** (the cron's whole cycle): acquires the
+  `'newsletter'` advisory lock; if an issue is `sending`, drains one more
+  batch (any day); else if it's Tuesday in New York (`Intl`-based,
+  DST-correct), picks the oldest approved issue, starts it, and sends its
+  first batch; else no-ops. Always releases the lock and records health in
+  `sync_state`. **Never throws** — internal errors come back as
+  `{ ok:false }`.
+- **`sendNow`** — the admin "Send now": same start+drain path, but
+  immediately and regardless of weekday; refuses if a *different* issue is
+  already sending.
+- **`sendTestIssue`** — single recipient, `[TEST]`-prefixed subject, an
+  unusable placeholder unsub link (no token is minted/rotated for a one-off
+  address).
+- **Webhook helpers:** `updateSendByProviderId` (match a ledger row by
+  Resend's message id, flip its status) and `suppressSubscriber` (permanent
+  `bounced`/`complained`, one-way — N1 already refuses to reactivate these).
+- **`importResendAudience`** — optional, runtime-gated on `RESEND_API_KEY` +
+  `RESEND_AUDIENCE_ID`; idempotent on `lower(email)`; inserts new contacts as
+  `active`/`source='resend-import'`, upgrades a `pending` row to `active`,
+  never reactivates a suppressed/unsubscribed address; fail-soft
+  (`{ ok:false, error }`, never throws).
+- Also: `statsForIssue`/`overallSubscriberStats` (ledger/subscriber counts
+  for the studio), `listIssues`/`listIssuableContent`/`getIssueDetail`
+  (admin listings), `listSubscribers`/`removeSubscriber`/`subscribersToCsv`
+  (owner never hard-deletes — a "remove" is `unsubscribed`), and the
+  link-bin CRUD.
+
+## Email — `lib/email/issue_template.js` + `lib/email/svix.js`
+
+- **`issue_template.js`** renders one issue email in the same visual
+  language as N1's confirmation email (600px table layout, dark header card,
+  lime "FIELD GUIDE" wordmark, inline styles only). The body is the SAME
+  sanitized markdown pipeline `/blog` uses (`lib/markdown.js`);
+  `prepareIssueContent(content)` does the expensive markdown→HTML/text
+  conversion **once per batch**, `renderIssueEmail(...)` cheaply assembles
+  the per-recipient document (only the unsubscribe link differs). Also
+  emits a plain-text twin (`markdownToText`) and the
+  `List-Unsubscribe`/`List-Unsubscribe-Post` headers. Pure rendering, no
+  secrets/DB — importable directly by the verify script.
+- **`svix.js`** verifies Resend's Svix-signed webhooks with **`node:crypto`
+  only** (no `svix` npm dependency): signed content is
+  `${svix-id}.${svix-timestamp}.${rawBody}`, key = base64 portion of
+  `RESEND_WEBHOOK_SECRET` after `whsec_`, expected = `HMAC-SHA256`, compared
+  **constant-time** (`timingSafeEqual`) against every `v1,` candidate in the
+  header (supports secret rotation), timestamps outside **±5 minutes**
+  rejected. Pure + `now`-injectable, so the verify script can build valid/
+  invalid/stale requests without a live endpoint.
+
+## API routes (Node runtime)
+
+- **`GET|POST /api/cron/newsletter-send`** — the scheduled sender.
+  `CRON_SECRET` unset → `503`; wrong/missing bearer → `401` (same
+  constant-time check as `linkedin-sync`); otherwise calls
+  `runNewsletterCron()` and always answers `200` (even on an internal
+  `{ok:false}`, except `server_not_configured` → `503`) — the
+  dead-man's-switch card is the failure signal, not a paging 5xx.
+- **`POST /api/newsletter/webhook`** — Resend delivery events.
+  `RESEND_WEBHOOK_SECRET` unset → `503`; bad/stale/missing signature → `401`.
+  Reads the **raw body** (`request.text()`, not re-serialized JSON) because
+  the signature covers exact bytes. `email.delivered` → ledger `delivered`;
+  `email.bounced`/`email.complained` → ledger status + permanent
+  `suppressSubscriber`; any other event type → `200`, ignored. A post-auth
+  handler error returns `200 {ok:false}` (best-effort — avoids a Resend
+  retry storm on a transient DB hiccup).
+- **`/api/admin/newsletter/{issues,subscribers,subscribers/csv,links}`** —
+  the studio's mutation surface; each route independently re-checks
+  `requireAdmin` + same-origin before touching `lib/newsletter_issues.js`.
+
+## Admin UI — `/admin/newsletter` (`app/admin/newsletter/page.js`)
+
+Server component: redirects to `/admin/login` unless `requireAdmin()`
+verifies the session; on success, loads subscriber stats, the subscriber
+list, all issues (enriched with per-issue delivery stats only for
+`sending`/`sent` issues, to skip the query on drafts), issuable content, the
+link bin, and cron health — all in parallel, all through
+`lib/newsletter_issues.js` — then hands them to the client `NewsletterStudio`
+plus a `config` flag object (`emailConfigured`, `webhookConfigured`,
+`resendAudienceConfigured`, `postalConfigured`) so the UI can show setup
+nudges without re-deriving env state client-side. All writes happen through
+the gated JSON APIs above; this page only reads.
+
+## Cron schedule (`vercel.json`)
+
+One new entry: `{ "path": "/api/cron/newsletter-send", "schedule": "0 13 * * *" }`
+— daily 13:00 UTC (≈9am EDT / 8am EST, accepted). Vercel Hobby's 2-cron limit
+is now fully used (`linkedin-sync` + `newsletter-send`); no more crons
+without a plan upgrade.

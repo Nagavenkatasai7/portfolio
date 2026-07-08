@@ -15,6 +15,7 @@
     "verify:phase-e": "node --conditions=react-server scripts/phase-e-verify.mjs",
     "verify:phase-f": "node --conditions=react-server scripts/phase-f-verify.mjs",
     "verify:newsletter": "node --conditions=react-server scripts/newsletter-verify.mjs",
+    "verify:newsletter-issues": "node --conditions=react-server scripts/newsletter-issues-verify.mjs",
     "linkedin:backfill": "node --conditions=react-server scripts/linkedin-backfill.mjs",
     "db:migrate": "node scripts/apply-migrations.mjs",
     "db:rls-probe": "node scripts/rls-probe.mjs"
