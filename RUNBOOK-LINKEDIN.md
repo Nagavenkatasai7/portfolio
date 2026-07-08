@@ -125,9 +125,12 @@ openssl rand -hex 32 | tr -d '\n' | vercel env add CRON_SECRET production
 vercel --prod
 ```
 
-The cron (`vercel.json` → every 6h, `0 */6 * * *`) runs **only on production**, so
-it stays inert on previews. Until `FGB_READONLY_DATABASE_URL` is set the endpoint
-no-ops; until `CRON_SECRET` is set it returns 503. Both are now set, so it runs.
+The cron (`vercel.json` → daily, `0 6 * * *` — the Vercel **Hobby** plan caps
+crons at once/day; the 7-day overlap window makes daily more than safe) runs
+**only on production**, so it stays inert on previews. Until
+`FGB_READONLY_DATABASE_URL` is set the endpoint no-ops; until `CRON_SECRET` is set
+it returns 503. Both are now set, so it runs. (On a Pro plan you can raise the
+frequency, e.g. `0 */6 * * *`.)
 
 ## Step D — one-time historical backfill
 

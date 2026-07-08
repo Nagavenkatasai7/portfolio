@@ -857,8 +857,9 @@ Built (all dormant until the env var is set):
 - **`app/api/cron/linkedin-sync/route.js`** — CRON_SECRET-guarded (503 if the
   secret is unset, 401 without the bearer). No-ops with a clear "not configured"
   200 when `FGB_READONLY_DATABASE_URL` is unset. `runtime=nodejs` (pg).
-- **`vercel.json` crons** — `/api/cron/linkedin-sync` every 6h. Vercel runs crons
-  only on PRODUCTION, so it is inert on preview (double-safe).
+- **`vercel.json` crons** — `/api/cron/linkedin-sync` daily (`0 6 * * *`; the
+  Hobby plan caps crons at once/day — the 7-day overlap window makes daily safe).
+  Vercel runs crons only on PRODUCTION, so it is inert on preview (double-safe).
 - **`scripts/linkedin-backfill.mjs`** (`npm run linkedin:backfill`) — owner-run
   one-shot: pulls ALL history (no window) through the same gate.
 - **`supabase/migrations/0007_sync_state.sql`** — the lock + health table +
