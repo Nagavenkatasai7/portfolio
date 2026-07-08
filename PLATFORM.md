@@ -118,6 +118,12 @@ Verified on that preview:
   `public/`.
 - `/` serves the legacy page byte-identical — the SHA-256 of the response
   body matches both `public/index.html` and the live production site.
+  (Update 2026-07-08: first intentional edit to `public/index.html` — a "Blog"
+  header-nav link (`<a href="/blog">`) was added. `/` still matches
+  `public/index.html` by SHA-256 (the verify scripts compare served `/` to the
+  committed local file, so they stay green), but it no longer matches the
+  pre-cutover production site until cutover. New baseline SHA-256
+  `500a5823…6903`, 85 356 bytes; the rest of the file is unchanged.)
 - `/api/health` → `{"ok":true}`; `/blog` renders correctly; static assets
   (`profile.png`, `chatbot.js`) serve byte-exact; `vercel.json` redirects
   work (e.g. `/intellidoc`); and the legacy root `api/chat` function **is**

@@ -232,6 +232,11 @@ async function seedAll() {
 }
 
 async function assertFailClosed(baselinePublished) {
+  // BASELINE (2026-07-08): public/index.html was intentionally edited for the first
+  // time — a "Blog" header-nav link (<a href="/blog">) was added; nothing else changed.
+  // New baseline SHA-256 500a5823…6903, 85356 bytes. This check is self-referential
+  // (served "/" vs the COMMITTED local file) so it stays green; the byte-parity-WITH-
+  // PRODUCTION guarantee is superseded until cutover (prod serves the pre-Blog page).
   // / byte-identical to public/index.html
   const rootRes = await curl('/');
   const rootBody = Buffer.from(await rootRes.arrayBuffer());
