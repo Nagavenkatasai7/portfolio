@@ -329,11 +329,12 @@ async function main() {
     const home = await curl('/');
     const homeHtml = await home.text();
     ok('chatbot /: no restrictive CSP header on the legacy home', !home.headers.get('content-security-policy'));
-    // BASELINE (2026-07-08): public/index.html was intentionally edited for the first
-    // time — a "Blog" header-nav link (<a href="/blog">) was added; nothing else changed.
-    // New baseline SHA-256 500a5823…6903, 85356 bytes. This check is self-referential
-    // (served "/" vs the COMMITTED local file) so it stays green; the byte-parity-WITH-
-    // PRODUCTION guarantee is superseded until cutover (prod serves the pre-Blog page).
+    // BASELINE (2026-07-08): public/index.html has had a further intentional edit — the
+    // "The Field Guide" newsletter signup <section id="newsletter"> (+ its scoped styles and
+    // inline enhancement script) was added after the Proof section; the earlier edit added
+    // the "Blog" header-nav link (9ca809e). New baseline SHA-256 2efa1f24…d227, 91377 bytes.
+    // This check is self-referential (served "/" vs the COMMITTED local file) so it stays
+    // green; the byte-parity-WITH-PRODUCTION guarantee is superseded until cutover.
     // / byte-identical to public/index.html
     const idx = readFileSync(join(ROOT, 'public', 'index.html'));
     ok('/ byte-identical to public/index.html', sha256hex(homeHtml) === sha256hex(idx.toString()), `${Buffer.byteLength(homeHtml)} vs ${idx.length} bytes`);

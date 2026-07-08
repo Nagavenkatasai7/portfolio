@@ -118,12 +118,13 @@ Verified on that preview:
   `public/`.
 - `/` serves the legacy page byte-identical — the SHA-256 of the response
   body matches both `public/index.html` and the live production site.
-  (Update 2026-07-08: first intentional edit to `public/index.html` — a "Blog"
-  header-nav link (`<a href="/blog">`) was added. `/` still matches
-  `public/index.html` by SHA-256 (the verify scripts compare served `/` to the
-  committed local file, so they stay green), but it no longer matches the
-  pre-cutover production site until cutover. New baseline SHA-256
-  `500a5823…6903`, 85 356 bytes; the rest of the file is unchanged.)
+  (Update 2026-07-08: two intentional edits to `public/index.html` — first a "Blog"
+  header-nav link (`<a href="/blog">`, 9ca809e), then the "The Field Guide"
+  newsletter signup `<section id="newsletter">` inserted after the Proof section
+  (Phase N1). `/` still matches `public/index.html` by SHA-256 (the verify scripts
+  compare served `/` to the committed local file, so they stay green), but it no
+  longer matches the pre-cutover production site until cutover. New baseline SHA-256
+  `2efa1f24…d227`, 91 377 bytes.)
 - `/api/health` → `{"ok":true}`; `/blog` renders correctly; static assets
   (`profile.png`, `chatbot.js`) serve byte-exact; `vercel.json` redirects
   work (e.g. `/intellidoc`); and the legacy root `api/chat` function **is**
@@ -1046,3 +1047,129 @@ Applied migrations `0001`–`0009` to live Supabase via `npm run db:migrate`
 - **Snyk Code (SAST)**: **zero findings in any changed file**; the only 2 issues
   are the same pre-existing, documented ones (`app/admin/Composer.js` `blob:`
   preview reviewed false positive; `scripts/dev-server.mjs` loopback dev helper).
+
+# Platform (Phase N1) — "The Field Guide" newsletter: public signup + double opt-in
+
+Phase N1 adds the newsletter *foundation*: a public signup form (homepage +
+`/blog`), a double-opt-in confirmation flow, and unsubscribe — all funneled
+through one server-only chokepoint. **Admin list UI, issue sending, and
+bounce/complaint webhooks are Phase N2 and are deliberately NOT built here.** No
+new npm dependency (Resend is called via native `fetch`); the feature is
+**dormant** (fails closed with a `503`) until `RESEND_API_KEY` is set — so the
+preview build is healthy before the owner supplies the key. See
+`RUNBOOK-NEWSLETTER.md` for the enable steps.
+
+## Schema + RLS (`supabase/migrations/0010_newsletter_subscribers.sql`)
+
+- `newsletter_subscribers` — the list. `status` CHECK in
+  `('pending','active','unsubscribed','bounced','complained')`; a functional
+  **UNIQUE index on `lower(email)`** (case-insensitive, one row per address);
+  hashed confirm + unsub tokens (`confirm_token_hash`/`unsub_token_hash` — only
+  the SHA-256 hex is stored, never the raw); `confirm_expires_at` (7-day) +
+  `confirm_sent_at` (throttles re-sends to ≤1/hour); `source` + a salted
+  `ip_hash` (no raw IP). **RLS on + FORCED, with NO anon/authenticated policy or
+  grant at all** — the strictest table in the schema (it is PII). All access is
+  service-role only, via `lib/newsletter.js`. Additive: touches no existing
+  table/view/RPC. Applied to live Supabase via `npm run db:migrate` (migrations
+  0001–0010 are all idempotent; re-running is safe).
+
+## The chokepoint — `lib/newsletter.js` (mirrors `lib/gate.js`)
+
+`import 'server-only'`; every DB access via `getServiceClient()`. Three functions:
+`subscribeEmail`, `confirmToken`, `unsubscribeToken`.
+
+- **Anti-enumeration:** `subscribeEmail({email, source, ipHash, sendFn})` ALWAYS
+  returns the same generic `{ ok:true }` for any valid email — the endpoint leaks
+  nothing about who is on the list. What happens internally is decided by the
+  address's status: none → insert `pending` + send confirm; `pending` → re-send
+  at most once/hour; `active` → nothing; `unsubscribed` → re-open (`pending`) +
+  send confirm; `bounced`/`complained` → nothing (permanent suppression, protects
+  sender reputation). A transient send failure is swallowed (the row is persisted
+  and re-sendable) so even a Resend outage can't make the response differ by
+  address; a `NotConfigured` error is rethrown so the route fails closed (503).
+- **Tokens:** 32 random bytes → base64url in the emailed LINK; only the SHA-256
+  hex is stored. Confirm token 7-day expiry. Because only the hash is stored, a
+  re-sent confirmation mints fresh tokens (the raw is needed to build the link) —
+  so the unsub token has no expiry but is rotated whenever a confirmation is
+  (re)sent.
+- **`sendFn` is dependency-injected** — the route passes the real
+  `lib/email/send.js#sendConfirmationEmail`; the verify script passes a mock, so
+  Resend is NEVER called from a test.
+- **Deliberate deviation (documented):** the confirm flow does **not** null the
+  token hash on success. The N1 spec asked for both "null the hash (single-use)"
+  and a "repeat confirm → `already:true`" test, which are mutually exclusive with
+  hash-only lookup (a nulled hash makes the repeat lookup miss). Single-use is
+  instead enforced by the `pending → active` status guard (a repeat click is an
+  idempotent no-op → `{ ok:true, already:true }`), which is what keeps the link
+  idempotent-friendly. The token grants nothing once the row is `active`.
+
+## Email — `lib/email/send.js` (Resend via native fetch, no SDK)
+
+`sendEmail({to,subject,html,text,headers})` POSTs to `https://api.resend.com/emails`
+with `RESEND_API_KEY`; `from` = `NEWSLETTER_FROM` or the Field Guide default;
+missing key → typed `NotConfiguredError`. `confirmationEmail()` is a branded,
+email-safe template (table layout + inline CSS, 600px, dark header card with the
+lime accent — the "Luminous" palette) + a plain-text twin; subject **"Confirm
+your Field Guide subscription"**, one confirm button, a plain-URL fallback, and a
+footer with unsubscribe + "didn't sign up? ignore this." A `List-Unsubscribe`
+header rides along (RFC 8058 one-click is Phase N2).
+
+## API routes (Node runtime)
+
+- **`POST /api/newsletter/subscribe`** — public. Accepts JSON (homepage fetch) OR
+  form-encoded (progressive enhancement → **303 to `/newsletter/pending`**).
+  `website` is a honeypot (filled → generic ok, no work). Order: parse (4 KB cap)
+  → honeypot → **per-IP rate limit (5/10 min)** reusing `hashIp` (salted, no raw
+  IP) + the existing Postgres limiter at `route='newsletter:subscribe'` → the
+  dormant `RESEND_API_KEY` gate (**503**) → validate + subscribe. The rate limit
+  runs BEFORE the 503 gate so the endpoint is protected (and testable) even when
+  email is unconfigured. Never reveals whether an email exists.
+- **`GET /api/newsletter/confirm?token=`** → `confirmToken` → 303 to
+  `/newsletter/confirmed`, or `/newsletter/pending?state=expired` on bad/expired.
+- **`GET|POST /api/newsletter/unsubscribe?token=`** → `unsubscribeToken` → GET
+  303s to `/newsletter/unsubscribed`; POST returns 200 JSON (RFC 8058 one-click
+  seam for N2). Never errors.
+
+## Pages (App Router, Luminous tokens, `noindex`)
+
+`app/newsletter/{pending,confirmed,unsubscribed}/page.js` + a shared
+`app/newsletter/ui.js` (`NEWSLETTER_CSS` + `NewsletterShell`) — the same inline-
+`<style>` token approach as `/blog`, scoped under `.nl`. Small, on-brand, link
+back to `/` and `/blog`. `/newsletter/pending` reads `?state=expired` to show the
+"link expired — sign up again" variant. **CSP note:** these routes are NOT in the
+`middleware.js` matcher or the `next.config.mjs` header config, so — like the
+legacy `/` — they carry no CSP (they are static, `noindex`, no user input, no
+scripts); in production they still get the baseline security headers from
+`vercel.json`'s `/(.*)` block. This keeps the existing CSP untouched.
+
+## Homepage + `/blog` signup
+
+- **`public/index.html`** — a new `<section id="newsletter">` inserted **after the
+  Proof section** (the site's own inline-CSS conventions; scoped styles added
+  beside the Proof rules + one responsive rule). Eyebrow `THE FIELD GUIDE · EVERY
+  TUESDAY`, the specified heading/body/CTA copy, email input + the site's pill +
+  hard-lime-offset button, honeypot, and an aria-live status line. A small inline
+  script (the `/` page has no CSP — documented compromise) does a `fetch` POST
+  with inline success/error states; **no-JS falls back to a normal form POST**
+  (the route handles form-encoded + 303-redirects). This is a further intentional
+  edit to `public/index.html` after the Blog-nav link (9ca809e). New baseline
+  **SHA-256 `2efa1f24…d227`, 91 377 bytes**; the byte-identity verify assertions
+  are self-referential (served `/` vs the committed file) so they stay green — the
+  doc baselines in `scripts/phase-c/d/e-verify.mjs` were updated to the new value.
+- **`/blog`** — a compact `SignupBox` at the bottom of the feed (`app/blog/render.js`
+  atom + scoped CSS in `BLOG_CSS`), a plain progressive form POSTing to the same
+  shared route (CSP-safe: `/blog` allows `form-action 'self'`).
+
+## Verification — `scripts/newsletter-verify.mjs` (`npm run verify:newsletter`)
+
+`node --conditions=react-server` so it imports the REAL `lib/newsletter.js`.
+Resend is NEVER called (DI'd mock `sendFn`). Covers, against live Supabase:
+new → pending + hashed token + email; confirm → active; repeat confirm → already;
+unsub → unsubscribed; re-subscribe after unsub → pending; active/complained/
+bounced re-subscribe → ok with NO email; pending re-send throttle (≤1/hour); token
+expiry; enumeration shape (identical response new vs existing) + invalid-email;
+an **RLS probe** (anon PostgREST cannot SELECT or INSERT `newsletter_subscribers`);
+and **route-level** (cold build + `next start` with `RESEND_API_KEY` unset):
+subscribe → 503, a burst trips 429, honeypot → 200 with no row. Full teardown.
+The existing suites (`gate:verify`, `verify:phase-c/d/e`, `db:rls-probe`) still
+pass (Phase N1 is additive; it doesn't touch existing tables/CSP/crons/gate).

@@ -99,6 +99,31 @@ export function PostPermalink({ id, label = 'Open post →' }) {
   return <div className="permalink"><a href={postPath(id)}>{label}</a></div>;
 }
 
+// Compact "The Field Guide" signup box for the bottom of the /blog index. A
+// plain progressive form (no client JS needed) that POSTs to the shared
+// same-origin subscribe route (form-encoded -> 303 to /newsletter/pending); the
+// route runs the same honeypot + per-IP rate limit as the homepage form. The
+// `website` input is a visually-hidden honeypot.
+export function SignupBox() {
+  return (
+    <section className="signup" aria-labelledby="signup-h">
+      <p className="signup-eyebrow">The Field Guide · Every Tuesday</p>
+      <h2 id="signup-h">Get the newsletter</h2>
+      <p className="signup-copy">One email a week: the three or four AI stories that actually matter, in plain English. Free — one click to unsubscribe.</p>
+      <form className="signup-form" method="POST" action="/api/newsletter/subscribe">
+        <input type="hidden" name="source" value="blog" />
+        <div className="hp" aria-hidden="true">
+          <label htmlFor="nl-website-blog">Leave this field empty</label>
+          <input id="nl-website-blog" type="text" name="website" tabIndex={-1} autoComplete="off" />
+        </div>
+        <label className="vh" htmlFor="nl-email-blog">Email address</label>
+        <input id="nl-email-blog" type="email" name="email" required placeholder="you@example.com" autoComplete="email" />
+        <button type="submit" className="signup-btn">Subscribe</button>
+      </form>
+    </section>
+  );
+}
+
 export const BLOG_CSS = `
   .blog {
     --ink: #171411; --ink-soft: #423b34; --muted: #756b62;
@@ -234,4 +259,30 @@ export const BLOG_CSS = `
   .blog .foot a { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--ink); border-radius: 999px; padding: 10px 20px; font-weight: 800; font-size: 14px; background: var(--surface); }
   .blog .foot a:hover { transform: translateY(-2px); box-shadow: 0 12px 26px rgba(23,20,17,.12); }
   .blog .count { font-family: var(--mono); font-size: 12px; color: var(--muted); margin: 14px 0 0; text-align: center; }
+
+  /* Compact newsletter signup box (bottom of the feed) */
+  .blog .signup {
+    margin-top: 44px; border: 1px solid var(--line); background: var(--surface);
+    border-radius: var(--radius); box-shadow: var(--shadow); padding: 30px 28px; text-align: center;
+  }
+  .blog .signup-eyebrow {
+    font-family: var(--mono); font-size: 11px; font-weight: 800; letter-spacing: .13em;
+    text-transform: uppercase; color: var(--coral); margin: 0 0 8px;
+  }
+  .blog .signup h2 { font-family: var(--serif); font-size: 24px; font-weight: 700; margin: 0 0 8px; }
+  .blog .signup-copy { color: var(--muted); font-size: 15px; margin: 0 auto 18px; max-width: 48ch; }
+  .blog .signup-form { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; max-width: 460px; margin: 0 auto; }
+  .blog .signup-form input[type=email] {
+    flex: 1 1 220px; min-width: 0; padding: 11px 15px; border: 1px solid var(--ink);
+    border-radius: 999px; font-size: 15px; font-family: var(--sans); background: var(--paper); color: var(--ink);
+  }
+  .blog .signup-form input[type=email]:focus-visible { outline: 2px solid var(--lime); outline-offset: 2px; }
+  .blog .signup-btn {
+    border: 1px solid var(--ink); border-radius: 999px; padding: 11px 22px; font-weight: 800; font-size: 14px;
+    color: #fff; background: var(--ink); box-shadow: 5px 5px 0 var(--lime); cursor: pointer;
+    transition: transform 160ms var(--ease);
+  }
+  .blog .signup-btn:hover { transform: translateY(-2px); }
+  .blog .hp { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+  .blog .vh { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 `;

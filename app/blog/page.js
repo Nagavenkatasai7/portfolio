@@ -12,7 +12,7 @@
 import { getAnonServerClient } from '@/lib/supabase/server';
 import { renderMarkdown } from '@/lib/markdown';
 import {
-  BLOG_CSS, SOURCE, formatDate, OriginalLink, ThreadView, PostMedia, PostPermalink,
+  BLOG_CSS, SOURCE, formatDate, OriginalLink, ThreadView, PostMedia, PostPermalink, SignupBox,
 } from './render';
 
 export const metadata = {
@@ -92,6 +92,8 @@ export default async function BlogPage() {
             <div className="foot"><a href="/">← Back to portfolio</a></div>
           </>
         )}
+
+        <SignupBox />
       </div>
     </div>
   );

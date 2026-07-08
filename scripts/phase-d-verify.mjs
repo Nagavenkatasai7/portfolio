@@ -334,11 +334,12 @@ async function assertFailClosed() {
   console.log('\n-- fail-closed surface --');
   const rootRes = await curl('/');
   const rootBody = Buffer.from(await rootRes.arrayBuffer());
-  // BASELINE (2026-07-08): public/index.html was intentionally edited for the first
-  // time — a "Blog" header-nav link (<a href="/blog">) was added; nothing else changed.
-  // New baseline SHA-256 500a5823…6903, 85356 bytes. This check is self-referential
-  // (served "/" vs the COMMITTED local file) so it stays green; the byte-parity-WITH-
-  // PRODUCTION guarantee is superseded until cutover (prod serves the pre-Blog page).
+  // BASELINE (2026-07-08): public/index.html has had a further intentional edit — the
+  // "The Field Guide" newsletter signup <section id="newsletter"> (+ its scoped styles and
+  // inline enhancement script) was added after the Proof section; the earlier edit added
+  // the "Blog" header-nav link (9ca809e). New baseline SHA-256 2efa1f24…d227, 91377 bytes.
+  // This check is self-referential (served "/" vs the COMMITTED local file) so it stays
+  // green; the byte-parity-WITH-PRODUCTION guarantee is superseded until cutover.
   const fileSha = sha256(readFileSync(join(ROOT, 'public', 'index.html')));
   ok('/ is byte-identical to public/index.html', sha256(rootBody) === fileSha, `(${rootBody.length} bytes)`);
 
