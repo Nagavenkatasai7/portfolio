@@ -655,3 +655,172 @@ admin-only) and the `scripts/dev-server.mjs` local-dev HTTP helper (Phase A).
 `npm install` + `npm run build` clean; `npm audit` **0 vulnerabilities**. **No
 new npm dependencies** (all new logic is pure JS reusing existing deps; the
 OpenRouter key reuses the existing `OPENROUTER_API_KEY`).
+
+# Platform (Phase E) — public distribution, analytics, ops hardening
+
+Phase E makes `/blog` a first-class **published surface** (per-post pages, SEO,
+RSS, sitemap, robots), adds **our-own, privacy-friendly view analytics** with an
+admin dashboard, and finalizes the **security response headers** — all without a
+new npm dependency, without a new *required* env var, and without touching the
+"Ask Naga" chatbot, the `/blog` video embeds, or the `/admin` uploads.
+
+## New files (all first-party, pure/server-only as marked)
+
+- `lib/post.js` — PURE: a post's public path (`/blog/<id>`), title, and a
+  sanitized meta description, derived ONE way for the feed, per-post page, RSS,
+  sitemap, and the verify script (so links/titles can never drift apart).
+- `lib/site.js` — the deployment's base URL for absolute SEO URLs (optional
+  `NEXT_PUBLIC_SITE_URL` → Vercel system vars → localhost) + `originFromHeaders`.
+- `lib/analytics.js` — server-only: IP hashing, bot/DNT filters, the dedupe
+  cookie, the published-id whitelist, and the view write. **No PII.**
+- `lib/analytics_aggregate.js` — PURE aggregation (unit-tested by the verify).
+- `app/api/analytics/view/route.js` — the public POST beacon.
+- `app/blog/[id]/page.js` — per-post page + full SEO + JSON-LD + the beacon.
+- `app/blog/render.js` — shared `/blog` rendering atoms (extracted from the feed
+  so per-post + feed render identically; the feed markup is unchanged).
+- `app/blog/rss.xml/route.js`, `app/sitemap.js`, `app/robots.js`.
+- `app/admin/analytics/page.js` — the dashboard (requireAdmin).
+- `scripts/phase-e-verify.mjs` (`npm run verify:phase-e`).
+
+## Blog analytics — privacy stance + abuse model
+
+**We log our own page views only. No third-party trackers, no PII.** A recorded
+view is a single `analytics_event` row: `{ content_id, kind:'view', path }` —
+there is **no IP, no user-agent, no visitor identity** stored, ever. (Third-party
+/ platform metrics — LinkedIn, X, YouTube — need paid APIs and are out of scope.)
+
+Flow: a tiny inline script on `/blog/<id>` POSTs the post's uuid to
+`POST /api/analytics/view`. The endpoint layers abuse controls so that **abuse
+fails closed** and **infrastructure hiccups fail open** (a 204 no-op — analytics
+can never break the page it measures):
+
+1. **DNT / GPC** (`DNT:1` / `Sec-GPC:1`) → silent 204 no-op. The client script
+   also self-suppresses on `navigator.doNotTrack` / `globalPrivacyControl`.
+2. **Bot filter** — a broad crawler/monitor/library UA regex; a missing/short UA
+   is treated as a bot → 204.
+3. **Same-origin** — a present `Origin` must match the host (blocks cross-site
+   inflation) → 403; a stripped `Origin` is allowed (other controls still gate).
+4. **Payload whitelist** — the body must be a **known published** content uuid.
+   Malformed → 400; unknown → 404. (Enforced by a service-role lookup.)
+5. **Per-IP burst limit** — reuses the **existing Postgres limiter**
+   (`lib/auth/ratelimit.js`, `auth_rate_limit` table) at `route='analytics:view'`,
+   `40 / 10 min`. **The IP is salted-hashed before it touches the DB** — the raw
+   IP is never stored. Over-limit → 429; a limiter *error* → 204 (fail open).
+   Salt reuses `SESSION_SECRET` (falls back to `SUPABASE_SERVICE_ROLE_KEY`) — **no
+   new env var**.
+6. **Per-day dedupe** — a short `av` httpOnly cookie remembers the post ids seen
+   today; a repeat → `200 {deduped:true}` and no new row.
+
+No schema migration was needed — the `analytics_event` table from
+`0004_analytics_rate_limit.sql` already had every column used (`add a migration
+only if a column is missing`). It stays RLS-locked / service-role-only.
+**Future upgrade (noted, not done):** move the rate limiter to the unconnected
+Upstash Redis resource; add a `visitor_hash` column + unique index for
+DB-enforced dedupe and a true unique-visitor metric.
+
+### `/admin/analytics` (requireAdmin)
+
+Server-rendered from `analytics_event` (service role), joined to `content` for
+titles/type/source. **No client JS** (the chart is inline SVG with native
+`<title>` hover tooltips — clean under the strict `/admin` nonce CSP). Shows:
+totals (30-day window), last-7-day + peak-day tiles, a 30-day single-series bar
+timeline, per-source and per-type breakdowns, and a per-post table. The
+aggregation math is the pure `lib/analytics_aggregate.js` (unit-tested), so the
+numbers on the dashboard are the numbers the verify asserts.
+
+## Syndication + SEO
+
+- **RSS 2.0** at `/blog/rss.xml` — published public content only (reads the same
+  anon `public_content` surface, so drafts/removed can't appear and no internal
+  column leaks), newest first, escaped, `application/rss+xml` + CDN cache headers.
+- **`/sitemap.xml`** — blog index + each published post (Next metadata route).
+- **`/robots.txt`** — `Allow: /` + `/blog`, **`Disallow: /admin` + `/api`**,
+  `Sitemap:` pointer.
+- **Per-post SEO** on `/blog/<id>`: title + sanitized meta description, canonical
+  URL, **Open Graph + Twitter Card**, **JSON-LD `BlogPosting`**, and a
+  `<link rel="alternate" type="application/rss+xml">`. Default OG image reuses the
+  existing `public/profile.png` (no image generator). `metadataBase` is set in
+  the root layout so all of these resolve to absolute URLs.
+- Per-post URLs are keyed on the **content uuid** (not a title-slug) so they are
+  well-defined for every content type and stable across edits; the same id is the
+  analytics whitelist key and the RSS `<guid>`. (Readable slugs = a future nicety.)
+
+## Header policy (finalized)
+
+Non-CSP security headers live in **`next.config.mjs`** (app routes — so
+`next start` emits them and the verify can assert them) with the **identical**
+HSTS + Permissions-Policy values mirrored in **`vercel.json`** (`/(.*)` — so the
+legacy `/` + static assets get them at the edge; identical values ⇒ any overlap
+is a no-op):
+
+- **HSTS**: `Strict-Transport-Security: max-age=63072000; includeSubDomains`
+  (2y, **no `preload`** — reversible/safe). Note: `includeSubDomains` is safe on
+  the all-HTTPS Vercel domains; **review before adding any non-HTTPS subdomain**.
+- **Permissions-Policy**: locks camera/mic/geolocation/payment/usb/sensors/
+  browsing-topics to nobody, while **explicitly allow-listing** self +
+  youtube-nocookie + vimeo for the four features the `/blog` `VideoEmbed` uses
+  (autoplay/fullscreen/encrypted-media/picture-in-picture) — so **embeds keep
+  working**.
+- `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`,
+  `X-Frame-Options: DENY` (+ `frame-ancestors 'none'` in the CSP).
+
+**CSP is unchanged** (Phase B–D `middleware.js` + `next.config.mjs`). The verify
+asserts the chatbot/embeds/uploads paths survive: `/blog` keeps `connect-src
+'self'` (the beacon + the chatbot's same-origin fetch pattern) and `frame-src`
+youtube-nocookie/vimeo; `/admin` keeps its nonce + Supabase `connect-src` + `blob:`
+img/media (uploads); `/api` keeps `default-src 'none'`; and `/` (the chatbot host)
+still carries **no restrictive CSP**. `/` remains **byte-identical** to
+`public/index.html`.
+
+## Ops follow-ups for the owner (docs only — not changed here)
+
+- **Set up Vercel billing / spend alerts** (Usage → Notifications) so the free/
+  hobby limits or a traffic spike can't surprise-bill.
+- **Keep preview deployments protected** — leave **Vercel Authentication** on for
+  Preview so the `platform` preview (which exposes `/admin` + the analytics
+  endpoint) isn't publicly reachable before you intend it.
+- **Rotate the `OPENROUTER_API_KEY`** — it was used in local dev; rotate it in
+  OpenRouter + update the Vercel env before any public launch.
+- If you later add the apex domain, set **`NEXT_PUBLIC_SITE_URL`** to it for the
+  nicest canonical/OG URLs (optional — Vercel system vars are the fallback).
+
+## Verification — `scripts/phase-e-verify.mjs` (`npm run verify:phase-e`)
+
+Runs the pure aggregation/helper unit tests, then seeds a **published + draft +
+removed** post through the real gate, does a cold `next build && next start`, and
+asserts over real HTTP (**91 PASS / 0 FAIL**):
+
+- RSS is valid XML with the published post (correct pubDate/guid/link), and
+  **excludes** the draft, the removed, and any internal/admin column.
+- sitemap lists the published post only; robots disallows `/admin` + `/api`.
+- a published post's HTML carries OG + Twitter + JSON-LD `BlogPosting` +
+  canonical + the RSS alternate link + the beacon; draft/removed/malformed → 404.
+- `POST /api/analytics/view`: a valid id → 200 + **exactly one** row; a repeat →
+  deduped (no row); a burst → **429 at N=40**; unknown → 404; malformed → 400;
+  bot UA / DNT → 204 skip; cross-site Origin → 403; and **no raw IP is stored**
+  (the limiter holds only the salted hash; `analytics_event` has no ip/ua column).
+- headers: HSTS + Permissions-Policy (camera/mic/geo locked, embed hosts still
+  delegated) + nosniff/referrer/frame; **CSP regression**: `/blog` connect-src
+  'self' + youtube/vimeo frame-src, `/admin` Supabase connect-src + blob:, `/api`
+  default-src 'none', `/` no CSP; `/` byte-identical.
+- `/admin/analytics` → 307 → `/admin/login` without a session (fail-closed).
+- clean teardown (every seeded/analytics/limiter row removed).
+
+**No regressions**: `db:rls-probe`, `gate:verify`, `verify:phase-c`,
+`verify:phase-d` all still **ALL PASS** after the Phase E changes.
+
+## Security scan notes (Snyk Code + gitleaks, Phase E)
+
+Snyk Code (SAST) on the full project: **zero findings in new Phase E code**
+(including every `dangerouslySetInnerHTML` — all are server-side with sanitized/
+controlled content: `renderMarkdown` output, `JSON.stringify`'d JSON-LD with `<`
+escaped, and a server-validated uuid in the beacon). The only 2 findings are the
+**same pre-existing, unchanged** ones documented under Phases C/D
+(`app/admin/Composer.js` reviewed `blob:`-preview false positive; the
+`scripts/dev-server.mjs` local-dev HTTP helper) — neither is Phase E code.
+
+**gitleaks** `git` (history, 34 commits) → **no leaks**. `.env.local` is
+gitignored and **untracked**; only `.env.local.example` is committed. (A
+`gitleaks dir` disk scan flags 137 hits, **all in gitignored `.next/` (127) +
+`.env.local` (10)** — nothing tracked.) `npm audit`: **0 vulnerabilities**.
+**No new npm deps; no new required env var** (`NEXT_PUBLIC_SITE_URL` is optional).

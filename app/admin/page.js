@@ -112,6 +112,7 @@ export default async function AdminPage({ searchParams }) {
           <div className="row-actions">
             <a className="btn primary" href="/admin/compose">+ New post</a>
             <a className="btn" href="/admin/x">✕ X studio</a>
+            <a className="btn" href="/admin/analytics">Analytics</a>
             <a className="btn" href="/blog">View /blog</a>
             <a className="btn" href="/">Portfolio</a>
             {/* Mutating => real form POST so the strict-sameSite cookie + Origin check apply. */}

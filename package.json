@@ -12,6 +12,7 @@
     "gate:verify": "node scripts/gate-verify.mjs",
     "verify:phase-c": "node --conditions=react-server scripts/phase-c-verify.mjs",
     "verify:phase-d": "node --conditions=react-server scripts/phase-d-verify.mjs",
+    "verify:phase-e": "node --conditions=react-server scripts/phase-e-verify.mjs",
     "db:migrate": "node scripts/apply-migrations.mjs",
     "db:rls-probe": "node scripts/rls-probe.mjs"
   },
