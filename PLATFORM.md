@@ -101,8 +101,34 @@ npm run dev:chatbot                # scripts/dev-server.mjs, per CHATBOT_SETUP.m
 
 `next dev`/`next start` do **not** serve `/api/chat` — that endpoint only
 exists as a Vercel Edge Function once actually deployed to Vercel, or via
-the standalone dev server above. This phase did not deploy anywhere, so
-that endpoint was not (and could not be) exercised as part of verification.
+the standalone dev server above.
+
+## Preview deployment verification (owner-authorized follow-up)
+
+The `platform` branch was pushed (branch push only; `main`, PR #1, and
+production were not touched) and the project's git integration auto-built a
+**preview** deployment:
+`https://portfolio-git-platform-venkats-projects-d28f24e0.vercel.app`
+(behind Vercel Authentication — viewable when logged into the Vercel team).
+Verified on that preview:
+
+- `"framework": "nextjs"` in `vercel.json` correctly overrode the project's
+  dashboard preset ("Other"): build logs show "Detected Next.js version:
+  15.5.20" and a normal `next build`, with static files collected from
+  `public/`.
+- `/` serves the legacy page byte-identical — the SHA-256 of the response
+  body matches both `public/index.html` and the live production site.
+- `/api/health` → `{"ok":true}`; `/blog` renders correctly; static assets
+  (`profile.png`, `chatbot.js`) serve byte-exact; `vercel.json` redirects
+  work (e.g. `/intellidoc`); and the legacy root `api/chat` function **is**
+  built and deployed alongside the Next.js app.
+- `/api/chat` on the preview returns its own controlled
+  `500 {"error":"server_not_configured"}` because `OPENROUTER_API_KEY` is
+  evidently scoped to the Production environment only. Not a code problem —
+  the widget degrades gracefully. If working chat on previews is wanted,
+  the owner can extend that env var to the Preview environment in the
+  project's settings (not done here; project settings were deliberately
+  left untouched).
 
 ## Phase roadmap
 
