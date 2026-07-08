@@ -191,28 +191,22 @@ idempotent ingestion gate, a hand-rolled GitHub-OAuth `/admin`, and a real
 `/blog`. Everything fails closed when its env is unset, so the preview build
 is healthy even before the owner supplies secrets.
 
-## Supabase connection — ONE dashboard click still required
+## Supabase connection — DONE
 
-The marketplace resource `supabase-citron-school` already exists in the team
-but is **not connected to any project**. The Vercel CLI cannot connect an
-*existing* resource: `vercel integration add` only *provisions a new* resource
-(which the task forbids), and `integration-resource` only has `disconnect`,
-no `connect`. So connection must be done once in the dashboard:
+The existing marketplace resource `supabase-citron-school` is now **connected
+to `portfolio`** (done in the dashboard — the Vercel CLI cannot connect an
+*existing* resource: `integration add` only provisions new ones, and
+`integration-resource` only has `disconnect`). **Free plan confirmed.** The
+Neon integration was disconnected from `portfolio` at the same time, so the
+`POSTGRES_*` env vars now unambiguously belong to Supabase across
+Development/Preview/Production.
 
-> Vercel → Storage (or Integrations) → `supabase-citron-school` → **Connect
-> Project** → `portfolio` → all environments.
-
-**Watch the env-var collision:** this project already has a Neon integration
-(`neon-teal-queen`) that injects `POSTGRES_URL`, `POSTGRES_PRISMA_URL`,
-`POSTGRES_URL_NON_POOLING`, `PGHOST`, etc. Supabase injects the *same*
-`POSTGRES_*` names. Connect Supabase with a **custom env prefix** (or disconnect
-Neon from `portfolio` if it is unused here) so they don't clash. The app itself
-sidesteps this entirely — it uses `SUPABASE_URL` + `SUPABASE_ANON_KEY` +
+The app still deliberately uses `SUPABASE_URL` + `SUPABASE_ANON_KEY` +
 `SUPABASE_SERVICE_ROLE_KEY` over HTTPS, never a bare `POSTGRES_URL`. Only
 migrations use a raw connection string, and `scripts/apply-migrations.mjs`
-**refuses to run against a non-Supabase host**, so it can't touch the Neon DB.
+**refuses to run against a non-Supabase host** as defense-in-depth.
 
-After connecting: `vercel env pull .env.local --environment=development`, then:
+Local workflow: `vercel env pull .env.local --environment=development`, then:
 
 ```bash
 npm run db:migrate      # applies supabase/migrations/*.sql via psql (needs libpq)
@@ -224,10 +218,19 @@ npm run gate:verify     # Part A always; Part B live dedupe when creds present
 
 | Var | Used by | Where |
 | --- | --- | --- |
-| `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` | DB access (gate, /blog, /admin, limiter) | injected by connecting Supabase |
+| `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` | DB access (gate, /blog, /admin, limiter) | **already injected** (Supabase connected) |
 | `GITHUB_OAUTH_CLIENT_ID`, `GITHUB_OAUTH_CLIENT_SECRET` | GitHub OAuth | GitHub OAuth App |
 | `ADMIN_GITHUB_ID` | admin identity (numeric id, string-compared) | `https://api.github.com/users/<login>` → `id` |
 | `SESSION_SECRET` | encrypted-JWT session key | `openssl rand -hex 32` |
+
+Only the four auth vars remain. Example (repeat `env add` per environment):
+
+```bash
+vercel env add GITHUB_OAUTH_CLIENT_ID production   # and: preview
+vercel env add GITHUB_OAUTH_CLIENT_SECRET production
+vercel env add ADMIN_GITHUB_ID production          # numeric id, e.g. 180471726
+vercel env add SESSION_SECRET production           # openssl rand -hex 32
+```
 
 Set the auth vars on **Preview + Production** (and pull to `.env.local` for
 local). The **GitHub OAuth App callback URL** must point at
@@ -278,13 +281,37 @@ untouched.
 ## Verification status
 
 Verified locally against `next build && next start`: build clean; `/`
-byte-identical to `public/index.html` (SHA-256 match); `/blog` renders the
-empty state with correct CSP; `/api/health` ok; `/api/ingest` without a session
-→ 401; `/admin` → 307 to `/admin/login`; `/api/auth/callback` with garbage →
-controlled fail-closed; gate canonicalization/dedupe unit tests pass; markdown
-sanitizer strips script/iframe/svg/style/`on*`/`javascript:`. **Pending the one
-Supabase dashboard click:** applying migrations, the live RLS probe, and the
-seeded-row `/blog` check (scripts are ready and one-command).
+byte-identical to `public/index.html` (SHA-256 match); `/blog` renders with
+correct CSP; `/api/health` ok; `/api/ingest` without a session → 401; `/admin`
+→ 307 to `/admin/login`; `/api/auth/callback` with garbage → controlled
+fail-closed; gate canonicalization/dedupe unit tests pass; markdown sanitizer
+strips script/iframe/svg/style/`on*`/`javascript:`.
+
+**Live-DB verification (real Supabase, after connection): all green.**
+
+- Migrations 0001–0005 applied via psql (Supavisor session port). Verified via
+  `information_schema`/`pg_catalog`: 3 tables + `public_content` view; RLS
+  enabled **and forced** on all three; exactly one policy
+  (`content_public_read`, SELECT, anon+authenticated);
+  `UNIQUE (source, external_id)`; both CHECK constraints; feed index;
+  `updated_at` trigger; `ingest_content` executable by service_role only;
+  anon's column grants exclude `ingested_at`.
+- 0005 exists because the live RLS probe caught a real bug: the
+  `security_invoker` view's WHERE references `deleted_at`, which 0002 withheld
+  from anon — every anon view read failed 42501. Fixed by granting that one
+  column (provably always NULL on anon-visible rows; still not in the view's
+  select list). `ingested_at` stays withheld.
+- RLS probe (`npm run db:rls-probe`, anon key over PostgREST): 6/6 — anon can
+  read `public_content`; anon INSERT denied; internal column denied; published
+  visible; draft invisible (view **and** base table).
+- Live gate (`npm run gate:verify`): 19/19 — same URL with different tracking
+  params → ONE row (upsert, `created:false` second time, same id);
+  `published_at` NOT reset on conflict; content fields updated; draft never
+  surfaces through `public_content`.
+- Seeded one published + one draft through the real `ingestContent`
+  (`node --conditions=react-server`): `/blog` rendered exactly the published
+  one (sanitized markdown, hardened links), draft absent; temp rows deleted;
+  `/blog` back to "No posts yet"; `/` still byte-identical throughout.
 
 ## Later-phase upgrades noted, not done here
 
