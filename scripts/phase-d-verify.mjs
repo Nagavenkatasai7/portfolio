@@ -36,7 +36,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { createClient } from '@supabase/supabase-js';
 
-import { generateXDrafts, buildXDraftItem } from '../lib/x_draft.js';
+import { generateXDrafts, buildXDraftItem, buildXDraftItemFromBody } from '../lib/x_draft.js';
 import { countChars, splitIntoTweets, parseVariants, xDraftExternalId, TWEET_LIMIT } from '../lib/x_draft_pure.js';
 import { ingestContent, moderateContent } from '../lib/gate.js';
 import { canonicalizeUrl } from '../lib/canonical.js';
@@ -148,6 +148,24 @@ async function stubbedTests() {
   ok('extid(draftId): different card -> different row', bidA !== bidB);
   ok('extid(draftId): canonicalizeUrl passthrough', canonicalizeUrl(bidA) === bidA);
 
+  // ROUTE-LEVEL (save-body) regression for the reviewed LAUNCH BLOCKER. The save
+  // route maps the request body -> the item via buildXDraftItemFromBody, which
+  // MUST forward body.draftId. The old route dropped it, so editing a
+  // saved/published draft minted a NEW content-derived external_id and the gate
+  // INSERTed a SECOND public post (two live posts on /blog). This exercises the
+  // exact mapping the route now uses.
+  const bodyT1 = { topic: 'Ship log', format: 'single', text: 'first published text', draftId: 'vcardRoute9' };
+  const bodyT2 = { ...bodyT1, text: 'edited-after-publish text' };
+  ok('save-body: forwards draftId -> stable external_id across text edits',
+    buildXDraftItemFromBody(bodyT1).external_id === buildXDraftItemFromBody(bodyT2).external_id,
+    buildXDraftItemFromBody(bodyT1).external_id);
+  ok('save-body: item carries the EDITED body_md', buildXDraftItemFromBody(bodyT2).body_md === 'edited-after-publish text');
+  // Guard: WITHOUT the draftId forward (the old behavior), the two edits get
+  // DIFFERENT ids — i.e. two rows. This pins the shape of the bug the fix closes.
+  const noDidA = buildXDraftItem({ topic: 'Ship log', format: 'single', chosenText: 'first published text' }).external_id;
+  const noDidB = buildXDraftItem({ topic: 'Ship log', format: 'single', chosenText: 'edited-after-publish text' }).external_id;
+  ok('save-body: WITHOUT draftId an edit would mint a 2nd id (regression guard)', noDidA !== noDidB);
+
   const pv = parseVariants('Variant 1: alpha\n---\n2) alpha\n---\n"beta"', { format: 'single' });
   ok('parse: strips labels/quotes + dedups identical', pv.length === 2 && pv[0].text === 'alpha' && pv[1].text === 'beta', JSON.stringify(pv.map((v) => v.text)));
 }
@@ -255,6 +273,32 @@ async function seedDrafts(svc) {
   const { data: erow } = await svc.from('content').select('body_md').eq('id', rE1.id).maybeSingle();
   ok('edit-fix: stored body_md is the EDITED text, not the pre-edit text',
     Boolean(erow?.body_md?.includes('EDITED text made after the first save')) && !erow?.body_md?.includes('original pre-edit text'));
+
+  // --- ROUTE-LEVEL (save-body) end-to-end via the REAL gate: the fix for the
+  // launch blocker, exercised through the exact body->item mapping the save
+  // route uses. Two saves with the SAME draftId (an edit after publish) must
+  // land in ONE row whose body is the edited text — NOT a second live post. ---
+  const rBodyId = `vsavebody${STAMP}`;
+  const saveBodyT1 = { topic: `${STAMP} savebody`, format: 'single', text: `${MARK_E} route body v1`, draftId: rBodyId };
+  const saveBodyT2 = { ...saveBodyT1, text: `${MARK_E} route body v2 EDITED` };
+  const rSB1 = await ingestContent(buildXDraftItemFromBody(saveBodyT1));
+  created.push({ source: 'x_auto', external_id: rSB1.external_id });
+  const rSB2 = await ingestContent(buildXDraftItemFromBody(saveBodyT2));
+  ok('save-body(gate): same draftId edit UPSERTS one row (created=false, same id)', rSB2.created === false && rSB2.id === rSB1.id);
+  const { count: sbCount } = await svc.from('content').select('id', { count: 'exact', head: true }).eq('source', 'x_auto').eq('external_id', rSB1.external_id);
+  ok('save-body(gate): exactly ONE row after the edit (no duplicate public post)', sbCount === 1, `(count=${sbCount})`);
+  const { data: sbRow } = await svc.from('content').select('body_md').eq('id', rSB1.id).maybeSingle();
+  ok('save-body(gate): stored body is the EDITED text',
+    Boolean(sbRow?.body_md?.includes('route body v2 EDITED')) && !sbRow?.body_md?.includes('route body v1'));
+
+  // Guard (captures the bug's shape): two saves of DIFFERENT text WITHOUT a
+  // draftId produce TWO distinct rows — exactly what the old route did on every
+  // edit to a saved/published draft.
+  const rNoDid1 = await ingestContent(buildXDraftItemFromBody({ topic: `${STAMP} nodid`, format: 'single', text: `${MARK_E} nodid original` }));
+  const rNoDid2 = await ingestContent(buildXDraftItemFromBody({ topic: `${STAMP} nodid`, format: 'single', text: `${MARK_E} nodid EDITED` }));
+  created.push({ source: 'x_auto', external_id: rNoDid1.external_id });
+  created.push({ source: 'x_auto', external_id: rNoDid2.external_id });
+  ok('save-body(gate): WITHOUT draftId an edit creates a SECOND row (regression captured)', rNoDid1.id !== rNoDid2.id && rNoDid2.created === true);
 
   // While all three are DRAFT: none visible on the anon public surface /blog reads.
   if (SB_ANON) {

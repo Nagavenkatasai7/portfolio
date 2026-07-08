@@ -15,6 +15,7 @@
 // Relative (not "@/") imports so scripts/phase-f-verify.mjs can import this
 // handler directly in plain Node and exercise the real auth + no-op behavior
 // without spinning up a server.
+import { timingSafeEqual } from 'node:crypto';
 import { json } from '../../../../lib/http.js';
 import { runLinkedinSync } from '../../../../lib/linkedin_sync.js';
 
@@ -22,14 +23,20 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
 
-// Bearer check. Length-guarded equality; not constant-time, which is adequate
-// for a high-entropy shared secret behind Vercel's edge.
+// Bearer check. Length-guarded, CONSTANT-TIME comparison (crypto.timingSafeEqual)
+// — matches the OAuth-state comparison in app/api/auth/callback/route.js, so a
+// timing side-channel can't leak the shared secret one byte at a time.
 function authorized(request) {
   const secret = process.env.CRON_SECRET;
   if (!secret) return false;
   const header = request.headers.get('authorization') || '';
   const expected = `Bearer ${secret}`;
-  return header.length === expected.length && header === expected;
+  if (header.length !== expected.length) return false;
+  try {
+    return timingSafeEqual(Buffer.from(header), Buffer.from(expected));
+  } catch {
+    return false;
+  }
 }
 
 async function handle(request) {

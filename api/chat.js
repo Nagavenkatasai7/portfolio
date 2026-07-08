@@ -10,18 +10,24 @@ import { streamChat } from './_llm.mjs';
 export const config = { runtime: 'edge' };
 
 // Origins allowed to call this API cross-origin. The portfolio is also served
-// from GitHub Pages, which has no serverless runtime, so its widget calls here.
+// from GitHub Pages (no serverless runtime), so its widget calls here. The
+// previous `*.vercel.app` wildcard was too broad (any Vercel-hosted page could
+// call the key-bearing proxy cross-origin); it is replaced by the EXPLICIT set
+// of origins actually used — production, the git-platform preview, github.io.
+// Same-origin fetches (the widget on the production/preview page itself) don't
+// need a CORS grant, so dropping the wildcard doesn't affect them.
 const ALLOWED_ORIGINS = new Set([
   'https://chennunagavenkatasai.com',
   'https://www.chennunagavenkatasai.com',
   'https://nagavenkatasai7.github.io',
+  'https://portfolio-git-platform-venkats-projects-d28f24e0.vercel.app',
 ]);
 
 // Build CORS headers for a given request origin (only echoes allowed origins).
 function corsHeaders(req) {
   const origin = req.headers.get('origin') || '';
   const headers = { Vary: 'Origin' };
-  if (ALLOWED_ORIGINS.has(origin) || /\.vercel\.app$/.test(safeHost(origin))) {
+  if (ALLOWED_ORIGINS.has(origin)) {
     headers['Access-Control-Allow-Origin'] = origin;
     headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS';
     headers['Access-Control-Allow-Headers'] = 'Content-Type';
@@ -29,8 +35,40 @@ function corsHeaders(req) {
   }
   return headers;
 }
-function safeHost(origin) {
-  try { return new URL(origin).host; } catch { return ''; }
+
+// --- Best-effort per-IP rate limit (edge, in-memory) -------------------------
+// This is the legacy standalone Edge Function; the Postgres limiter in the Next
+// app isn't cleanly reachable from here (it pulls in `server-only`/service-role
+// client). A per-instance in-memory sliding window is a pragmatic throttle that
+// caps a single IP's ability to burn the shared OpenRouter key. LIMITATION: edge
+// instances are ephemeral and not shared, so this is per-instance, not global —
+// a determined distributed attacker can still exceed it; a KV/Upstash-backed
+// limit is the documented future upgrade (see PLATFORM.md). It costs nothing and
+// meaningfully raises the bar for casual single-origin abuse.
+const RL_WINDOW_MS = 60 * 1000;   // 1 minute window...
+const RL_MAX = 20;                // ...max 20 chat calls per IP per instance.
+const RL_MAX_KEYS = 5000;         // crude memory bound on the tracking map.
+const rlHits = new Map();         // ip -> number[] recent request timestamps
+
+function clientIpEdge(req) {
+  const real = req.headers.get('x-real-ip');
+  if (real && real.trim()) return real.trim();
+  const xff = req.headers.get('x-forwarded-for');
+  if (xff) return xff.split(',')[0].trim();
+  return 'unknown';
+}
+
+function rateLimited(ip) {
+  const now = Date.now();
+  const recent = (rlHits.get(ip) || []).filter((t) => now - t < RL_WINDOW_MS);
+  recent.push(now);
+  rlHits.set(ip, recent);
+  if (rlHits.size > RL_MAX_KEYS) {
+    // Shed roughly half the tracked keys to bound memory (best-effort).
+    let i = 0;
+    for (const k of rlHits.keys()) { rlHits.delete(k); if (++i >= RL_MAX_KEYS / 2) break; }
+  }
+  return recent.length > RL_MAX;
 }
 
 const sse = (obj) => `data: ${JSON.stringify(obj)}\n\n`;
@@ -42,6 +80,10 @@ export default async function handler(req) {
   // CORS preflight.
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
   if (req.method !== 'POST') return json({ error: 'method_not_allowed' }, 405, cors);
+
+  // Per-IP throttle (best-effort, in-memory) before any upstream work. The
+  // chatbot widget already surfaces a 429 as a friendly "rate_limited" message.
+  if (rateLimited(clientIpEdge(req))) return json({ error: 'rate_limited' }, 429, cors);
 
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) return json({ error: 'server_not_configured' }, 500, cors);

@@ -901,3 +901,142 @@ scripts): **zero findings**. The view identifier is validated + double-quoted an
 all row queries are parameterized (no SQL injection); TLS verification is never
 disabled in the library (it honors the URL's `sslmode`; real FGB/Neon uses
 `sslmode=require` = verified).
+
+# Platform (Phase G) — pre-launch adversarial-review hardening
+
+Two adversarial reviews (security + code) were run before the public launch.
+This phase applies the confirmed findings, adds a regression test for each, and
+re-verifies the whole suite. **No new npm dependency; no new required env var;
+`/` stays byte-identical; every content write still goes only through
+`lib/gate.js`.** Migrations are additive (`0008`, `0009`); already-applied
+migrations were not edited in place.
+
+## Findings fixed
+
+1. **[CRITICAL — launch blocker] Duplicate public X posts.** `POST /api/x/save`
+   built the ingest item without forwarding `body.draftId`, so editing a
+   saved/published draft minted a NEW content-derived `external_id` and the gate
+   INSERTed a second row (two live posts on `/blog`). Fixed with a thin, PURE
+   extraction `buildXDraftItemFromBody(body)` (`lib/x_draft_pure.js`) that
+   forwards `draftId`; the route calls it. **Route-level regression test** added
+   to `phase-d-verify` (the old test only exercised `buildXDraftItem` directly,
+   so it missed the wiring bug): saving T1 then edited T2 with the SAME draftId
+   yields ONE row whose body is T2, plus a guard proving that WITHOUT the draftId
+   forward the two edits would produce two rows.
+
+2. **[SECURITY MEDIUM] Analytics beacon abuse/DoS** (`app/api/analytics/view`,
+   `lib/http.js`, `lib/analytics.js`, migration `0009`):
+   - **IP source** — `clientIp` now prefers the Vercel-set, un-spoofable
+     `x-real-ip`; the client-controllable leftmost XFF is only a fallback (so an
+     attacker can't rotate XFF for a fresh limit bucket per request).
+   - **Server-side dedupe** — `0009` adds `ip_hash` + `day_bucket` and a UNIQUE
+     index `(content_id, ip_hash, day_bucket)`; `recordView` upserts
+     `ON CONFLICT DO NOTHING`, so cookie-less replays collapse to one row. Still
+     no PII: only a salted SHA-256 of the IP + a UTC day bucket are stored.
+   - **Cap + limit before parse** — a small Content-Length cap AND the per-IP
+     rate limit now run BEFORE `request.json()`.
+   - **Retention** — a probabilistic prune in the write path bounds
+     `analytics_event` growth (`ANALYTICS_RETENTION_DAYS = 180`), reusing the
+     auth limiter's opportunistic-prune pattern. pg_cron would be tidier but is
+     **deferred** (enabling it isn't guaranteed on every shared instance, and it
+     isn't worth a launch-night migration risk). Fail-open on infra error,
+     fail-closed on abuse — both preserved.
+   - `phase-e-verify` proves: spoofed rotating XFF no longer bypasses the limit
+     (x-real-ip is the key), server dedupe collapses repeats to one row, and the
+     cap/limit run before JSON parse; the PII assertion now allows the salted
+     `ip_hash` while still forbidding any raw ip/ua/visitor column.
+
+3. **[CODE MEDIUM #3 / part of HIGH #2] Ingest no longer rewrites status.**
+   `0008` CREATE-OR-REPLACEs `ingest_content` (same 9-arg signature) without
+   `status = excluded.status`. New INSERTs still set status from the item (the
+   composer "publish now" still lands published — verified); existing rows keep
+   their status (lifecycle belongs solely to `moderateContent`). Re-ingest/edit
+   no longer flips a published row back.
+
+4. **[CODE HIGH #2] LinkedIn daily re-sync no longer reverts owner edits.**
+   Mechanism chosen:
+   - A `locally_edited` boolean (`0008`) marks owner edits. The composer edit
+     path (`/api/content/update`) now writes via a new **PK-based**
+     `updateContentFields()` in `lib/gate.js` — a targeted UPDATE, not a
+     read-modify-reingest (which removes the TOCTOU the reviewer flagged and
+     keeps the gate the single chokepoint) — and sets `locally_edited = true`.
+   - Autosync uses a SEPARATE gate function `ingest_content_autosync` (same
+     9-arg signature, distinct NAME) that, on conflict, leaves the content
+     columns of a `locally_edited` row untouched while upserting brand-new /
+     un-edited rows normally. `lib/gate.js#ingestContent(item, { autosync })`
+     routes LinkedIn sync to it; the composer create path uses normal mode.
+   - **Why a second function instead of a `p_autosync` param on `ingest_content`:**
+     launch-night safety. A param would mean dropping and re-signing the hot-path
+     RPC that the whole suite (and `gate:verify`'s direct 9-arg call) depends on,
+     plus relying on PostgREST default-arg/overload resolution. An identically-
+     signed, differently-named function changes nothing about `ingest_content`
+     and has zero overload ambiguity; behavior is identical.
+   - `phase-f-verify` proves an owner edit (via the real `updateContentFields`)
+     survives a subsequent autosync while un-edited rows still refresh from
+     source; the composer create/edit and X studio save paths are unaffected
+     (x_auto rows are never `locally_edited`).
+
+5. **[SECURITY LOW] `api/chat.js` — unauthenticated LLM proxy + wildcard CORS.**
+   Added a best-effort per-IP in-memory sliding-window limit (20/min/instance —
+   this is the legacy standalone Edge Function where the Postgres limiter isn't
+   cleanly reachable; a KV/Upstash limit is the documented future upgrade), and
+   replaced the `/\.vercel\.app$/` origin allow with the EXPLICIT origins used
+   (production + www, github.io, the git-platform preview). Same-origin fetches
+   need no CORS grant, so dropping the wildcard doesn't affect the widget; the
+   client already surfaces a 429 as a friendly "rate_limited" message. Verified
+   out-of-band (CORS echo/deny + limiter trip, no network).
+
+6. **[SECURITY LOW] Clickjacking on `/`.** Added `X-Frame-Options: DENY` to the
+   `vercel.json` `/(.*)` header block (header only — `/` body stays byte-
+   identical; `/blog` + `/admin` already send it via middleware/next.config). CSP
+   `frame-ancestors 'none'` was deliberately NOT added to `/`, to preserve the
+   legacy home's "no CSP header" posture (the chatbot host).
+
+7. **[SECURITY LOW] CRON_SECRET timing.** `app/api/cron/linkedin-sync` now uses
+   `crypto.timingSafeEqual` (length-guarded), matching the OAuth-state comparison
+   in `app/api/auth/callback`.
+
+8. **[CODE LOW #6] One malformed source row no longer aborts the sync.**
+   `lib/linkedin_sync.js` skips-and-counts bad rows (logs + a `skippedRows`
+   counter) instead of throwing out of the ingest loop. (The counter is named
+   distinctly from the run-level `skipped` REASON string — `'locked'` /
+   `'not_configured'` — so the two never collide.)
+
+## Documented, deliberately NOT changed
+
+- **[Code-review LOW #5] anon has direct SELECT on the base `content` table**
+  (not only the `public_content` view). **Accepted, no-sensitive-leak posture:**
+  RLS (on + forced) restricts anon to `status='published' AND deleted_at IS
+  NULL`, the column grant withholds the internal columns
+  (`ingested_at`/`deleted_at`), and the reviewer confirmed no sensitive column is
+  exposed. The optional future hardening — revoke anon base-table SELECT and
+  serve only the view — is **deferred** because it risks breaking the
+  `security_invoker` view's RLS enforcement and adds no confidentiality today.
+  (The RLS probe already asserts a draft is invisible on BOTH the view and the
+  base table for anon.)
+- **[INFO] Rate-limiter count-then-insert TOCTOU** — the Postgres limiter counts
+  then inserts in two statements, so a concurrent burst can slightly overshoot
+  the limit. **Accepted:** the window is short, the overshoot is bounded, and the
+  limiter is a soft abuse control, not an authorization boundary.
+
+## Verification (all green)
+
+Applied migrations `0001`–`0009` to live Supabase via `npm run db:migrate`
+(host-guarded to Supabase; libpq `psql`). Live schema confirmed: exactly one
+`ingest_content` (no overload) with the status-overwrite removed;
+`ingest_content_autosync` guards `locally_edited`; `content.locally_edited`,
+`analytics_event.ip_hash`/`day_bucket`, and the dedupe unique index all present.
+
+- `npm install` + `npm run build`: clean. `npm audit`: **0 vulnerabilities**.
+- `db:rls-probe`: **6/6** (still green after the new migrations).
+- `gate:verify`: ALL PASS (content still updates on conflict; `published_at`
+  preserved; status no longer overwritten on conflict).
+- `verify:phase-c`: ALL PASS (the edit-route switch didn't regress create/dedupe).
+- `verify:phase-d`: ALL PASS incl. the new route-level x-save regression.
+- `verify:phase-e`: ALL PASS incl. the new analytics-abuse assertions.
+- `verify:phase-f`: ALL PASS incl. owner-edit preservation + skip-bad-row.
+- `/` **byte-identical** to `public/index.html` (SHA-256, 85 314 bytes;
+  `public/index.html` untouched).
+- **Snyk Code (SAST)**: **zero findings in any changed file**; the only 2 issues
+  are the same pre-existing, documented ones (`app/admin/Composer.js` `blob:`
+  preview reviewed false positive; `scripts/dev-server.mjs` loopback dev helper).

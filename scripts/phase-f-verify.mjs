@@ -39,6 +39,7 @@ import {
   SYNC_NAME,
 } from '../lib/linkedin_sync.js';
 import * as cronRoute from '../app/api/cron/linkedin-sync/route.js';
+import { updateContentFields } from '../lib/gate.js';
 
 // ---- env --------------------------------------------------------------------
 function loadEnvLocal() {
@@ -218,7 +219,11 @@ async function main() {
   ]);
   await seed(3, 3, `LinkedIn recent three ${stamp}`, []);
   await seed('old', 400 * 24, `LinkedIn OLD ${stamp} out of window`, []);
-  console.log('seeded 3 recent + 1 old post into mock_fgb.posts');
+  // A MALFORMED-but-shape-valid row (media is a jsonb OBJECT, not an array):
+  // passes the view shape check but mapRowToItem rejects it — proving one bad
+  // row is skipped-and-counted, not fatal to the whole run (Finding 8).
+  await seed('badmedia', 6, `LinkedIn BADMEDIA ${stamp} malformed`, {});
+  console.log('seeded 3 recent + 1 old + 1 malformed post into mock_fgb.posts');
 
   // Wait for PostgREST to see the freshly-applied table + RPCs.
   section('setup: wait for PostgREST schema cache');
@@ -247,6 +252,7 @@ async function main() {
   const r1 = await runLinkedinSync({ connectionString: MOCK_CONN, viewName: VIEW, windowDays: 7 });
   ok('sync ok', r1.ok === true, JSON.stringify(r1));
   ok('created 3 recent (old post excluded by window)', r1.created === 3 && r1.updated === 0 && r1.synced === 3, JSON.stringify(r1));
+  ok('one malformed row skipped-and-counted, not fatal (Finding 8)', r1.skippedRows === 1, JSON.stringify(r1));
   ok('content has exactly 3 linkedin_auto rows', (await contentCount()) === 3);
 
   // ---- D. published rows appear on the public /blog ------------------------
@@ -284,6 +290,28 @@ async function main() {
   const r3 = await runLinkedinSync({ connectionString: MOCK_CONN, viewName: VIEW, all: true });
   ok('backfill created 1 (old) + updated 3', r3.ok && r3.created === 1 && r3.updated === 3, JSON.stringify(r3));
   ok('content now exactly 4 rows', (await contentCount()) === 4);
+
+  // ---- G2. owner-edit preservation (High #2 / Finding 4) -------------------
+  section('G2. an owner edit survives the daily autosync (locally_edited)');
+  const { data: editRow } = await svc.from('content').select('id, body_md')
+    .eq('source', 'linkedin_auto').like('external_id', `%${stamp}-1%`).maybeSingle();
+  ok('located synced row #1 to edit', Boolean(editRow?.id), editRow?.id || '(none)');
+  const OWNER_BODY = `OWNER EDITED via composer — must survive re-sync ${stamp}`;
+  // Edit through the REAL gate path the composer uses (PK update + locally_edited).
+  await updateContentFields(editRow.id, { body_md: OWNER_BODY });
+  const { data: editedNow } = await svc.from('content').select('body_md, locally_edited').eq('id', editRow.id).maybeSingle();
+  ok('composer edit set locally_edited=true + new body', editedNow?.locally_edited === true && editedNow?.body_md === OWNER_BODY);
+  // Re-run the autosync — the source view STILL has the original body for row #1.
+  const rEdit = await runLinkedinSync({ connectionString: MOCK_CONN, viewName: VIEW, windowDays: 7 });
+  ok('re-sync ran (autosync mode)', rEdit.ok === true, JSON.stringify(rEdit));
+  const { data: afterSync } = await svc.from('content').select('body_md, locally_edited').eq('id', editRow.id).maybeSingle();
+  ok('owner edit PRESERVED — autosync did NOT revert body_md', afterSync?.body_md === OWNER_BODY, (afterSync?.body_md || '').slice(0, 44));
+  ok('locally_edited flag still set after re-sync', afterSync?.locally_edited === true);
+  // A NON-edited row is still refreshed from source normally (un-edited posts sync).
+  const { data: freshRow } = await svc.from('content').select('body_md, locally_edited')
+    .eq('source', 'linkedin_auto').like('external_id', `%${stamp}-2%`).maybeSingle();
+  ok('un-edited row still syncs from source (locally_edited=false)', String(freshRow?.body_md || '').includes(String(stamp)) && freshRow?.locally_edited === false);
+  ok('content still exactly 4 rows after edit + re-sync', (await contentCount()) === 4);
 
   // ---- H. single-flight lock blocks a concurrent run -----------------------
   section('H. single-flight lock blocks a concurrent run');

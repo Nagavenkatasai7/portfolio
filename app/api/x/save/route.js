@@ -16,7 +16,7 @@ import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/auth/session';
 import { isSameOrigin, json } from '@/lib/http';
 import { ingestContent, moderateContent, GateError } from '@/lib/gate';
-import { buildXDraftItem, XDraftError } from '@/lib/x_draft';
+import { buildXDraftItemFromBody, XDraftError } from '@/lib/x_draft';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -42,16 +42,12 @@ export async function POST(request) {
   const action = body?.action === 'publish' ? 'publish' : 'draft';
 
   // Build the item purely (validates text/format); map its errors to 400.
+  // buildXDraftItemFromBody forwards body.draftId -> the item's stable
+  // external_id, so editing a saved/published draft UPSERTS the one row instead
+  // of INSERTing a duplicate public post (the reviewed launch-blocker fix).
   let item;
   try {
-    item = buildXDraftItem({
-      topic: body?.topic,
-      tone: body?.tone,
-      format: body?.format,
-      model_used: body?.model_used,
-      variants: body?.variants,
-      chosenText: body?.text,
-    });
+    item = buildXDraftItemFromBody(body);
   } catch (err) {
     if (err instanceof XDraftError) return json({ error: err.code }, 400);
     return json({ error: 'invalid_input' }, 400);

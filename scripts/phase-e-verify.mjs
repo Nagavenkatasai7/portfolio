@@ -160,14 +160,16 @@ function stopServer(child) {
 
 const curl = (path, opts = {}) => fetch(`${BASE}${path}`, { cache: 'no-store', redirect: 'manual', ...opts });
 
-async function post(path, bodyObj, { ip, ua, dnt, origin = BASE, cookie } = {}) {
+async function post(path, bodyObj, { ip, realip, ua, dnt, origin = BASE, cookie, rawBody } = {}) {
   const headers = { 'content-type': 'application/json' };
-  if (ip) headers['x-forwarded-for'] = ip;
+  if (ip) headers['x-forwarded-for'] = ip;          // spoofable leftmost XFF
+  if (realip) headers['x-real-ip'] = realip;        // Vercel-set, un-spoofable
   if (ua !== undefined) headers['user-agent'] = ua;
   if (dnt) headers.dnt = '1';
   if (origin) headers.origin = origin;
   if (cookie) headers.cookie = cookie;
-  return fetch(`${BASE}${path}`, { method: 'POST', headers, body: JSON.stringify(bodyObj), redirect: 'manual' });
+  const body = rawBody !== undefined ? rawBody : JSON.stringify(bodyObj);
+  return fetch(`${BASE}${path}`, { method: 'POST', headers, body, redirect: 'manual' });
 }
 function getSetCookie(res) {
   try { const a = res.headers.getSetCookie?.(); if (a && a.length) return a; } catch { /* */ }
@@ -331,6 +333,15 @@ async function main() {
     const idx = readFileSync(join(ROOT, 'public', 'index.html'));
     ok('/ byte-identical to public/index.html', sha256hex(homeHtml) === sha256hex(idx.toString()), `${Buffer.byteLength(homeHtml)} vs ${idx.length} bytes`);
 
+    // vercel.json edge headers are NOT emitted by `next start`, so assert the
+    // anti-clickjacking header for "/" at the config level (Finding 6). The
+    // legacy "/" is served statically from public/ under the vercel.json /(.*)
+    // header block — adding a response header keeps the body byte-identical.
+    const vjson = JSON.parse(readFileSync(join(ROOT, 'vercel.json'), 'utf8'));
+    const rootHdrs = (vjson.headers || []).find((h) => h.source === '/(.*)')?.headers || [];
+    ok('config: vercel.json "/(.*)" sets X-Frame-Options: DENY (clickjacking on /)',
+      rootHdrs.some((h) => h.key === 'X-Frame-Options' && /DENY/i.test(h.value)), JSON.stringify(rootHdrs.map((h) => h.key)));
+
     // admin analytics fail-closed
     const an = await curl('/admin/analytics');
     const loc = an.headers.get('location') || '';
@@ -368,6 +379,41 @@ async function main() {
     ok('beacon: rate limit triggers at/after the configured N', firstError >= VIEW_LIMIT, `(N=${VIEW_LIMIT}, first429=${firstError})`);
     ok('beacon: allowed some before limiting', firstOkBefore429);
 
+    // ---- ABUSE HARDENING (reviewed findings) ----
+    // (i) Rate-limit runs BEFORE request.json(): ipBurst is already over the
+    // limit, so even an INVALID body returns 429 (a parse-first route would 400).
+    const rLimitPreParse = await post('/api/analytics/view', null, { ip: ipBurst, ua: 'Mozilla/5.0 (X11) AppleWebKit Chrome/119 Safari/537.36', rawBody: '{ not valid json' });
+    ok('beacon: over-limit IP -> 429 BEFORE json parse (limit precedes parse)', rLimitPreParse.status === 429, `(got ${rLimitPreParse.status})`);
+
+    // (ii) Content-Length cap runs BEFORE request.json(): an oversized body is
+    // 413 even though it is not valid JSON.
+    const rCap = await post('/api/analytics/view', null, { realip: '198.51.100.220', ua: 'Mozilla/5.0 (Macintosh) AppleWebKit Chrome/123 Safari/537.36', rawBody: 'x'.repeat(3 * 1024) });
+    ok('beacon: oversized body -> 413 BEFORE json parse (cap precedes parse)', rCap.status === 413, `(got ${rCap.status})`);
+
+    // (iii) Spoofed rotating XFF no longer bypasses the IP limit: a FIXED
+    // x-real-ip (as Vercel sets) with a DIFFERENT leftmost XFF per request must
+    // STILL hit the limit — proving x-real-ip is the rate-limit key, not the
+    // client-controlled XFF (which, as the primary key, would give a fresh
+    // bucket per request and never rate-limit).
+    const realFixed = '198.51.100.200';
+    let spoofGot429 = false; let spoofFirst = -1;
+    for (let i = 0; i < VIEW_LIMIT + 8; i++) {
+      const rs = await post('/api/analytics/view', { id: pubId }, { realip: realFixed, ip: `10.0.0.${i}`, ua: 'Mozilla/5.0 (X11 Linux) AppleWebKit Chrome/121 Safari/537.36' });
+      if (rs.status === 429) { spoofGot429 = true; spoofFirst = i; break; }
+    }
+    ok('beacon: spoofed rotating XFF does NOT bypass the limit (x-real-ip is the key)', spoofGot429, `(first 429 at #${spoofFirst})`);
+
+    // (iv) Server-side dedupe: a cookie-less replay from the same visitor/post/
+    // day collapses to ONE row via UNIQUE(content_id, ip_hash, day_bucket).
+    const dedIp = '198.51.100.210';
+    const beforeDed = await countViews(pubId);
+    const rDed1 = await post('/api/analytics/view', { id: pubId }, { realip: dedIp, ua: 'Mozilla/5.0 (Macintosh) AppleWebKit Chrome/122 Safari/537.36' });
+    const midDed = await countViews(pubId);
+    const rDed2 = await post('/api/analytics/view', { id: pubId }, { realip: dedIp, ua: 'Mozilla/5.0 (Macintosh) AppleWebKit Chrome/122 Safari/537.36' }); // NO cookie forwarded
+    const afterDed = await countViews(pubId);
+    ok('beacon: first no-cookie view writes exactly one row', rDed1.status === 200 && midDed === beforeDed + 1, `(${beforeDed}->${midDed})`);
+    ok('beacon: cookie-less replay is server-deduped to ONE row', rDed2.status === 200 && afterDed === midDed, `(${midDed}->${afterDed})`);
+
     // unknown (well-formed uuid, not in DB) -> 404
     const rUnknown = await post('/api/analytics/view', { id: '123e4567-e89b-42d3-a456-426614174000' }, { ip: '203.0.113.55', ua: 'Mozilla/5.0 (Windows NT) AppleWebKit Chrome/120 Safari/537.36' });
     ok('beacon: unknown id rejected (404)', rUnknown.status === 404, `(got ${rUnknown.status})`);
@@ -397,9 +443,16 @@ async function main() {
     const ips = (rlRows || []).map((r) => r.ip);
     ok('PII: raw client IP is NEVER stored in the limiter', !ips.includes(ipA) && !ips.includes(ipBurst));
     ok('PII: the limiter stores the SALTED HASH of the IP instead', ips.includes(hashIp(ipA)), `(expected hash present, ${ips.length} rows)`);
-    const { data: evRows } = await sb.from('analytics_event').select('*').eq('content_id', pubId).limit(1);
+    const { data: evRows } = await sb.from('analytics_event').select('*').eq('content_id', pubId).limit(10);
     const cols = Object.keys(evRows?.[0] || {});
-    ok('PII: analytics_event has NO ip/ua/visitor column', !cols.some((c) => /ip|ua|user.?agent|visitor|email/i.test(c)), cols.join(','));
+    // No RAW ip/ua/visitor/email column. The salted `ip_hash` + `day_bucket`
+    // dedupe key added in 0009 is NOT PII and is expected.
+    const rawPiiCols = cols.filter((c) => /(^|_)(ip|ua|user_?agent|visitor|email)(_|$)/i.test(c) && c !== 'ip_hash');
+    ok('PII: analytics_event has NO raw ip/ua/visitor column (salted ip_hash OK)', rawPiiCols.length === 0, cols.join(','));
+    ok('PII: dedupe key columns ip_hash + day_bucket present', cols.includes('ip_hash') && cols.includes('day_bucket'), cols.join(','));
+    // The stored ip_hash is the one-way salted hash — never the raw IP.
+    ok('PII: stored ip_hash is the salted hash, not any raw IP',
+      (evRows || []).every((r) => r.ip_hash == null || (r.ip_hash !== ipA && r.ip_hash !== dedIp && !/\b(203\.0\.113|198\.51\.100|10\.0\.0)\b/.test(String(r.ip_hash)))));
     ok('PII: no view row carries a raw IP in path', !(evRows || []).some((r) => String(r.path || '').includes('203.0.113')));
 
     // aggregate over the real seeded rows resolves the published post as top
