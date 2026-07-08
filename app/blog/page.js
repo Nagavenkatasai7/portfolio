@@ -162,6 +162,14 @@ const css = `
   .blog .body :not(pre) > code { background: var(--paper-2); padding: 1px 5px; border-radius: 4px; }
   .blog .body blockquote { border-left: 3px solid var(--lime); margin: 0 0 14px; padding: 4px 0 4px 16px; color: var(--muted); font-style: italic; }
 
+  /* X thread — sequential tweets rendered as a connected chain */
+  .blog .thread { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+  .blog .tweet { position: relative; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper); padding: 14px 16px; }
+  .blog .tweet::before { content: ""; position: absolute; left: 26px; top: -12px; width: 2px; height: 12px; background: var(--line); }
+  .blog .tweet:first-child::before { display: none; }
+  .blog .tnum { display: inline-block; font-family: var(--mono); font-size: 11px; font-weight: 800; color: var(--coral); margin-bottom: 6px; letter-spacing: .06em; }
+  .blog .ttext { color: var(--ink-soft); font-size: 16px; white-space: pre-wrap; line-height: 1.62; word-break: break-word; }
+
   .blog .embed { position: relative; aspect-ratio: 16 / 9; margin: 16px 0 4px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); background: #000; }
   .blog .embed iframe, .blog .embed video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
 
@@ -183,6 +191,37 @@ function OriginalLink({ post }) {
   if (!url || !/^https:\/\//i.test(url)) return null;
   const label = post.source?.startsWith('linkedin') ? 'View on LinkedIn ↗' : post.source?.startsWith('x') ? 'View on X ↗' : 'View original ↗';
   return <a className="orig" href={url} rel="nofollow noopener noreferrer" target="_blank">{label}</a>;
+}
+
+// An x_auto/x_manual THREAD renders as sequential tweets. Prefer the stored
+// payload.thread array (authoritative from generation); fall back to splitting
+// the body on blank lines so an edited thread still renders. Plain text only
+// (no markdown/HTML) — tweets are rendered as text nodes, so nothing to sanitize.
+function threadTweets(post) {
+  const t = post.payload?.thread;
+  if (Array.isArray(t)) {
+    const cleaned = t.filter((x) => typeof x === 'string' && x.trim()).map((x) => x.trim());
+    if (cleaned.length) return cleaned;
+  }
+  if (typeof post.body_md === 'string' && post.body_md.trim()) {
+    return post.body_md.split(/\n{2,}/).map((s) => s.trim()).filter(Boolean);
+  }
+  return [];
+}
+
+function ThreadView({ post }) {
+  const tweets = threadTweets(post);
+  if (!tweets.length) return null;
+  return (
+    <ol className="thread">
+      {tweets.map((tw, i) => (
+        <li className="tweet" key={i}>
+          <span className="tnum">{i + 1}/{tweets.length}</span>
+          <div className="ttext">{tw}</div>
+        </li>
+      ))}
+    </ol>
+  );
 }
 
 function PostMedia({ post }) {
@@ -248,7 +287,9 @@ export default async function BlogPage() {
                       <OriginalLink post={post} />
                     </div>
                     {post.title && <h2 className="title">{post.title}</h2>}
-                    {html && <div className="body" dangerouslySetInnerHTML={{ __html: html }} />}
+                    {post.type === 'thread'
+                      ? <ThreadView post={post} />
+                      : (html && <div className="body" dangerouslySetInnerHTML={{ __html: html }} />)}
                     <PostMedia post={post} />
                   </article>
                 );

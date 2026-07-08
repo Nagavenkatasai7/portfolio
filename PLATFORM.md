@@ -482,3 +482,176 @@ Scanned after each change. Findings and disposition:
   no real security. Left in place with the guard.
 - **HTTP-not-HTTPS (Medium), `scripts/dev-server.mjs`** — **pre-existing**, not
   Phase C code (a loopback-only local dev helper, documented under Phase A).
+
+---
+
+# Platform (Phase D) — X/Twitter draft studio (LLM-drafted posts)
+
+An X-flavored companion to the composer: the owner seeds a topic, an LLM drafts
+styled X posts, and the owner reviews / edits / approves them in `/admin`.
+Approved posts appear on the public `/blog`. **There is deliberately NO real X
+API integration** — the owner has not bought X API access, so nothing here calls
+the X/Twitter API, OAuth, or any signup/paid flow. Posting to X itself is
+**manual**: the studio gives a **Copy text** button and an **Open X compose**
+link (a plain `https://twitter.com/intent/tweet?text=…` intent URL — not an API
+call) so the owner pastes the post into X by hand. Publishing only controls what
+shows on `/blog`.
+
+## The X draft studio — `/admin/x`
+
+A deliberately DISTINCT visual identity from the warm-paper composer: a dark
+**terminal "command deck"** (`app/admin/xui.js` → `.xst` scoped CSS) — near-black
+surface, monospace-forward, faint CRT scanlines + grid, the site's lime
+(`#caff60`) as a phosphor accent and coral (`#e86f4a`) for over-limit warnings.
+Still coherent with the site tokens (same lime/coral, same pill-button DNA, grid
+motif), just flipped dark and tightened. No external fonts (CSP `font-src 'self'`)
+— the system monospace stack is the intentional choice for a dev's X deck.
+
+- **Server shell** `app/admin/x/page.js` — independently enforces the admin
+  session (`isAuthConfigured()` + `requireAdmin()`, redirect to `/admin/login`
+  on fail), exactly like `/admin/compose`. Renders the client studio; generates
+  and writes nothing itself.
+- **Client** `app/admin/XStudio.js` (`'use client'`) — a topic/seed textarea,
+  a tone select (Punchy / Insightful / Casual / Bold / Technical), a
+  **Single / Thread** format toggle, and a **Generate** button. Returned
+  variants render as editable cards with a **LIVE character count** (280/tweet;
+  a thread splitter previews each tweet with its own count; over-limit turns
+  coral). Per card: inline **Edit** (textarea), **Copy text**, **Open X compose**
+  (intent link), **Save as draft**, **Approve & publish**, **Discard**. A single
+  post over 280 offers "split into a thread"; a thread can collapse to single.
+  The UI states plainly that publishing shows the post on `/blog` and that X
+  posting is manual for now.
+
+## Drafting — `lib/x_draft.js` (+ pure `lib/x_draft_pure.js`)
+
+Mirrors the `lib/canonical.js` (pure) / `lib/gate.js` (server-only) split so the
+SAME logic is shared without drift by the client (live counting), the server
+(parsing), and the save path (item building):
+
+- **`lib/x_draft_pure.js`** — PURE, client-safe (no `server-only`, no `node:`
+  built-ins). `TWEET_LIMIT=280`; `countChars` (Unicode **code points**, so an
+  emoji counts as 1); `splitIntoTweets` (greedy word-pack, never breaks a word
+  unless a single token exceeds the limit, then hard-splits by code point);
+  `parseVariants` (splits a completion on `---` delimiter lines, strips
+  `Variant N:` / quote labels, dedups, caps at 3); `xDraftExternalId` (a pure-JS
+  cyrb53 hash → `xdraft:<topic-slug>-<hash>`); `buildXDraftItem` (turns a chosen
+  draft into an `ingestContent` item). Reuses `slugify` from `lib/slug.js`.
+- **`lib/x_draft.js`** — `server-only`. `generateXDrafts({topic, tone, format},
+  { llmFn })` returns `{ ok:true, model_used, variants }` or `{ ok:false, error }`
+  and **NEVER throws**. The LLM call is **dependency-injected** (`llmFn`) so tests
+  stub it deterministically with no network (see the verify script). When omitted,
+  the default walks the **exact same OpenRouter free-model fallback chain the
+  chatbot uses** (`MODELS` imported from `api/_llm.mjs`), one non-streaming call
+  per model, first non-empty answer wins, honoring each model's `reasoning` tweak.
+
+### Graceful degradation (OpenRouter out of credits)
+
+The free pool is frequently throttled / out of credits (502 / empty). Every
+failure mode is absorbed: if a model 502s or returns empty, the chain falls to
+the next; if **every** model fails (or the injected stub throws / returns
+empty), `generateXDrafts` returns `{ ok:false, error:'generation_unavailable' }`
+— it does not throw. `POST /api/x/generate` then returns **HTTP 200 with
+`{ ok:false, error }`** (the same convention `api/chat.js` uses — a 200 carrying
+an error frame), and the studio shows a "couldn't generate — write it yourself"
+state **with an editable blank draft still ready**, so drafting failure never
+crashes a page or blocks manual authoring, saving, or publishing.
+
+## API routes (both admin-gated + same-origin, like every content route)
+
+- **`POST /api/x/generate`** — `requireAdmin` → 401, `isSameOrigin` → 403, size
+  guard. Validates `topic`, calls `generateXDrafts` (default = real OpenRouter).
+  Persists nothing. 200 `{ ok:true, variants }` on success; 200 `{ ok:false }`
+  on generation failure; 400 `topic_required`.
+- **`POST /api/x/save`** — `requireAdmin` → 401, `isSameOrigin` → 403.
+  `buildXDraftItem` → **`ingestContent`** (always `status='draft'`); if
+  `action:'publish'`, then **`moderateContent(id, {status:'published'})`**
+  (the gate's lifecycle write). Returns `{ id, status, external_id, type }`.
+  **Discarding a saved draft** reuses `POST /api/content/moderate`
+  `{action:'remove'}` (tombstone); discarding an unsaved variant is client-only.
+
+## Persistence via the gate
+
+Everything writes through `lib/gate.js` (no bare inserts):
+
+- `source='x_auto'` (LLM-drafted X posts; distinct from Phase C's `x_manual`
+  hand-pasted posts), `type='text'` (single) or `'thread'`, `status='draft'`.
+- `external_id = xdraft:<slug>-<id>` — **stable per draft**. From the studio each
+  card carries a stable `draftId`, so editing a saved draft's text and re-saving
+  UPSERTS the **same** row — the inline edit persists on Approve/Update, with no
+  orphaned row (all persistence, including publish, goes through `/api/x/save` →
+  `ingestContent`, never a text-blind status flip). Callers that omit `draftId`
+  (e.g. the verify script) fall back to a content-derived hash so identical
+  content still dedupes to one row. The `xdraft:` scheme passes `canonicalizeUrl`
+  through unchanged, so the dedupe key is exactly that string.
+- `payload = { topic, tone, format, model_used, variants, char_counts, thread? }`
+  (`thread` = the tweet array, only for threads); `body_md` = the chosen text
+  (threads store the tweets joined by blank lines); `title=null` (an X post is a
+  body, not a titled article — the dashboard identifies rows by the topic-slug in
+  the external_id). Drafts (`status='draft'`) never reach `/blog` — the public
+  `public_content` view already filters `status='published' AND deleted_at IS
+  NULL` (re-verified).
+
+## `/blog` rendering + `/admin` dashboard
+
+- **`/blog`** — a published `x_auto`/`x_manual` **thread** (`type='thread'`)
+  renders as **sequential tweets** (`ThreadView`: an `<ol class="thread">` of
+  numbered `1/N` tweet cards, plain-text nodes — nothing to sanitize), preferring
+  the stored `payload.thread` array and falling back to splitting `body_md`. A
+  single post (`type='text'`) renders as before (sanitized markdown). Both carry
+  the existing dark **X** source chip.
+- **`/admin`** — `x_auto` rows already appear (the dashboard lists all sources /
+  statuses) and are fully actionable (Edit / Publish / Unpublish / Remove /
+  Restore via `/api/content/moderate`). Added: a `Thread` type label, an **"✕ X
+  studio"** link in the topbar, and a lightweight **"✕ X drafts (N)"** filter
+  (`?src=x_auto`, display-only — global counts unchanged).
+
+## Verification — `scripts/phase-d-verify.mjs` (`npm run verify:phase-d`)
+
+`node --conditions=react-server` so it imports the REAL `lib/x_draft.js` +
+`lib/gate.js`. **All assertions PASS.** It:
+
+- **(A) Stubbed-LLM logic (no network, no DB):** `generateXDrafts` with an
+  injected `llmFn` returning canned variants → asserts variants parsed,
+  character-limited, thread-split; asserts it **degrades gracefully** (returns
+  `{ ok:false }`, never throws) when the stub throws / returns empty /
+  unparseable / lacks a topic; plus splitter, code-point counter, and
+  `external_id` (determinism + `canonicalizeUrl` passthrough) invariants.
+- **(B) Real gate:** seeds `x_auto` drafts via `buildXDraftItem` →
+  `ingestContent` (driven by the stubbed generator) — a single draft (dedupe
+  re-save asserted = one row), a thread + a single that get published via
+  `moderateContent`; asserts each is ABSENT from the anon `public_content`
+  surface while a draft, and the thread reports `type='thread'` once published.
+  Also an **edit-persistence** case: re-saving with the same `draftId` but edited
+  text UPSERTS the same row and the stored `body_md` is the EDITED text (this is
+  the fix for a review finding — a text-blind publish would have kept the old text).
+- **(C) One cold build + `next start`:** `/` byte-identical to
+  `public/index.html`; `/admin/x` → `/admin/login` redirect; `/api/x/generate`
+  and `/api/x/save` → **401** without a session; the published thread renders on
+  `/blog` as sequential tweets with the X chip, the published single renders, and
+  the **draft stays hidden**.
+- **(D)** Full teardown (all test rows deleted, 0 remain).
+- **Live probe (INFO only):** at the last run, live OpenRouter generation
+  **worked** — the primary `openai/gpt-oss-120b:free` was unavailable and the
+  chain fell back to `nvidia/nemotron-3-ultra-550b-a55b:free`, returning 3 real
+  variants. Credits can run out at any time; the graceful-degradation path above
+  is what guarantees the studio stays usable when they do.
+
+**Could not** exercise the *authenticated* `/admin/x` page in a browser — the
+admin session secret is unset by design and the run cannot log in. The page
+compiles + type-checks + bundles, mirrors the proven `/admin/compose` auth shell,
+and all of its data logic (counting, splitting, save payloads, publish/discard)
+is verified at the lib + gate + route-auth level.
+
+## Security scan notes (Snyk Code, Phase D)
+
+Snyk Code (SAST) run on the full project after the changes. **Zero findings in
+new Phase D code** (`lib/x_draft.js`, `lib/x_draft_pure.js`, `app/api/x/*`,
+`app/admin/x/page.js`, `app/admin/XStudio.js`, `app/admin/xui.js`, and the
+`/blog` + `/admin` edits). The only 2 findings are **pre-existing and unchanged
+by Phase D** — the `app/admin/Composer.js` `blob:`-URL preview (reviewed false
+positive in Phase C: guarded `blob:` value into a non-script `<img>/<video src>`,
+admin-only) and the `scripts/dev-server.mjs` local-dev HTTP helper (Phase A).
+
+`npm install` + `npm run build` clean; `npm audit` **0 vulnerabilities**. **No
+new npm dependencies** (all new logic is pure JS reusing existing deps; the
+OpenRouter key reuses the existing `OPENROUTER_API_KEY`).

@@ -13,7 +13,7 @@ import LocalTime from './LocalTime';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Admin | Naga Venkata Sai Chennu', robots: { index: false, follow: false } };
 
-const TYPE_LABEL = { blog: 'Blog', newsletter: 'Newsletter', video: 'Video', image: 'Image', text: 'Post', link: 'Link' };
+const TYPE_LABEL = { blog: 'Blog', newsletter: 'Newsletter', video: 'Video', image: 'Image', text: 'Post', thread: 'Thread', link: 'Link' };
 
 function fmtUtc(ts) {
   if (!ts) return '—';
@@ -85,6 +85,7 @@ export default async function AdminPage({ searchParams }) {
 
   const sp = searchParams ? await searchParams : {};
   const modError = typeof sp?.e === 'string' ? MOD_ERRORS[sp.e] : null;
+  const filter = sp?.src === 'x_auto' ? 'x_auto' : null;
 
   const { rows, error } = await loadRows();
   const counts = { published: 0, draft: 0, removed: 0 };
@@ -93,6 +94,10 @@ export default async function AdminPage({ searchParams }) {
     else if (r.status === 'published') counts.published++;
     else if (r.status === 'draft') counts.draft++;
   }
+  // x_auto = LLM-drafted X posts from the studio. Counts stay global; the
+  // filter only narrows the displayed rows (all statuses remain actionable).
+  const xCount = rows ? rows.filter((r) => r.source === 'x_auto').length : 0;
+  const shown = rows ? (filter === 'x_auto' ? rows.filter((r) => r.source === 'x_auto') : rows) : rows;
 
   return (
     <div className="adm">
@@ -106,6 +111,7 @@ export default async function AdminPage({ searchParams }) {
           </div>
           <div className="row-actions">
             <a className="btn primary" href="/admin/compose">+ New post</a>
+            <a className="btn" href="/admin/x">✕ X studio</a>
             <a className="btn" href="/blog">View /blog</a>
             <a className="btn" href="/">Portfolio</a>
             {/* Mutating => real form POST so the strict-sameSite cookie + Origin check apply. */}
@@ -157,6 +163,19 @@ export default async function AdminPage({ searchParams }) {
         )}
 
         {rows && rows.length > 0 && (
+          <div className="row-actions" style={{ margin: '0 0 14px' }}>
+            <a className={`btn sm${filter ? '' : ' primary'}`} href="/admin">All ({rows.length})</a>
+            <a className={`btn sm${filter === 'x_auto' ? ' primary' : ''}`} href="/admin?src=x_auto">✕ X drafts ({xCount})</a>
+          </div>
+        )}
+
+        {rows && rows.length > 0 && shown.length === 0 && filter === 'x_auto' && (
+          <div className="card">
+            <p style={{ margin: 0 }}>No X drafts yet. <a href="/admin/x" style={{ textDecoration: 'underline', fontWeight: 700 }}>Open the X studio →</a></p>
+          </div>
+        )}
+
+        {shown && shown.length > 0 && (
           <div className="tablewrap">
             <div className="scroll">
               <table>
@@ -167,7 +186,7 @@ export default async function AdminPage({ searchParams }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {rows.map((r) => (
+                  {shown.map((r) => (
                     <tr key={r.id}>
                       <td><StatusChip status={r.status} deleted={Boolean(r.deleted_at)} /></td>
                       <td><SourceChip source={r.source} /></td>
