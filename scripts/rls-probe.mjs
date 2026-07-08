@@ -80,6 +80,16 @@ async function main() {
     const baseDraft = await rb.json();
     ok('draft row is NOT visible on base content table (anon)', Array.isArray(baseDraft) && baseDraft.length === 0);
   }
+
+  // 5. anon canNOT touch the N2 newsletter control tables (PII + owner-only
+  //    control surface): RLS enable+force, ZERO policies, service_role only
+  //    (migration 0011, mirroring 0010's newsletter_subscribers).
+  for (const t of ['newsletter_issue_meta', 'newsletter_sends', 'newsletter_links']) {
+    const rs = await fetch(rest(`${t}?select=*&limit=1`), { headers: anonHeaders });
+    ok(`anon SELECT ${t} denied`, rs.status >= 400, `(status ${rs.status})`);
+    const ri = await fetch(rest(t), { method: 'POST', headers: anonHeaders, body: JSON.stringify({}) });
+    ok(`anon INSERT ${t} denied`, ri.status === 401 || ri.status === 403, `(status ${ri.status})`);
+  }
 }
 
 try {
