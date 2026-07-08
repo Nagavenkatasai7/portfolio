@@ -13,6 +13,8 @@
     "verify:phase-c": "node --conditions=react-server scripts/phase-c-verify.mjs",
     "verify:phase-d": "node --conditions=react-server scripts/phase-d-verify.mjs",
     "verify:phase-e": "node --conditions=react-server scripts/phase-e-verify.mjs",
+    "verify:phase-f": "node --conditions=react-server scripts/phase-f-verify.mjs",
+    "linkedin:backfill": "node --conditions=react-server scripts/linkedin-backfill.mjs",
     "db:migrate": "node scripts/apply-migrations.mjs",
     "db:rls-probe": "node scripts/rls-probe.mjs"
   },
@@ -21,6 +23,7 @@
     "jose": "6.2.3",
     "marked": "18.0.5",
     "next": "15.5.20",
+    "pg": "8.22.0",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "sanitize-html": "2.17.5",

@@ -11,6 +11,12 @@
  * layout wrapping. It is served as a plain static file, unmodified.
  */
 const nextConfig = {
+  // `pg` (the Postgres driver used by the READ-ONLY LinkedIn sync — Phase F) is
+  // a Node-only library with an OPTIONAL native dep (`pg-native`). Keep it out
+  // of the webpack bundle and require it at runtime from node_modules, so its
+  // conditional requires don't emit resolution warnings/errors at build. It is
+  // only ever loaded (lazily) on the Node-runtime cron route / backfill.
+  serverExternalPackages: ["pg"],
   async rewrites() {
     return [
       { source: "/", destination: "/index.html" },

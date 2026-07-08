@@ -824,3 +824,79 @@ gitignored and **untracked**; only `.env.local.example` is committed. (A
 `gitleaks dir` disk scan flags 137 hits, **all in gitignored `.next/` (127) +
 `.env.local` (10)** — nothing tracked.) `npm audit`: **0 vulnerabilities**.
 **No new npm deps; no new required env var** (`NEXT_PUBLIC_SITE_URL` is optional).
+
+# Platform (Phase F) — READ-ONLY LinkedIn ingestion (staged & dormant)
+
+Mirrors the owner's auto-posted LinkedIn posts (produced by the SEPARATE
+`field-guide-builder` / "FGB" app, which posts on a schedule into its OWN Neon
+DB) into this platform's Supabase so they surface on `/blog`. **This is a
+STAGE-ONLY build: nothing here connects to, reads, or writes FGB. Every FGB code
+path is DORMANT until the owner sets `FGB_READONLY_DATABASE_URL`** — see
+`RUNBOOK-LINKEDIN.md` for the exact enable steps.
+
+**The view is the contract.** The sync depends ONLY on a stable, read-only VIEW
+with columns *we* chose — `external_id text, text_md text, url text, published_at
+timestamptz, media jsonb`. The owner creates that view in FGB's Neon (mapping
+FGB's real table → these names). So the sync code is fully written and tested
+against these stable names WITHOUT knowing FGB's real schema.
+
+Built (all dormant until the env var is set):
+- **`lib/linkedin_sync.js`** — reads the contract view over a pinned `pg`
+  connection (the one justified new dep) inside a `START TRANSACTION READ ONLY`,
+  and upserts each row through the existing gate (`ingestContent`, source
+  `linkedin_auto`, type `text`, `body_md`=text_md, canonical url in
+  `payload.link.url`, published_at, media). Robustness: **overlapping window**
+  (`published_at >= now() - N days`, default 7; idempotent via the gate's
+  `(source,external_id)` upsert); **schema-shape validation** (exact
+  columns+types via pg field OIDs — aborts, ingests nothing, if the view is
+  malformed); **single-flight lock** with **stale-takeover** (Supabase
+  `sync_state` + `sync_try_acquire`/`sync_finish` RPCs); **dead-man's-switch**
+  (last_success_at/last_error surfaced on `/admin`); **fails safe** (any
+  FGB-side error is caught, recorded, the lock released — never crashes, never
+  corrupts content).
+- **`app/api/cron/linkedin-sync/route.js`** — CRON_SECRET-guarded (503 if the
+  secret is unset, 401 without the bearer). No-ops with a clear "not configured"
+  200 when `FGB_READONLY_DATABASE_URL` is unset. `runtime=nodejs` (pg).
+- **`vercel.json` crons** — `/api/cron/linkedin-sync` every 6h. Vercel runs crons
+  only on PRODUCTION, so it is inert on preview (double-safe).
+- **`scripts/linkedin-backfill.mjs`** (`npm run linkedin:backfill`) — owner-run
+  one-shot: pulls ALL history (no window) through the same gate.
+- **`supabase/migrations/0007_sync_state.sql`** — the lock + health table +
+  RPCs. RLS forced, no anon/authenticated access; service_role only (mirrors
+  0004). Applied to Supabase during Phase F verification.
+- **`RUNBOOK-LINKEDIN.md`** — the morning steps: least-privilege read-only role +
+  contract-view DDL (with `-- FILL IN` placeholders), connection string, `vercel
+  env add … production`, backfill, verify, and one-step rollback.
+
+**Published vs draft.** Auto-synced posts land **`published`** (constant
+`AUTO_SYNC_STATUS`) — they are already public on LinkedIn, so /blog matches their
+existing visibility. Flip the constant to `'draft'` for a review step.
+
+**Verified against a MOCK, never FGB** (`npm run verify:phase-f`,
+`scripts/phase-f-verify.mjs`): a mock contract view (`mock_fgb.linkedin_posts_view`,
+FGB-like columns renamed to prove the view maps them) is created in the SAME
+Supabase DB (guarded to a Supabase host), seeded, and the sync is pointed at it.
+**ALL PASS**: shape-validation (pure + real malformed view rejected), upsert as
+`linkedin_auto`, published rows visible on the public `/blog`, canonicalization
+(utm/trk/www stripped), dedupe (re-run → updates, no dupes), overlapping-window
+(no double-insert), full backfill picks up out-of-window rows, single-flight lock
+blocks a concurrent run, stale-lock takeover, last_success_at advances, simulated
+FGB error records last_error + releases the lock + no corruption, cron 503/401 +
+200-no-op-when-unconfigured. Full teardown (mock schema dropped, sync_state reset,
+0 rows left).
+
+**No regressions**: `db:rls-probe`, `gate:verify`, `verify:phase-c`,
+`verify:phase-d`, `verify:phase-e` all still **ALL PASS** after Phase F (0007 is
+additive; doesn't touch existing RLS). Clean `next build`; `/` byte-identical.
+
+## Security scan notes (Snyk Code + SCA, Phase F)
+
+**Snyk SCA**: the new `pg@8.22.0` dep has **zero findings**. `npm audit`: **0
+vulnerabilities**. (The 2 SCA findings are the **same pre-existing `next` CVEs**
+the project already pins around — CVE-2026-27980 is already mitigated by
+`images:{unoptimized:true}`; upgrading Next major is out of scope.) **Snyk Code
+(SAST)** on every new file (`lib/linkedin_sync.js`, the cron route, both
+scripts): **zero findings**. The view identifier is validated + double-quoted and
+all row queries are parameterized (no SQL injection); TLS verification is never
+disabled in the library (it honors the URL's `sslmode`; real FGB/Neon uses
+`sslmode=require` = verified).

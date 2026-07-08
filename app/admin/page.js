@@ -7,6 +7,7 @@
 import { redirect } from 'next/navigation';
 import { requireAdmin, isAuthConfigured } from '@/lib/auth/session';
 import { getServiceClient } from '@/lib/supabase/server';
+import { getSyncHealth, syncStaleness, isFgbConfigured } from '@/lib/linkedin_sync';
 import { adminCss, StatusChip, SourceChip } from './ui';
 import LocalTime from './LocalTime';
 
@@ -77,6 +78,44 @@ function RowActions({ r }) {
   );
 }
 
+// Dead-man's-switch surface for the READ-ONLY LinkedIn sync (Phase F). Shows
+// last success / last error / staleness so a broken or missed sync is visible.
+// The sync stays DORMANT until FGB_READONLY_DATABASE_URL is set on the
+// deployment; until then this card says "not enabled".
+function SyncHealthCard({ health, enabled }) {
+  const s = syncStaleness(health);
+  const LABEL = {
+    ok: 'Healthy', stale: 'STALE — check the sync', error: 'ERROR — last run failed',
+    unknown: enabled ? 'Enabled, no successful run yet' : 'Not enabled',
+  };
+  const COLOR = { ok: '#1f7a4d', stale: '#b06a00', error: '#b4231b', unknown: '#756b62' };
+  const level = enabled ? s.level : 'unknown';
+  return (
+    <div className="card" style={{ marginBottom: 18 }}>
+      <p className="eyebrow" style={{ margin: '0 0 10px' }}>LinkedIn sync (read-only)</p>
+      <div className="stat-row" style={{ marginBottom: 10, alignItems: 'center' }}>
+        <div className="stat">
+          <b style={{ color: COLOR[level] }}>●</b>
+          <span style={{ fontWeight: 700, color: COLOR[level] }}>{LABEL[level]}</span>
+        </div>
+        <div className="stat"><b>{health?.synced_count ?? 0}</b><span>Last synced</span></div>
+        <div className="stat"><b>{health?.created_count ?? 0}</b><span>New</span></div>
+        <div className="stat"><b>{health?.updated_count ?? 0}</b><span>Updated</span></div>
+      </div>
+      <p className="meta" style={{ margin: 0 }}>
+        last_success={fmtUtc(health?.last_success_at)} · last_run={fmtUtc(health?.last_run_at)}
+        {health?.locked_by ? ' · running now' : ''}
+        {!enabled && ' · dormant until FGB_READONLY_DATABASE_URL is set (see RUNBOOK-LINKEDIN.md)'}
+      </p>
+      {health?.last_error && (
+        <p className="meta" style={{ margin: '6px 0 0', color: '#b4231b' }}>
+          last_error: {String(health.last_error).slice(0, 200)} ({fmtUtc(health.last_error_at)})
+        </p>
+      )}
+    </div>
+  );
+}
+
 export default async function AdminPage({ searchParams }) {
   // Fail-closed: unconfigured auth => cannot be admin => send to login.
   if (!isAuthConfigured()) redirect('/admin/login');
@@ -88,6 +127,8 @@ export default async function AdminPage({ searchParams }) {
   const filter = sp?.src === 'x_auto' ? 'x_auto' : null;
 
   const { rows, error } = await loadRows();
+  const syncHealth = await getSyncHealth();
+  const fgbEnabled = isFgbConfigured();
   const counts = { published: 0, draft: 0, removed: 0 };
   if (rows) for (const r of rows) {
     if (r.deleted_at || r.status === 'removed') counts.removed++;
@@ -141,6 +182,8 @@ export default async function AdminPage({ searchParams }) {
             expires={fmtUtc(session.exp ? session.exp * 1000 : null)}
           </p>
         </div>
+
+        <SyncHealthCard health={syncHealth} enabled={fgbEnabled} />
 
         {error === 'db_not_configured' && (
           <div className="card">
