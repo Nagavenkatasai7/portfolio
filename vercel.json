@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
   "redirects": [
     { "source": "/intellidoc", "destination": "https://intellidoc-nexus.vercel.app", "permanent": false },
     { "source": "/jira-automation", "destination": "https://ai-business-request-intake.vercel.app", "permanent": false },
