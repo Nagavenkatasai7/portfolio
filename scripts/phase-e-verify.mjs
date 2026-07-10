@@ -16,9 +16,8 @@
 //      aggregation math, the id/bot/dedupe helpers.
 //   B. Seed a PUBLISHED + a DRAFT + a REMOVED post through the REAL gate.
 //   C. Cold build + next start, then assert the public distribution surface:
-//      RSS (published only, valid XML, no draft/removed/admin data), sitemap
-//      (published only), robots (disallow /admin + /api), per-post SEO
-//      (OG/Twitter/JSON-LD/canonical + RSS alternate), draft/removed post 404,
+//      sitemap (published only), robots (disallow /admin + /api), per-post SEO
+//      (OG/Twitter/JSON-LD/canonical), draft/removed post 404,
 //      the security headers (HSTS/Permissions-Policy/nosniff/frame) AND the
 //      unchanged CSP the chatbot/embeds/uploads depend on, / byte-identical,
 //      /admin/analytics -> login redirect.
@@ -241,20 +240,7 @@ async function main() {
 
   try {
     // ---- C. Public distribution surface ----
-    console.log('\n== C. RSS / sitemap / robots / per-post SEO / headers ==');
-
-    // RSS
-    const rss = await curl('/blog/rss.xml');
-    const rssType = rss.headers.get('content-type') || '';
-    const rssXml = await rss.text();
-    ok('rss: 200 + application/rss+xml', rss.status === 200 && /application\/rss\+xml/.test(rssType), rssType);
-    ok('rss: well-formed <rss><channel> with items', /<rss[\s>]/.test(rssXml) && /<channel>/.test(rssXml) && /<item>/.test(rssXml));
-    ok('rss: contains the PUBLISHED post', rssXml.includes(`${STAMP} Published Post`) && rssXml.includes(`/blog/${pubId}`));
-    ok('rss: guid is the permalink', rssXml.includes(`<guid isPermaLink="true">${BASE}/blog/${pubId}</guid>`));
-    ok('rss: has a valid pubDate (RFC-822)', /<pubDate>[A-Z][a-z]{2}, \d{2} [A-Z][a-z]{2} \d{4} \d{2}:\d{2}:\d{2} GMT<\/pubDate>/.test(rssXml));
-    ok('rss: EXCLUDES the draft', !rssXml.includes(`${STAMP} Draft Post`) && !rssXml.includes(draftId) && !rssXml.includes(DRAFT_MARK));
-    ok('rss: EXCLUDES the removed', !rssXml.includes(`${STAMP} Removed Post`) && !rssXml.includes(removedId));
-    ok('rss: leaks no internal/admin columns', !/ingested_at|deleted_at|service_role|external_id/i.test(rssXml));
+    console.log('\n== C. sitemap / robots / per-post SEO / headers ==');
 
     // sitemap
     const sm = await curl('/sitemap.xml');
@@ -284,8 +270,6 @@ async function main() {
     ok('post: Open Graph tags', /property="og:title"/.test(ppHtml) && /property="og:type"\s+content="article"/.test(ppHtml) && ppHtml.includes(`property="og:url"`) && /property="og:image"/.test(ppHtml));
     ok('post: Twitter card', /name="twitter:card"\s+content="summary_large_image"/.test(ppHtml) && /name="twitter:title"/.test(ppHtml));
     ok('post: JSON-LD BlogPosting', /application\/ld\+json/.test(ppHtml) && /"@type":"BlogPosting"/.test(ppHtml) && ppHtml.includes(`"url":"${BASE}/blog/${pubId}"`));
-    ok('post: RSS alternate link in head', /<link[^>]+rel="alternate"[^>]+type="application\/rss\+xml"[^>]+href="[^"]*\/blog\/rss\.xml"/.test(ppHtml)
-      || /<link[^>]+type="application\/rss\+xml"[^>]+rel="alternate"/.test(ppHtml));
     ok('post: embeds the analytics beacon (POST /api/analytics/view)', ppHtml.includes('/api/analytics/view') && ppHtml.includes(pubId));
     ok('post: beacon respects DNT client-side', /doNotTrack/.test(ppHtml));
 

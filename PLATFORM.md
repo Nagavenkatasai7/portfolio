@@ -666,7 +666,7 @@ OpenRouter key reuses the existing `OPENROUTER_API_KEY`).
 # Platform (Phase E) — public distribution, analytics, ops hardening
 
 Phase E makes `/blog` a first-class **published surface** (per-post pages, SEO,
-RSS, sitemap, robots), adds **our-own, privacy-friendly view analytics** with an
+sitemap, robots), adds **our-own, privacy-friendly view analytics** with an
 admin dashboard, and finalizes the **security response headers** — all without a
 new npm dependency, without a new *required* env var, and without touching the
 "Ask Naga" chatbot, the `/blog` video embeds, or the `/admin` uploads.
@@ -674,7 +674,7 @@ new npm dependency, without a new *required* env var, and without touching the
 ## New files (all first-party, pure/server-only as marked)
 
 - `lib/post.js` — PURE: a post's public path (`/blog/<id>`), title, and a
-  sanitized meta description, derived ONE way for the feed, per-post page, RSS,
+  sanitized meta description, derived ONE way for the feed, per-post page,
   sitemap, and the verify script (so links/titles can never drift apart).
 - `lib/site.js` — the deployment's base URL for absolute SEO URLs (optional
   `NEXT_PUBLIC_SITE_URL` → Vercel system vars → localhost) + `originFromHeaders`.
@@ -685,7 +685,7 @@ new npm dependency, without a new *required* env var, and without touching the
 - `app/blog/[id]/page.js` — per-post page + full SEO + JSON-LD + the beacon.
 - `app/blog/render.js` — shared `/blog` rendering atoms (extracted from the feed
   so per-post + feed render identically; the feed markup is unchanged).
-- `app/blog/rss.xml/route.js`, `app/sitemap.js`, `app/robots.js`.
+- `app/sitemap.js`, `app/robots.js`.
 - `app/admin/analytics/page.js` — the dashboard (requireAdmin).
 - `scripts/phase-e-verify.mjs` (`npm run verify:phase-e`).
 
@@ -737,20 +737,16 @@ numbers on the dashboard are the numbers the verify asserts.
 
 ## Syndication + SEO
 
-- **RSS 2.0** at `/blog/rss.xml` — published public content only (reads the same
-  anon `public_content` surface, so drafts/removed can't appear and no internal
-  column leaks), newest first, escaped, `application/rss+xml` + CDN cache headers.
 - **`/sitemap.xml`** — blog index + each published post (Next metadata route).
 - **`/robots.txt`** — `Allow: /` + `/blog`, **`Disallow: /admin` + `/api`**,
   `Sitemap:` pointer.
 - **Per-post SEO** on `/blog/<id>`: title + sanitized meta description, canonical
-  URL, **Open Graph + Twitter Card**, **JSON-LD `BlogPosting`**, and a
-  `<link rel="alternate" type="application/rss+xml">`. Default OG image reuses the
-  existing `public/profile.png` (no image generator). `metadataBase` is set in
-  the root layout so all of these resolve to absolute URLs.
+  URL, **Open Graph + Twitter Card**, and **JSON-LD `BlogPosting`**. Default OG
+  image reuses the existing `public/profile.png` (no image generator).
+  `metadataBase` is set in the root layout so all of these resolve to absolute URLs.
 - Per-post URLs are keyed on the **content uuid** (not a title-slug) so they are
   well-defined for every content type and stable across edits; the same id is the
-  analytics whitelist key and the RSS `<guid>`. (Readable slugs = a future nicety.)
+  analytics whitelist key. (Readable slugs = a future nicety.)
 
 ## Header policy (finalized)
 
@@ -795,13 +791,11 @@ still carries **no restrictive CSP**. `/` remains **byte-identical** to
 
 Runs the pure aggregation/helper unit tests, then seeds a **published + draft +
 removed** post through the real gate, does a cold `next build && next start`, and
-asserts over real HTTP (**91 PASS / 0 FAIL**):
+asserts over real HTTP (**all PASS / 0 FAIL**):
 
-- RSS is valid XML with the published post (correct pubDate/guid/link), and
-  **excludes** the draft, the removed, and any internal/admin column.
 - sitemap lists the published post only; robots disallows `/admin` + `/api`.
 - a published post's HTML carries OG + Twitter + JSON-LD `BlogPosting` +
-  canonical + the RSS alternate link + the beacon; draft/removed/malformed → 404.
+  canonical + the beacon; draft/removed/malformed → 404.
 - `POST /api/analytics/view`: a valid id → 200 + **exactly one** row; a repeat →
   deduped (no row); a burst → **429 at N=40**; unknown → 404; malformed → 400;
   bot UA / DNT → 204 skip; cross-site Origin → 403; and **no raw IP is stored**

@@ -18,10 +18,8 @@ import {
 export const metadata = {
   title: 'Blog | Naga Venkata Sai Chennu',
   description: 'Writing and posts on scalable systems, test automation, and AI-assisted development.',
-  // Advertise the RSS feed in the document head for feed readers + browsers.
   alternates: {
     canonical: '/blog',
-    types: { 'application/rss+xml': '/blog/rss.xml' },
   },
 };
 
@@ -54,7 +52,6 @@ export default async function BlogPage() {
           <p className="lede">Notes on scalable systems, test automation, and AI-assisted development — plus cross-posted updates from LinkedIn and X.</p>
           <div className="navrow">
             <a href="/">← Portfolio</a>
-            <a href="/blog/rss.xml">RSS feed</a>
           </div>
         </header>
 
