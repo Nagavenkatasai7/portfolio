@@ -1310,3 +1310,44 @@ One new entry: `{ "path": "/api/cron/newsletter-send", "schedule": "0 13 * * *" 
 — daily 13:00 UTC (≈9am EDT / 8am EST, accepted). Vercel Hobby's 2-cron limit
 is now fully used (`linkedin-sync` + `newsletter-send`); no more crons
 without a plan upgrade.
+
+# CI — GitHub Actions (`.github/workflows/ci.yml`)
+
+A **checks-only** pipeline that gates every `pull_request` and every push to
+`platform`/`main`. It turns the repo's existing manual verification into
+automated gates. It does **NOT deploy** — Vercel's native Git integration owns
+deploys, so there is no Vercel token and no deploy job. `platform` is **not**
+the production branch (production tracks `main`); the pipeline treats both as
+checks only. `concurrency` cancels a superseded run per ref; `permissions` is
+`contents: read`; third-party actions are pinned to a version tag.
+
+**Jobs**
+
+- **`build`** — `npm ci` → **`next build`** (the primary gate; it already
+  catches route/type/import errors) → verify scripts:
+  - *Always* (offline, no DB/creds, exercise real logic): `gate:verify`
+    (URL canonicalization + dedupe, Part A) and `verify:newsletter-preview`
+    (the email renderer + static CSP/route guarantees).
+  - *Conditional on Supabase secrets* (`db:rls-probe`, `gate:verify` Part B,
+    `verify:phase-c/d/e/f`, `verify:newsletter`, `verify:newsletter-issues`):
+    a detect step reads the secrets into env and sets a `has_supabase` /
+    `has_pg` output; the DB steps run only when it is `true`. When the secrets
+    are absent they **skip cleanly (green)** — never a red failure.
+- **`secret-scan`** — **gitleaks** (`gitleaks/gitleaks-action@v2`, full-history
+  checkout). A **hard gate**: fails the build if a real secret is committed.
+  The repo is public, so no license/token is needed (a `GITLEAKS_LICENSE` is
+  only required for GitHub Organisation accounts).
+- **`snyk`** — **Snyk Code**, gated on `SNYK_TOKEN` and **non-fatal**
+  (`continue-on-error`): a finding or a Snyk outage never blocks a merge, and a
+  missing token skips the job green.
+
+**GitHub Actions secrets**
+
+- **Required:** none. With no secrets, the pipeline still runs `next build`,
+  the two offline verify scripts, and gitleaks — and is green.
+- **Optional (DB-backed verify — set the Supabase ones together):**
+  `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY`, and
+  `POSTGRES_URL_NON_POOLING` (adds `phase-f`). **Point these at a test/staging
+  Supabase, not production** — `gate:verify` Part B and the phase/newsletter
+  scripts write rows (they clean up after themselves).
+- **Optional (Snyk):** `SNYK_TOKEN`.

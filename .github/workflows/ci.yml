@@ -1,0 +1,196 @@
+# ============================================================
+# CI — checks-only pipeline for the Next.js platform.
+#
+# This pipeline GATES every PR and every push to `platform`/`main`. It does NOT
+# deploy: Vercel's native Git integration owns deploys, so there is no Vercel
+# token and no deploy job here. `platform` is NOT the production branch
+# (production tracks `main`); this workflow treats both the same — as checks.
+#
+# Jobs
+#   build         next build (primary gate) + verify scripts.
+#   secret-scan   gitleaks — HARD gate (the repo is PUBLIC).
+#   snyk          Snyk Code — optional, NON-FATAL.
+#
+# GitHub Actions secrets
+#   Required: none. With no secrets set, the pipeline still runs the primary
+#             gates (next build + the two offline verify scripts + gitleaks) and
+#             is GREEN. Every DB/token-dependent step SKIPS cleanly when its
+#             secret is absent — a missing optional secret is never a failure.
+#
+#   Optional (enable the DB-backed verify scripts — set ALL of the Supabase
+#   ones together). Point these at a TEST/STAGING Supabase, never production:
+#   gate-verify Part B and the phase/newsletter scripts WRITE rows (they clean
+#   up after themselves, but they do write):
+#     - SUPABASE_URL
+#     - SUPABASE_SERVICE_ROLE_KEY
+#     - SUPABASE_ANON_KEY
+#     - POSTGRES_URL_NON_POOLING   (adds phase-f, which needs a Postgres URL)
+#   Optional (Snyk Code scan, non-fatal):
+#     - SNYK_TOKEN
+#
+# gitleaks needs no token/license for a personal PUBLIC repo (a GITLEAKS_LICENSE
+# is only required for GitHub Organisation accounts).
+# ============================================================
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [platform, main]
+
+# One in-flight run per ref; a new push cancels the previous run.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# Least privilege: the checks only need to read the repo.
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build & verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # DB creds flow in from secrets. When a secret is unset GitHub injects an
+    # empty string, so the verify scripts self-gate (skip) and the detect step
+    # below turns the expensive/hard-failing DB steps off.
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      POSTGRES_URL_NON_POOLING: ${{ secrets.POSTGRES_URL_NON_POOLING }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # PRIMARY GATE: next build already catches route + type + import errors.
+      - name: next build
+        run: npx next build
+
+      # OFFLINE verify scripts — no DB, no server, no creds. They exit 0 and
+      # exercise real logic (URL canonicalization/dedupe; the email renderer +
+      # static CSP/route guarantees), so they run on every event.
+      - name: Verify (offline) — ingestion gate canonicalization
+        run: npm run gate:verify
+
+      - name: Verify (offline) — newsletter preview renderer
+        run: npm run verify:newsletter-preview
+
+      # Detect optional DB secrets. GitHub Actions can't read secrets directly
+      # in an `if:`, so we branch on the env vars (populated from secrets above).
+      - name: Detect DB secrets
+        id: db
+        run: |
+          if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "has_supabase=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_supabase=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Supabase secrets absent — DB-dependent verify scripts are skipped (green, not a failure)."
+          fi
+          if [ -n "$POSTGRES_URL_NON_POOLING" ]; then
+            echo "has_pg=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_pg=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # DB-DEPENDENT verify scripts — only when the Supabase secrets are present.
+      # (rls-probe and phase-f hard-exit non-zero without creds; the phase/
+      # newsletter scripts would otherwise build+start a server just to SKIP.)
+      - name: Verify (DB) — RLS probe
+        if: steps.db.outputs.has_supabase == 'true'
+        run: npm run db:rls-probe
+
+      - name: Verify (DB) — ingestion gate live dedupe (Part B)
+        if: steps.db.outputs.has_supabase == 'true'
+        run: npm run gate:verify
+
+      - name: Verify (DB) — phase C (build + public surface)
+        if: steps.db.outputs.has_supabase == 'true'
+        run: npm run verify:phase-c
+
+      - name: Verify (DB) — phase D (ingest/x + render)
+        if: steps.db.outputs.has_supabase == 'true'
+        run: npm run verify:phase-d
+
+      - name: Verify (DB) — phase E (distribution + analytics)
+        if: steps.db.outputs.has_supabase == 'true'
+        run: npm run verify:phase-e
+
+      - name: Verify (DB) — phase F (linkedin sync)
+        if: steps.db.outputs.has_supabase == 'true' && steps.db.outputs.has_pg == 'true'
+        run: npm run verify:phase-f
+
+      - name: Verify (DB) — newsletter
+        if: steps.db.outputs.has_supabase == 'true'
+        run: npm run verify:newsletter
+
+      - name: Verify (DB) — newsletter issues
+        if: steps.db.outputs.has_supabase == 'true'
+        run: npm run verify:newsletter-issues
+
+  secret-scan:
+    name: Secret scan (gitleaks)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          # gitleaks scans the pushed commit range / PR diff — full history so
+          # nothing is missed on a push.
+          fetch-depth: 0
+      # HARD gate: fails the build if a real secret is committed. Pinned to a
+      # major version tag (not a floating branch). No token/license needed for a
+      # personal public repo.
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  snyk:
+    name: Snyk Code (optional)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Detect Snyk token
+        id: snyk
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: |
+          if [ -n "$SNYK_TOKEN" ]; then
+            echo "has_token=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_token=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::SNYK_TOKEN absent — Snyk scan skipped (green, not a failure)."
+          fi
+
+      # NON-FATAL: continue-on-error so a Snyk finding (or a transient Snyk
+      # outage) never blocks a merge. Runs only when the token is present.
+      - name: Snyk Code test
+        if: steps.snyk.outputs.has_token == 'true'
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: npx snyk code test
