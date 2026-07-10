@@ -71,6 +71,9 @@ export function middleware(request) {
       "font-src 'self'",
       `connect-src 'self'${sb ? ` ${sb}` : ''}`,
       "object-src 'none'",
+      // Let the studio embed the SAME-ORIGIN inline email-preview iframe
+      // (/api/admin/newsletter/preview). Only 'self' — no third-party frames.
+      "frame-src 'self'",
       "frame-ancestors 'none'",
       "form-action 'self'",
     ];

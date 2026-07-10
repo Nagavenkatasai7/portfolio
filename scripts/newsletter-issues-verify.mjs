@@ -143,6 +143,7 @@ async function templateTests() {
   ok('template: List-Unsubscribe + one-click headers set', email.headers['List-Unsubscribe'] === '<https://s/u?token=AAA>' && email.headers['List-Unsubscribe-Post'] === 'List-Unsubscribe=One-Click');
   ok('template: unsub + read-in-browser links in HTML', email.html.includes('https://s/u?token=AAA') && email.html.includes('https://s/blog/x'));
   ok('template: hero image with alt rendered', email.html.includes('https://ex.com/h.png') && /alt="Weekly AI"/.test(email.html));
+  ok('template: HTML embeds subject + wordmark (inline-preview parity)', email.html.includes('Weekly AI') && email.html.includes('The Field Guide'));
   ok('template: plain-text twin present', email.text.includes('Weekly AI') && email.text.includes('Unsubscribe:'));
   const test = renderIssueEmail({ content, meta, prepared, unsubUrl: 'https://s/u?token=B', readInBrowserUrl: 'https://s/blog/x', test: true });
   ok('template: [TEST] prefix on test render', test.subject === '[TEST] Weekly AI');
@@ -481,6 +482,23 @@ async function routeAuthTests() {
     ok('route auth: subscribers 401 without session', sub.status === 401, `(${sub.status})`);
     const lnk = await postJson('/api/admin/newsletter/links', { action: 'add', url: 'https://e.com' });
     ok('route auth: links 401 without session', lnk.status === 401, `(${lnk.status})`);
+
+    // Inline email preview (GET the studio iframe navigates to): 401 without a
+    // session, and it must NOT stream the email HTML to an unauthenticated caller.
+    const prev = await fetch(`${BASE}/api/admin/newsletter/preview?contentId=x`, { cache: 'no-store' });
+    ok('route auth: preview 401 without session', prev.status === 401, `(${prev.status})`);
+    ok('route auth: preview does NOT return email HTML without session', !(prev.headers.get('content-type') || '').includes('text/html'));
+    // next.config carves ONLY this path out of the strict /api CSP so /admin can
+    // frame it — verify the isolating framing headers land on the path...
+    const prevCsp = prev.headers.get('content-security-policy') || '';
+    ok('route auth: preview path CSP allows same-origin framing (frame-ancestors self)', /frame-ancestors 'self'/.test(prevCsp), prevCsp.slice(0, 90));
+    ok('route auth: preview path X-Frame-Options SAMEORIGIN', (prev.headers.get('x-frame-options') || '').toUpperCase() === 'SAMEORIGIN', `(${prev.headers.get('x-frame-options')})`);
+    // ...while a SIBLING admin /api route keeps the strict locked-down CSP (proves
+    // the carve-out is scoped to the one path — no weakening of other routes).
+    const iss2 = await fetch(`${BASE}/api/admin/newsletter/issues?contentId=x`, { cache: 'no-store' });
+    const issCsp = iss2.headers.get('content-security-policy') || '';
+    ok('route auth: sibling /api CSP still frame-ancestors none (unchanged)', /frame-ancestors 'none'/.test(issCsp), issCsp.slice(0, 90));
+    ok('route auth: sibling /api X-Frame-Options still DENY (unchanged)', (iss2.headers.get('x-frame-options') || '').toUpperCase() === 'DENY');
   } finally {
     if (server) { stopServer(server); await sleep(500); }
   }

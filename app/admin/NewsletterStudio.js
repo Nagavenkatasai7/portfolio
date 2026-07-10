@@ -120,6 +120,10 @@ export default function NewsletterStudio({ stats, subscribers, issues, issuable,
   const [editPreheader, setEditPreheader] = useState('');
   const [editHero, setEditHero] = useState('');
   const [testEmail, setTestEmail] = useState('');
+  // Inline email preview (read-only iframe of the EXACT email). `previewNonce`
+  // bumps to remount the iframe (reload) after the admin saves meta edits.
+  const [previewOpen, setPreviewOpen] = useState(true);
+  const [previewNonce, setPreviewNonce] = useState(0);
 
   // Link bin tab
   const [linkUrl, setLinkUrl] = useState('');
@@ -527,6 +531,39 @@ export default function NewsletterStudio({ stats, subscribers, issues, issuable,
                   </div>
                   {!config.emailConfigured && (
                     <p className="hint">Sending is dormant until RESEND_API_KEY is set.</p>
+                  )}
+
+                  {/* inline email preview — the EXACT email, rendered read-only
+                      in a sandboxed same-origin iframe (no test send needed). */}
+                  <hr className="divider" />
+                  <div className="row-actions" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+                    <button
+                      type="button"
+                      className="btn sm"
+                      aria-expanded={previewOpen}
+                      onClick={() => setPreviewOpen((v) => !v)}
+                    >
+                      {previewOpen ? '▾ Email preview' : '▸ Email preview'}
+                    </button>
+                    {previewOpen && (
+                      <button type="button" className="btn sm" onClick={() => setPreviewNonce((n) => n + 1)}>
+                        Refresh preview
+                      </button>
+                    )}
+                  </div>
+                  {previewOpen && (
+                    <>
+                      <p className="hint" style={{ margin: '10px 0' }}>
+                        Exactly what a subscriber receives. Edit the fields above, Save meta, then Refresh preview.
+                      </p>
+                      <iframe
+                        title="Email preview"
+                        sandbox=""
+                        src={`/api/admin/newsletter/preview?contentId=${encodeURIComponent(selectedIssueId)}`}
+                        style={{ width: '100%', height: '760px', border: '1px solid #ddceb8', borderRadius: '8px', background: '#f3ead8' }}
+                        key={previewNonce}
+                      />
+                    </>
                   )}
 
                   {/* test send */}

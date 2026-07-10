@@ -16,6 +16,7 @@
     "verify:phase-f": "node --conditions=react-server scripts/phase-f-verify.mjs",
     "verify:newsletter": "node --conditions=react-server scripts/newsletter-verify.mjs",
     "verify:newsletter-issues": "node --conditions=react-server scripts/newsletter-issues-verify.mjs",
+    "verify:newsletter-preview": "node scripts/newsletter-preview-verify.mjs",
     "newsletter:hero": "node scripts/newsletter-hero.mjs",
     "newsletter:draft": "node --conditions=react-server scripts/newsletter-draft-helper.mjs",
     "linkedin:backfill": "node --conditions=react-server scripts/linkedin-backfill.mjs",
