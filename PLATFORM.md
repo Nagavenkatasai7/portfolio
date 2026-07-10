@@ -1313,12 +1313,15 @@ without a plan upgrade.
 
 # CI — GitHub Actions (`.github/workflows/ci.yml`)
 
+![CI](https://github.com/Nagavenkatasai7/portfolio/actions/workflows/ci.yml/badge.svg?branch=platform)
+
 A **checks-only** pipeline that gates every `pull_request` and every push to
 `platform`/`main`. It turns the repo's existing manual verification into
 automated gates. It does **NOT deploy** — Vercel's native Git integration owns
-deploys, so there is no Vercel token and no deploy job. `platform` is **not**
-the production branch (production tracks `main`); the pipeline treats both as
-checks only. `concurrency` cancels a superseded run per ref; `permissions` is
+deploys, so there is no Vercel token and no deploy job. Since the production
+cutover, **`platform` is the production branch** (Vercel auto-deploys pushes to
+it); the CI pipeline still treats every ref as checks only and leaves deploys
+entirely to Vercel. `concurrency` cancels a superseded run per ref; `permissions` is
 `contents: read`; third-party actions are pinned to a version tag.
 
 **Jobs**
