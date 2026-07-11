@@ -45,7 +45,7 @@ served at their original relative paths. Nothing was hand-converted to JSX.
   file that was at the repo root before this conversion.
 - `public/chatbot.css`, `public/chatbot.js` — the "Ask Naga" chat widget
   front end, referenced by `index.html` via plain relative `href`/`src`.
-- `public/profile.png`, `public/img.JPG`,
+- `public/profile.png`,
   `public/Naga_Venkata_Sai_Chennu_Career_Fair_Resume.pdf`,
   `public/assets/projects/*.jpg` — every image/asset `index.html`
   references, at the same relative paths it already used.
@@ -1354,3 +1354,39 @@ entirely to Vercel. `concurrency` cancels a superseded run per ref; `permissions
   Supabase, not production** — `gate:verify` Part B and the phase/newsletter
   scripts write rows (they clean up after themselves).
 - **Optional (Snyk):** `SNYK_TOKEN`.
+
+## Known follow-ups & operational gaps (2026-07-10 hardening pass)
+
+A full audit + fix pass shipped the site fixes, security hardening, and admin
+dashboard improvements. These items were deliberately left open — each needs an
+owner decision, new infrastructure/secret, or a DB migration, so none were
+auto-applied:
+
+- **Durable chatbot rate limiter.** `api/chat.js` (Edge) now has a per-IP + a
+  coarse per-instance in-memory backstop, but a true cross-instance limit needs
+  either the already-provisioned Upstash Redis (`upstash-kv-green-branch`) wired
+  in via its REST URL/token env vars, or moving the chatbot to a Node runtime so
+  it can use the Postgres limiter. It must NOT import `server-only` / the
+  service-role client (that crashes the Edge function).
+- **Newsletter subscribe CAPTCHA.** Fail-closed per-IP + global hourly ceilings
+  are in place; a CAPTCHA/Turnstile challenge (needs an external secret) would
+  be the stronger per-request bot check on top.
+- **Rendered composer preview.** Deferred: every Snyk-clean implementation needs
+  a `next.config.mjs` `/api/admin/preview` CSP carve-out mirroring the existing
+  newsletter-preview one (the live textarea body is a Snyk-tainted source that
+  its markdown+sanitize pipeline isn't credited for). Owner decision on the CSP.
+- **CSP nonce for `/blog/:path*` (skipped hardening #10),** origin-host allowlist
+  (#6, risks locking out dynamic preview OAuth hosts), and atomic rate-limit
+  counting (#8, needs a unique-constraint / DB-function migration) — all left as
+  documented lower-priority items.
+- **Uploaded blog media is public-on-upload** (bucket `public=true`). Acceptable
+  for a public blog; a private bucket + signed URLs is the alternative.
+- **Active monitoring/alerting.** Cron failures now return 5xx (Vercel detects
+  them) and the dead-man's-switch card exists, but there is no external error
+  tracker (e.g. Sentry — needs a DSN secret).
+- **Backup / disaster recovery.** No documented Supabase PITR / export cadence
+  for content, subscribers, and analytics. Recommended: enable Supabase PITR and
+  a periodic export of the `content` + `newsletter_subscribers` tables.
+- **DB-level gate for the send-lock refactor.** The advisory-lock `finally`
+  refactor in `lib/newsletter_issues.js` was verified by inspection; run
+  `npm run verify:newsletter-issues` against a test Supabase for a runtime gate.

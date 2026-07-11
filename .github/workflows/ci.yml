@@ -3,8 +3,9 @@
 #
 # This pipeline GATES every PR and every push to `platform`/`main`. It does NOT
 # deploy: Vercel's native Git integration owns deploys, so there is no Vercel
-# token and no deploy job here. `platform` is NOT the production branch
-# (production tracks `main`); this workflow treats both the same — as checks.
+# token and no deploy job here. `platform` IS the production branch (Vercel's
+# Production Branch was flipped main->platform on 2026-07-10); this workflow
+# still treats both `platform` and `main` the same — as checks only.
 #
 # Jobs
 #   build         next build (primary gate) + verify scripts.
