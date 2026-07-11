@@ -45,6 +45,7 @@ export async function POST(request) {
       if (err.code === 'not_found') return json({ error: 'not_found' }, 404);
       if (err.code === 'invalid_id' || err.code === 'invalid_email') return json({ error: err.code }, 400);
       if (err.code === 'suppressed') return json({ error: 'suppressed', detail: err.detail || null }, 409);
+      if (err.code === 'unsubscribed') return json({ error: 'unsubscribed', detail: err.detail || null }, 409);
     }
     return json({ error: 'action_failed' }, 500);
   }

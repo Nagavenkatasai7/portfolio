@@ -29,6 +29,7 @@ const ERR_MSG = {
   invalid_email: 'Enter a valid email',
   not_configured: 'Audience import is not configured (RESEND_AUDIENCE_ID unset)',
   suppressed: 'That address is suppressed (a hard bounce or spam complaint) and can’t be re-added',
+  unsubscribed: 'That address unsubscribed — they must re-subscribe themselves via the signup form',
   timed_out: 'The request timed out — please try again',
 };
 const errMsg = (c) => ERR_MSG[c] || 'Something went wrong';
