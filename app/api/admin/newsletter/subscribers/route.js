@@ -1,12 +1,13 @@
 // POST /api/admin/newsletter/subscribers — admin subscriber actions (Phase N2).
-//   remove -> removeSubscriber(subscriberId)   (manual opt-out -> 'unsubscribed')
+//   add    -> addSubscriberManual(email)        (owner manual add -> 'active')
+//   remove -> removeSubscriber(subscriberId)    (manual opt-out -> 'unsubscribed')
 //   import -> importResendAudience()            (optional Resend Audience import)
 //
 // requireAdmin + isSameOrigin on every call. Service-role writes only via the
 // chokepoint lib/newsletter_issues.js.
 import { requireAdmin } from '@/lib/auth/session';
 import { isSameOrigin, json } from '@/lib/http';
-import { removeSubscriber, importResendAudience, IssueError } from '@/lib/newsletter_issues';
+import { addSubscriberManual, removeSubscriber, importResendAudience, IssueError } from '@/lib/newsletter_issues';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -21,6 +22,11 @@ export async function POST(request) {
   const action = typeof body?.action === 'string' ? body.action : '';
 
   try {
+    if (action === 'add') {
+      const email = typeof body?.email === 'string' ? body.email : '';
+      const result = await addSubscriberManual(email);
+      return json({ ok: true, ...result }, 200);
+    }
     if (action === 'remove') {
       const subscriberId = typeof body?.subscriberId === 'string' ? body.subscriberId : '';
       const row = await removeSubscriber(subscriberId);
@@ -37,7 +43,8 @@ export async function POST(request) {
     if (err instanceof IssueError) {
       if (err.code === 'server_not_configured') return json({ error: 'server_not_configured' }, 503);
       if (err.code === 'not_found') return json({ error: 'not_found' }, 404);
-      if (err.code === 'invalid_id') return json({ error: 'invalid_id' }, 400);
+      if (err.code === 'invalid_id' || err.code === 'invalid_email') return json({ error: err.code }, 400);
+      if (err.code === 'suppressed') return json({ error: 'suppressed', detail: err.detail || null }, 409);
     }
     return json({ error: 'action_failed' }, 500);
   }

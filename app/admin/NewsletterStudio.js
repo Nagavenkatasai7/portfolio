@@ -16,6 +16,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUnsavedGuard } from './useUnsavedGuard';
+import { fetchWithTimeout, isTimeout } from './fetchWithTimeout';
 
 // Friendly copy for the error codes the APIs return (non-2xx { error }).
 const ERR_MSG = {
@@ -27,6 +28,8 @@ const ERR_MSG = {
   locked: 'A send is already running — try again in a moment',
   invalid_email: 'Enter a valid email',
   not_configured: 'Audience import is not configured (RESEND_AUDIENCE_ID unset)',
+  suppressed: 'That address is suppressed (a hard bounce or spam complaint) and can’t be re-added',
+  timed_out: 'The request timed out — please try again',
 };
 const errMsg = (c) => ERR_MSG[c] || 'Something went wrong';
 
@@ -105,6 +108,7 @@ export default function NewsletterStudio({ stats, subscribers, issues, issuable,
 
   // Subscribers tab
   const [subSearch, setSubSearch] = useState('');
+  const [newSubEmail, setNewSubEmail] = useState('');
 
   // Issues tab — "new issue" setup
   const [newContentId, setNewContentId] = useState('');
@@ -136,11 +140,13 @@ export default function NewsletterStudio({ stats, subscribers, issues, issuable,
   // POST JSON, tolerant of empty / non-JSON bodies. Never throws (network
   // failures surface via the caller's try/catch).
   async function callApi(path, body) {
-    const res = await fetch(path, {
+    // 65s ceiling — just over the send-now route's 60s maxDuration so a legitimate
+    // full-batch send isn't aborted client-side while the server is still finishing.
+    const res = await fetchWithTimeout(path, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(body),
-    });
+    }, 65000);
     let data = {};
     try { data = await res.json(); } catch { /* empty / non-JSON body */ }
     return { ok: res.ok, status: res.status, data };
@@ -155,7 +161,7 @@ export default function NewsletterStudio({ stats, subscribers, issues, issuable,
     try {
       const { ok, data } = await callApi(path, body);
       if (!ok) {
-        setBanner({ kind: 'err', text: errMsg(data.error) });
+        setBanner({ kind: 'err', text: errMsg(data.error), signin: data.error === 'unauthorized' });
         return { ok: false, data };
       }
       const text = typeof opts.ok === 'function' ? opts.ok(data) : (opts.ok || 'Done.');
@@ -163,8 +169,8 @@ export default function NewsletterStudio({ stats, subscribers, issues, issuable,
       router.refresh();
       if (opts.detail && selectedIssueId) await refreshDetail(selectedIssueId);
       return { ok: true, data };
-    } catch {
-      setBanner({ kind: 'err', text: 'Network error — please try again.' });
+    } catch (e) {
+      setBanner({ kind: 'err', text: isTimeout(e) ? errMsg('timed_out') : 'Network error — please try again.' });
       return { ok: false, data: {} };
     } finally {
       setBusy(null);
@@ -176,10 +182,17 @@ export default function NewsletterStudio({ stats, subscribers, issues, issuable,
   // that seeds the editor, on a fresh selection.
   async function refreshDetail(contentId) {
     try {
-      const res = await fetch(`/api/admin/newsletter/issues?contentId=${encodeURIComponent(contentId)}`);
+      const res = await fetchWithTimeout(`/api/admin/newsletter/issues?contentId=${encodeURIComponent(contentId)}`, {}, 30000);
       const data = await res.json().catch(() => ({}));
-      if (res.ok && data.ok) setDetail(data);
-    } catch { /* keep the prior detail on a transient failure */ }
+      if (res.ok && data.ok) { setDetail(data); return; }
+      // Failed refresh: drop the now-stale panel rather than show outdated
+      // status/ledger numbers, and tell the owner to reopen it.
+      setDetail(null);
+      setBanner({ kind: 'err', text: 'Could not refresh the issue — reopen it to see the latest.' });
+    } catch (e) {
+      setDetail(null);
+      setBanner({ kind: 'err', text: isTimeout(e) ? errMsg('timed_out') : 'Could not refresh the issue — reopen it to see the latest.' });
+    }
   }
 
   async function selectIssue(contentId) {
@@ -189,7 +202,7 @@ export default function NewsletterStudio({ stats, subscribers, issues, issuable,
     setTestEmail('');
     setDetailLoading(true);
     try {
-      const res = await fetch(`/api/admin/newsletter/issues?contentId=${encodeURIComponent(contentId)}`);
+      const res = await fetchWithTimeout(`/api/admin/newsletter/issues?contentId=${encodeURIComponent(contentId)}`, {}, 30000);
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.ok) {
         setDetail(data);
@@ -197,11 +210,11 @@ export default function NewsletterStudio({ stats, subscribers, issues, issuable,
         setEditPreheader(data.meta?.preheader || '');
         setEditHero(data.meta?.hero_image_url || '');
       } else {
-        setBanner({ kind: 'err', text: errMsg(data.error) });
+        setBanner({ kind: 'err', text: errMsg(data.error), signin: data.error === 'unauthorized' });
         setSelectedIssueId(null);
       }
-    } catch {
-      setBanner({ kind: 'err', text: 'Network error — could not load the issue.' });
+    } catch (e) {
+      setBanner({ kind: 'err', text: isTimeout(e) ? errMsg('timed_out') : 'Network error — could not load the issue.' });
       setSelectedIssueId(null);
     } finally {
       setDetailLoading(false);
@@ -277,6 +290,16 @@ export default function NewsletterStudio({ stats, subscribers, issues, issuable,
       { ok: 'Subscriber removed.' });
   }
 
+  async function addSubscriber() {
+    if (!newSubEmail.trim()) return;
+    const { ok } = await mutate('add-sub', '/api/admin/newsletter/subscribers', { action: 'add', email: newSubEmail.trim() }, {
+      ok: (d) => d.result === 'already_active' ? 'That address is already an active subscriber.'
+        : d.result === 'activated' ? 'Subscriber re-activated.'
+          : 'Subscriber added.',
+    });
+    if (ok) setNewSubEmail('');
+  }
+
   // Import is special: the API can answer 200 with { ok: false, error:
   // 'not_configured' }, so we can't trust the HTTP status alone.
   async function importAudience() {
@@ -285,7 +308,7 @@ export default function NewsletterStudio({ stats, subscribers, issues, issuable,
     try {
       const { ok, data } = await callApi('/api/admin/newsletter/subscribers', { action: 'import' });
       if (!ok || data.ok === false) {
-        setBanner({ kind: 'err', text: errMsg(data.error) });
+        setBanner({ kind: 'err', text: errMsg(data.error), signin: data.error === 'unauthorized' });
         return;
       }
       setBanner({
@@ -293,8 +316,8 @@ export default function NewsletterStudio({ stats, subscribers, issues, issuable,
         text: `Imported ${data.imported ?? 0}, upgraded ${data.upgraded ?? 0}, skipped ${data.skipped ?? 0} (audience ${data.total ?? 0}).`,
       });
       router.refresh();
-    } catch {
-      setBanner({ kind: 'err', text: 'Network error — please try again.' });
+    } catch (e) {
+      setBanner({ kind: 'err', text: isTimeout(e) ? errMsg('timed_out') : 'Network error — please try again.' });
     } finally {
       setBusy(null);
     }
@@ -357,7 +380,12 @@ export default function NewsletterStudio({ stats, subscribers, issues, issuable,
   // ── render ──────────────────────────────────────────────────────────────
   return (
     <>
-      {banner && <div className={`banner ${banner.kind}`} style={{ marginTop: 18 }}>{banner.text}</div>}
+      {banner && (
+        <div className={`banner ${banner.kind}`} style={{ marginTop: 18 }}>
+          {banner.text}
+          {banner.signin && <> <a href="/admin/login" target="_blank" rel="noopener noreferrer">Sign in ↗</a></>}
+        </div>
+      )}
 
       <div className="seg" role="group" aria-label="Studio section" style={{ margin: '18px 0' }}>
         <button type="button" aria-pressed={tab === 'issues'} onClick={() => setTab('issues')}>Issues ({(issues || []).length})</button>
@@ -411,16 +439,16 @@ export default function NewsletterStudio({ stats, subscribers, issues, issuable,
                 {showSetup && newContentId && (
                   <div style={{ marginTop: 16 }}>
                     <div className="field">
-                      <label>Subject</label>
-                      <input type="text" value={newSubject} onChange={(e) => setNewSubject(e.target.value)} placeholder="What lands in the inbox line" />
+                      <label htmlFor="ns-new-subject">Subject</label>
+                      <input id="ns-new-subject" type="text" value={newSubject} onChange={(e) => setNewSubject(e.target.value)} placeholder="What lands in the inbox line" />
                     </div>
                     <div className="field">
-                      <label>Preheader <span className="opt">(optional)</span></label>
-                      <input type="text" value={newPreheader} onChange={(e) => setNewPreheader(e.target.value)} placeholder="The grey preview text after the subject" />
+                      <label htmlFor="ns-new-preheader">Preheader <span className="opt">(optional)</span></label>
+                      <input id="ns-new-preheader" type="text" value={newPreheader} onChange={(e) => setNewPreheader(e.target.value)} placeholder="The grey preview text after the subject" />
                     </div>
                     <div className="field">
-                      <label>Hero image URL <span className="opt">(optional)</span></label>
-                      <input type="url" value={newHero} onChange={(e) => setNewHero(e.target.value)} placeholder="https://…" />
+                      <label htmlFor="ns-new-hero">Hero image URL <span className="opt">(optional)</span></label>
+                      <input id="ns-new-hero" type="url" value={newHero} onChange={(e) => setNewHero(e.target.value)} placeholder="https://…" />
                     </div>
                     <div className="row-actions">
                       <button className="btn primary" type="button" onClick={createMeta} disabled={!newSubject.trim() || anyBusy}>
@@ -507,18 +535,27 @@ export default function NewsletterStudio({ stats, subscribers, issues, issuable,
                     )}
                   </div>
 
+                  {/* Surface a swallowed publish failure from startSending: an issue
+                      that is sending/sent whose post never went public means the
+                      email's "read in browser" link won't resolve. */}
+                  {(metaStatus === 'sending' || metaStatus === 'sent') && detail.content && detail.content.status !== 'published' && (
+                    <div className="banner err" style={{ marginTop: 10 }}>
+                      ⚠ This issue is {metaStatus}, but its post isn’t published (status: {detail.content.status}) — the email’s “read in browser” link won’t resolve. Publish it from the dashboard.
+                    </div>
+                  )}
+
                   {/* meta editor */}
                   <div className="field" style={{ marginTop: 14 }}>
-                    <label>Subject</label>
-                    <input type="text" value={editSubject} onChange={(e) => setEditSubject(e.target.value)} />
+                    <label htmlFor="ns-edit-subject">Subject</label>
+                    <input id="ns-edit-subject" type="text" value={editSubject} onChange={(e) => setEditSubject(e.target.value)} />
                   </div>
                   <div className="field">
-                    <label>Preheader <span className="opt">(optional)</span></label>
-                    <input type="text" value={editPreheader} onChange={(e) => setEditPreheader(e.target.value)} />
+                    <label htmlFor="ns-edit-preheader">Preheader <span className="opt">(optional)</span></label>
+                    <input id="ns-edit-preheader" type="text" value={editPreheader} onChange={(e) => setEditPreheader(e.target.value)} />
                   </div>
                   <div className="field">
-                    <label>Hero image URL <span className="opt">(optional)</span></label>
-                    <input type="url" value={editHero} onChange={(e) => setEditHero(e.target.value)} />
+                    <label htmlFor="ns-edit-hero">Hero image URL <span className="opt">(optional)</span></label>
+                    <input id="ns-edit-hero" type="url" value={editHero} onChange={(e) => setEditHero(e.target.value)} />
                   </div>
 
                   {/* actions */}
@@ -581,9 +618,10 @@ export default function NewsletterStudio({ stats, subscribers, issues, issuable,
 
                   {/* test send */}
                   <div className="field" style={{ marginTop: 14 }}>
-                    <label>Send a test</label>
+                    <label htmlFor="ns-test-email">Send a test</label>
                     <div className="row-actions">
                       <input
+                        id="ns-test-email"
                         type="text"
                         inputMode="email"
                         value={testEmail}
@@ -678,8 +716,21 @@ export default function NewsletterStudio({ stats, subscribers, issues, issuable,
 
           <div className="card">
             <div className="field" style={{ margin: '0 0 14px' }}>
-              <label>Filter</label>
-              <input type="text" value={subSearch} onChange={(e) => setSubSearch(e.target.value)} placeholder="Filter by email…" />
+              <label htmlFor="ns-add-sub">Add a subscriber</label>
+              <div className="row-actions">
+                <input id="ns-add-sub" type="email" inputMode="email" value={newSubEmail}
+                  onChange={(e) => setNewSubEmail(e.target.value)} placeholder="name@example.com" style={{ maxWidth: 320 }} />
+                <button className="btn sm primary" type="button" onClick={addSubscriber} disabled={!newSubEmail.trim() || anyBusy}>
+                  {busy === 'add-sub' ? <><span className="spin" /> Adding</> : 'Add'}
+                </button>
+              </div>
+              <p className="hint" style={{ marginTop: 6 }}>
+                Adds a confirmed, active subscriber directly (no double opt-in). Suppressed addresses (hard bounce / spam complaint) are refused.
+              </p>
+            </div>
+            <div className="field" style={{ margin: '0 0 14px' }}>
+              <label htmlFor="ns-sub-filter">Filter</label>
+              <input id="ns-sub-filter" type="text" value={subSearch} onChange={(e) => setSubSearch(e.target.value)} placeholder="Filter by email…" />
             </div>
 
             {shownSubs.length === 0 ? (
@@ -736,12 +787,12 @@ export default function NewsletterStudio({ stats, subscribers, issues, issuable,
           <div className="card">
             <p className="eyebrow" style={{ margin: '0 0 10px' }}>Add a link</p>
             <div className="field">
-              <label>URL</label>
-              <input type="url" value={linkUrl} onChange={(e) => setLinkUrl(e.target.value)} placeholder="https://…" />
+              <label htmlFor="ns-link-url">URL</label>
+              <input id="ns-link-url" type="url" value={linkUrl} onChange={(e) => setLinkUrl(e.target.value)} placeholder="https://…" />
             </div>
             <div className="field">
-              <label>Note <span className="opt">(optional)</span></label>
-              <input type="text" value={linkNote} onChange={(e) => setLinkNote(e.target.value)} placeholder="Why it's worth a mention" />
+              <label htmlFor="ns-link-note">Note <span className="opt">(optional)</span></label>
+              <input id="ns-link-note" type="text" value={linkNote} onChange={(e) => setLinkNote(e.target.value)} placeholder="Why it's worth a mention" />
             </div>
             <button className="btn primary" type="button" onClick={addLink} disabled={!linkUrl.trim() || anyBusy}>
               {busy === 'add-link' ? <><span className="spin" /> Adding</> : 'Add link'}
