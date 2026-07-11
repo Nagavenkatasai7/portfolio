@@ -19,6 +19,11 @@ import {
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+// "Send now" runs the SAME sequential send path the crons budget 60s for. Without
+// an explicit budget a long batch can hit the platform's default function timeout
+// mid-send and strand the 'newsletter' advisory lock until the 30-min stale
+// reclaim. Give it the same 60s ceiling the cron path uses.
+export const maxDuration = 60;
 
 // GET ?contentId=... — one issue's detail (meta + per-recipient ledger + stats)
 // for the admin detail view. requireAdmin; non-mutating read (no origin check).
