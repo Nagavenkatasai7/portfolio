@@ -23,6 +23,13 @@ const MAX_BODY = 4 * 1024;
 const RL_ROUTE = 'newsletter:subscribe';
 const RL_LIMIT = 5;
 const RL_WINDOW_MS = 10 * 60 * 1000; // 5 signups / 10 min / IP
+// Global (all-IPs) hourly ceiling on ACCEPTED confirmation-send attempts — a
+// backstop against a distributed, IP-rotating attacker who defeats the per-IP
+// cap to spray confirm emails / drain Resend (see POST for the fail-closed
+// contract).
+const GLOBAL_RL_ROUTE = 'subscribe:hourly';
+const GLOBAL_RL_LIMIT = 100;
+const GLOBAL_RL_WINDOW_MS = 60 * 60 * 1000; // 100 accepted subscribes / hour / GLOBAL
 const PENDING = '/newsletter/pending';
 
 function seeOther(request, path) {
@@ -72,11 +79,28 @@ export async function POST(request) {
   }
 
   // Per-IP burst limit. Salted-hash the IP (reuse the analytics hasher) and
-  // reuse the existing Postgres limiter — no raw IP is ever stored. Over-limit
-  // fails closed; an unconfigured/errored limiter is not treated as over-limit.
+  // reuse the existing Postgres limiter — no raw IP is ever stored. FAIL CLOSED
+  // on a DB error: checkAndRecord returns allowed:false on a query error and
+  // sets unconfigured:true ONLY when Supabase is entirely unset — so the
+  // `!rl.unconfigured` guard below denies during a real DB outage (protecting
+  // the outbound-mail path from a limiter that can't count), while a creds-less
+  // local/dev run still passes through.
   const ipHash = hashIp(clientIp(request));
   const rl = await checkAndRecord(ipHash, RL_ROUTE, { limit: RL_LIMIT, windowMs: RL_WINDOW_MS });
   if (!rl.allowed && !rl.unconfigured) {
+    return isForm ? seeOther(request, PENDING) : json({ error: 'rate_limited' }, 429);
+  }
+
+  // GLOBAL confirmation-send ceiling: cap total accepted subscribe attempts per
+  // hour across ALL IPs, so a distributed attacker rotating IPs can't slip under
+  // the per-IP cap to blast confirm emails at attacker-chosen addresses. Same
+  // limiter + a shared 'global' key + the identical fail-closed-on-DB-error /
+  // fail-open-when-unconfigured contract as the per-IP check above.
+  // FOLLOW-UP (needs an external secret, so intentionally NOT wired here): a
+  // CAPTCHA / Cloudflare Turnstile challenge would be the stronger per-request
+  // bot check to add on top of these limits.
+  const gl = await checkAndRecord('global', GLOBAL_RL_ROUTE, { limit: GLOBAL_RL_LIMIT, windowMs: GLOBAL_RL_WINDOW_MS });
+  if (!gl.allowed && !gl.unconfigured) {
     return isForm ? seeOther(request, PENDING) : json({ error: 'rate_limited' }, 429);
   }
 

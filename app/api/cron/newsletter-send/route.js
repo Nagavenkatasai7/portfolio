@@ -46,9 +46,18 @@ async function handle(request) {
 
   const result = await runNewsletterCron();
 
-  // Fail-safe: internal errors return 200 {ok:false} (recorded in sync_state
-  // health) so the admin card is the signal, not a paging 5xx.
-  const status = result.ok === false && result.error === 'server_not_configured' ? 503 : 200;
+  // Surface a genuine cron FAILURE as a 5xx so Vercel's cron-failure detection
+  // fires (a silent 200 {ok:false} was previously invisible to the platform).
+  // Only a top-level failure (result.ok === false: server_not_configured,
+  // lock_error, or a thrown send_failed) trips this — 503 when unconfigured,
+  // 500 otherwise. A normal run, a 'locked'/'noop' skip, or a batch that merely
+  // recorded some per-recipient failures all keep result.ok === true -> 200, so
+  // partial delivery failures still land in the ledger without paging. The body
+  // shape and the auth/secret check are unchanged.
+  let status = 200;
+  if (result.ok === false) {
+    status = result.error === 'server_not_configured' ? 503 : 500;
+  }
   return json(result, status);
 }
 
