@@ -36,25 +36,48 @@ function corsHeaders(req) {
   return headers;
 }
 
-// --- Best-effort per-IP rate limit (edge, in-memory) -------------------------
-// This is the legacy standalone Edge Function; the Postgres limiter in the Next
-// app isn't cleanly reachable from here (it pulls in `server-only`/service-role
-// client). A per-instance in-memory sliding window is a pragmatic throttle that
-// caps a single IP's ability to burn the shared OpenRouter key. LIMITATION: edge
-// instances are ephemeral and not shared, so this is per-instance, not global —
-// a determined distributed attacker can still exceed it; a KV/Upstash-backed
-// limit is the documented future upgrade (see PLATFORM.md). It costs nothing and
-// meaningfully raises the bar for casual single-origin abuse.
+// --- Best-effort in-memory rate limits (edge) --------------------------------
+// This is the legacy standalone Edge Function. It is kept 100% edge-safe ON
+// PURPOSE: it must NOT import `server-only`/the Supabase service-role client (a
+// `server-only` import THROWS under the edge bundler's default resolution and
+// would crash the public chatbot), and it must never reference the service-role
+// key inside this internet-facing function. So the throttle stays in-memory.
+//
+// Two layers, both per-instance/in-memory:
+//   1. per-IP sliding window (RL_MAX / minute) — caps one IP's key burn.
+//   2. a coarse per-INSTANCE global backstop (GLOBAL_RL_MAX / minute, all IPs) —
+//      blunts a single instance being drained via IP rotation, which defeats
+//      layer 1.
+//
+// LIMITATION: edge instances are ephemeral and NOT shared, so neither layer is
+// cross-instance/global — a distributed attacker across many instances can still
+// exceed them.
+// DURABLE FOLLOW-UP (NEEDS USER ACTION — not wired here): the real cross-instance
+// fix is to back these with the team's already-provisioned but UNCONNECTED
+// Upstash Redis (`upstash-kv-green-branch`) via its REST URL/token env vars
+// (edge-safe, no service-role exposure), OR move this function to a Node runtime
+// so it can use the existing Postgres limiter (lib/auth/ratelimit.js). Both
+// require the owner to add env / approve a runtime change. See PLATFORM.md.
 const RL_WINDOW_MS = 60 * 1000;   // 1 minute window...
 const RL_MAX = 20;                // ...max 20 chat calls per IP per instance.
 const RL_MAX_KEYS = 5000;         // crude memory bound on the tracking map.
 const rlHits = new Map();         // ip -> number[] recent request timestamps
 
+const GLOBAL_RL_WINDOW_MS = 60 * 1000; // 1 minute window...
+const GLOBAL_RL_MAX = 120;             // ...max chat calls per INSTANCE per minute (all IPs).
+let globalHits = [];                   // recent request timestamps for THIS instance
+
 function clientIpEdge(req) {
   const real = req.headers.get('x-real-ip');
   if (real && real.trim()) return real.trim();
   const xff = req.headers.get('x-forwarded-for');
-  if (xff) return xff.split(',')[0].trim();
+  if (xff) {
+    // Rightmost hop (closest trusted proxy), NOT the client-controllable
+    // leftmost — otherwise an attacker rotates the leftmost XFF to mint a fresh
+    // per-IP bucket per request. Mirrors lib/http.js#clientIp.
+    const parts = xff.split(',').map((p) => p.trim()).filter(Boolean);
+    if (parts.length) return parts[parts.length - 1];
+  }
   return 'unknown';
 }
 
@@ -71,6 +94,16 @@ function rateLimited(ip) {
   return recent.length > RL_MAX;
 }
 
+// Coarse per-INSTANCE global backstop (all IPs). Blunts a single edge instance
+// being drained via IP rotation, which defeats the per-IP limiter. Per-instance
+// only — see the durable-follow-up note above.
+function globalRateLimited() {
+  const now = Date.now();
+  globalHits = globalHits.filter((t) => now - t < GLOBAL_RL_WINDOW_MS);
+  globalHits.push(now);
+  return globalHits.length > GLOBAL_RL_MAX;
+}
+
 const sse = (obj) => `data: ${JSON.stringify(obj)}\n\n`;
 const json = (obj, status, extra) =>
   new Response(JSON.stringify(obj), { status, headers: { 'Content-Type': 'application/json', ...(extra || {}) } });
@@ -84,6 +117,8 @@ export default async function handler(req) {
   // Per-IP throttle (best-effort, in-memory) before any upstream work. The
   // chatbot widget already surfaces a 429 as a friendly "rate_limited" message.
   if (rateLimited(clientIpEdge(req))) return json({ error: 'rate_limited' }, 429, cors);
+  // Per-instance global backstop (all IPs) — see globalRateLimited().
+  if (globalRateLimited()) return json({ error: 'rate_limited' }, 429, cors);
 
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) return json({ error: 'server_not_configured' }, 500, cors);
