@@ -6,6 +6,7 @@
 // Supabase Storage (never through a function), then /api/media/finalize
 // content-sniffs the object server-side before its public URL is attached.
 import { useCallback, useRef, useState } from 'react';
+import { useUnsavedGuard } from './useUnsavedGuard';
 
 const KINDS = [
   { id: 'blog', label: 'Blog post', ic: '✎' },
@@ -75,6 +76,11 @@ export default function Composer() {
   const fileRef = useRef(null);
 
   const uploading = items.some((i) => i.status === 'uploading');
+
+  // Warn before losing typed-but-unsaved content. reset() empties every field on
+  // a successful create, so `dirty` falls back to false automatically after save.
+  const dirty = Boolean(title.trim() || body.trim() || videoUrl.trim() || pasteUrl.trim() || items.length > 0);
+  useUnsavedGuard(dirty);
 
   const addFiles = useCallback((fileList) => {
     const files = Array.from(fileList || []);

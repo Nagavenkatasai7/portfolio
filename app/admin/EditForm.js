@@ -4,6 +4,7 @@
 // re-writes through the ingestion gate. Status changes happen on the dashboard
 // (publish/unpublish/remove), not here.
 import { useState } from 'react';
+import { useUnsavedGuard } from './useUnsavedGuard';
 
 const ERR_MSG = {
   unauthorized: 'Your session expired — sign in again.',
@@ -21,6 +22,16 @@ export default function EditForm({ row }) {
   const [ok, setOk] = useState(false);
   const [error, setError] = useState(null);
 
+  // Baseline = the last-saved values; `dirty` is any field diverging from it, so
+  // the guard clears right after a successful save (baseline is re-snapshotted)
+  // and re-arms if the owner edits again.
+  const [baseline, setBaseline] = useState({
+    title: row.title || '', body: row.body_md || '', videoUrl: row.payload?.video?.url || '',
+  });
+  const dirty = title !== baseline.title || body !== baseline.body
+    || (row.type === 'video' && videoUrl !== baseline.videoUrl);
+  useUnsavedGuard(dirty);
+
   async function submit(e) {
     e.preventDefault();
     setBusy(true); setError(null); setOk(false);
@@ -33,6 +44,7 @@ export default function EditForm({ row }) {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) { setError(friendly(data.error)); setBusy(false); return; }
       setOk(true);
+      setBaseline({ title, body, videoUrl });
     } catch { setError('Network error. Please try again.'); }
     setBusy(false);
   }

@@ -15,6 +15,7 @@
 // interaction is a normal React handler — no onclick strings, no innerHTML.
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useUnsavedGuard } from './useUnsavedGuard';
 
 // Friendly copy for the error codes the APIs return (non-2xx { error }).
 const ERR_MSG = {
@@ -340,6 +341,18 @@ export default function NewsletterStudio({ stats, subscribers, issues, issuable,
   const hs = healthState(health, now);
   const anyBusy = Boolean(busy);
   const metaStatus = detail?.meta?.status;
+
+  // Unsaved-changes guard: an open issue's meta edits diverging from what was
+  // loaded, or an in-progress "new issue" setup with typed content. Subjects are
+  // short, but a lost preheader/subject edit is still an annoyance worth warning
+  // about. After Save meta, refreshDetail re-pulls meta so these fall equal again.
+  const metaDirty = Boolean(detail) && (
+    editSubject !== (detail.meta?.subject || '')
+    || editPreheader !== (detail.meta?.preheader || '')
+    || editHero !== (detail.meta?.hero_image_url || '')
+  );
+  const setupDirty = showSetup && Boolean(newSubject.trim() || newPreheader.trim() || newHero.trim());
+  useUnsavedGuard(metaDirty || setupDirty);
 
   // ── render ──────────────────────────────────────────────────────────────
   return (

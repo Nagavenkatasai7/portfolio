@@ -12,6 +12,7 @@
 // give an editable blank draft so the owner can write, save, and publish by hand.
 import { useCallback, useRef, useState } from 'react';
 import { TWEET_LIMIT, countChars, splitIntoTweets, X_TONES } from '@/lib/x_draft_pure';
+import { useUnsavedGuard } from './useUnsavedGuard';
 
 const ERR_MSG = {
   unauthorized: 'Your session expired — sign in again.',
@@ -29,7 +30,14 @@ const friendly = (c) => ERR_MSG[c] || 'Something went wrong. Please try again.';
 
 let SEQ = 0;
 const uid = () => `v${Date.now().toString(36)}_${SEQ++}`;
-const makeVariant = (text, format, origin = 'ai') => ({ key: uid(), text, format, origin, saved: null, busy: false, msg: null, err: null });
+// savedText snapshots the text at the last successful save, so an edit AFTER a
+// save re-counts as unsaved (savedText !== text) for the unsaved-changes guard
+// and the pre-regenerate confirm.
+const makeVariant = (text, format, origin = 'ai') => ({ key: uid(), text, format, origin, saved: null, savedText: null, busy: false, msg: null, err: null });
+
+// A variant holds unsaved writing when it has text that was never saved, or was
+// edited since its last save. Removed drafts don't count.
+const variantDirty = (v) => v.saved?.status !== 'removed' && Boolean(v.text.trim()) && (!v.saved || v.savedText !== v.text);
 
 // Live derivation of a variant's tweets + counts (mirrors the server exactly).
 function derive(v) {
@@ -68,6 +76,10 @@ export default function XStudio() {
   const setV = useCallback((key, patch) => {
     setVariants((prev) => prev.map((v) => (v.key === key ? { ...v, ...patch } : v)));
   }, []);
+
+  // Guard the whole deck: warn on close/reload while any draft has unsaved text.
+  const anyDirty = variants.some(variantDirty);
+  useUnsavedGuard(anyDirty);
 
   async function generate() {
     const t = topic.trim();
@@ -134,6 +146,7 @@ export default function XStudio() {
       setV(v.key, {
         busy: false,
         saved: { id: data.id, status: data.status },
+        savedText: v.text, // the exact text just persisted server-side
         msg: action === 'publish' ? 'published' : 'saved as draft',
         err: null,
       });
