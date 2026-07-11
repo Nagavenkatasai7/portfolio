@@ -13,6 +13,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { TWEET_LIMIT, countChars, splitIntoTweets, X_TONES } from '@/lib/x_draft_pure';
 import { useUnsavedGuard } from './useUnsavedGuard';
+import { fetchWithTimeout, isTimeout } from './fetchWithTimeout';
 
 const ERR_MSG = {
   unauthorized: 'Your session expired — sign in again.',
@@ -25,6 +26,7 @@ const ERR_MSG = {
   text_too_long: 'That draft is too long to save.',
   server_not_configured: 'The server isn’t fully configured yet.',
   not_found: 'That draft no longer exists.',
+  timed_out: 'The request timed out. Check your connection and try again.',
 };
 const friendly = (c) => ERR_MSG[c] || 'Something went wrong. Please try again.';
 
@@ -71,6 +73,7 @@ export default function XStudio() {
   const [batchTexts, setBatchTexts] = useState([]);   // provenance: the options generated
   const [variants, setVariants] = useState([]);
   const [copiedKey, setCopiedKey] = useState('');
+  const [expired, setExpired] = useState(false); // 401 -> offer a Sign in link
   const copyTimer = useRef(null);
 
   const setV = useCallback((key, patch) => {
@@ -84,14 +87,20 @@ export default function XStudio() {
   async function generate() {
     const t = topic.trim();
     if (!t) { setGenError(friendly('topic_required')); return; }
-    setGenerating(true); setGenError(null);
+    // Regenerating REPLACES the current drafts — guard unsaved writing first.
+    if (variants.some(variantDirty)
+      && !window.confirm('Generating replaces the drafts below, and some have unsaved edits. Discard them and generate new drafts?')) {
+      return;
+    }
+    setGenerating(true); setGenError(null); setExpired(false);
     try {
-      const res = await fetch('/api/x/generate', {
+      const res = await fetchWithTimeout('/api/x/generate', {
         method: 'POST', headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ topic: t, tone, format }),
-      });
+      }, 45000);
       const data = await res.json().catch(() => ({}));
       if (!res.ok && res.status !== 200) {
+        if (data.error === 'unauthorized') setExpired(true);
         setGenError(friendly(data.error));
         // keep authoring possible even on a hard error
         setVariants([makeVariant('', format, 'manual')]);
@@ -107,8 +116,10 @@ export default function XStudio() {
         setModelUsed(null);
         setVariants([makeVariant('', format, 'manual')]); // write-it-yourself fallback
       }
-    } catch {
-      setGenError('Network error — the draft couldn’t be generated. Write it yourself below.');
+    } catch (e) {
+      setGenError(isTimeout(e)
+        ? 'Generating timed out — the models took too long. Try again, or write it yourself below.'
+        : 'Network error — the draft couldn’t be generated. Write it yourself below.');
       setVariants([makeVariant('', format, 'manual')]);
     } finally {
       setGenerating(false);
@@ -120,17 +131,24 @@ export default function XStudio() {
   async function copy(v) {
     const d = derive(v);
     const text = v.format === 'thread' ? d.tweets.join('\n\n') : v.text;
-    try { await navigator.clipboard?.writeText(text); } catch { /* clipboard unavailable */ }
-    setCopiedKey(v.key);
-    clearTimeout(copyTimer.current);
-    copyTimer.current = setTimeout(() => setCopiedKey(''), 1600);
+    try {
+      // Only flip to "✓ copied" AFTER the clipboard write actually resolves — a
+      // rejected/absent clipboard must not claim success.
+      await navigator.clipboard.writeText(text);
+      setV(v.key, { err: null });
+      setCopiedKey(v.key);
+      clearTimeout(copyTimer.current);
+      copyTimer.current = setTimeout(() => setCopiedKey(''), 1600);
+    } catch {
+      setV(v.key, { err: 'Couldn’t reach the clipboard — select the text and copy it manually.' });
+    }
   }
 
   async function save(v, action) {
     if (!v.text.trim()) { setV(v.key, { err: friendly('text_required'), msg: null }); return; }
     setV(v.key, { busy: true, err: null, msg: null });
     try {
-      const res = await fetch('/api/x/save', {
+      const res = await fetchWithTimeout('/api/x/save', {
         method: 'POST', headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
           topic: topic.trim(), tone, format: v.format,
@@ -140,9 +158,9 @@ export default function XStudio() {
           // (so edits to a saved draft persist on Approve/Update, no orphan).
           draftId: v.key,
         }),
-      });
+      }, 30000);
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) { setV(v.key, { busy: false, err: friendly(data.error) }); return; }
+      if (!res.ok) { if (data.error === 'unauthorized') setExpired(true); setV(v.key, { busy: false, err: friendly(data.error) }); return; }
       setV(v.key, {
         busy: false,
         saved: { id: data.id, status: data.status },
@@ -150,7 +168,7 @@ export default function XStudio() {
         msg: action === 'publish' ? 'published' : 'saved as draft',
         err: null,
       });
-    } catch { setV(v.key, { busy: false, err: 'Network error. Please try again.' }); }
+    } catch (e) { setV(v.key, { busy: false, err: isTimeout(e) ? friendly('timed_out') : 'Network error. Please try again.' }); }
   }
 
   async function discard(v) {
@@ -192,6 +210,13 @@ export default function XStudio() {
             itself is manual for now — use <b>Copy text</b> or <b>Open X compose</b> and paste it into X yourself.
           </div>
         </div>
+
+        {expired && (
+          <div className="fail">
+            <h3>Session expired</h3>
+            <p>Your admin session ended. <a href="/admin/login" target="_blank" rel="noopener noreferrer">Sign in ↗</a> in a new tab — your drafts stay right here.</p>
+          </div>
+        )}
 
         {/* command bar */}
         <div className="cmd">

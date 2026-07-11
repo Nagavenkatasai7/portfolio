@@ -5,12 +5,14 @@
 // (publish/unpublish/remove), not here.
 import { useState } from 'react';
 import { useUnsavedGuard } from './useUnsavedGuard';
+import { fetchWithTimeout, isTimeout } from './fetchWithTimeout';
 
 const ERR_MSG = {
   unauthorized: 'Your session expired — sign in again.',
   not_found: 'That item no longer exists.',
   bad_video_url: 'That video URL isn’t a supported YouTube, Vimeo, or direct link.',
   server_not_configured: 'The server isn’t fully configured yet.',
+  timed_out: 'The request timed out. Check your connection and try again.',
 };
 const friendly = (c) => ERR_MSG[c] || 'Could not save. Please try again.';
 
@@ -21,6 +23,7 @@ export default function EditForm({ row }) {
   const [busy, setBusy] = useState(false);
   const [ok, setOk] = useState(false);
   const [error, setError] = useState(null);
+  const [expired, setExpired] = useState(false);
 
   // Baseline = the last-saved values; `dirty` is any field diverging from it, so
   // the guard clears right after a successful save (baseline is re-snapshotted)
@@ -34,25 +37,30 @@ export default function EditForm({ row }) {
 
   async function submit(e) {
     e.preventDefault();
-    setBusy(true); setError(null); setOk(false);
+    setBusy(true); setError(null); setOk(false); setExpired(false);
     const payload = { id: row.id, title, body_md: body };
     if (row.type === 'video') payload.videoUrl = videoUrl;
     try {
-      const res = await fetch('/api/content/update', {
+      const res = await fetchWithTimeout('/api/content/update', {
         method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload),
-      });
+      }, 30000);
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) { setError(friendly(data.error)); setBusy(false); return; }
+      if (!res.ok) { setExpired(data.error === 'unauthorized'); setError(friendly(data.error)); setBusy(false); return; }
       setOk(true);
       setBaseline({ title, body, videoUrl });
-    } catch { setError('Network error. Please try again.'); }
+    } catch (err) { setError(isTimeout(err) ? friendly('timed_out') : 'Network error. Please try again.'); }
     setBusy(false);
   }
 
   return (
     <form onSubmit={submit} noValidate>
       {ok && <div className="banner ok">Saved. <a href="/admin">Back to dashboard</a>{' · '}<a href="/blog">View /blog</a></div>}
-      {error && <div className="banner err">{error}</div>}
+      {error && (
+        <div className="banner err">
+          {error}
+          {expired && <> <a href="/admin/login" target="_blank" rel="noopener noreferrer">Sign in ↗</a> — your edits stay here.</>}
+        </div>
+      )}
 
       <div className="field">
         <label htmlFor="t">Title</label>

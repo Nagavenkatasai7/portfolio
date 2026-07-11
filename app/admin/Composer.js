@@ -7,6 +7,7 @@
 // content-sniffs the object server-side before its public URL is attached.
 import { useCallback, useRef, useState } from 'react';
 import { useUnsavedGuard } from './useUnsavedGuard';
+import { fetchWithTimeout, isTimeout } from './fetchWithTimeout';
 
 const KINDS = [
   { id: 'blog', label: 'Blog post', ic: '✎' },
@@ -33,28 +34,31 @@ const ERR_MSG = {
   video_too_large: 'Video exceeds the 200 MB limit.',
   content_sniff_failed: 'The uploaded file failed a content check.',
   server_not_configured: 'The server isn’t fully configured yet.',
+  timed_out: 'The request timed out. Check your connection and try again.',
 };
 
 function friendly(code) { return ERR_MSG[code] || 'Something went wrong. Please try again.'; }
 
-// Upload one file: sign -> raw PUT to Storage -> finalize (server sniff).
+// Upload one file: sign -> raw PUT to Storage -> finalize (server sniff). Each
+// step has an AbortController timeout (the raw PUT gets a generous window since
+// large videos legitimately take a while); a timeout throws 'timed_out'.
 async function uploadOne(file) {
-  const signRes = await fetch('/api/media/sign', {
+  const signRes = await fetchWithTimeout('/api/media/sign', {
     method: 'POST', headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ filename: file.name, contentType: file.type, size: file.size }),
-  });
+  }, 30000);
   const sign = await signRes.json().catch(() => ({}));
   if (!signRes.ok) throw new Error(sign.error || 'sign_failed');
 
-  const put = await fetch(sign.uploadUrl, {
+  const put = await fetchWithTimeout(sign.uploadUrl, {
     method: 'PUT', headers: { 'content-type': file.type || sign.mime, 'x-upsert': 'true' }, body: file,
-  });
+  }, 180000);
   if (!put.ok) throw new Error('upload_failed');
 
-  const finRes = await fetch('/api/media/finalize', {
+  const finRes = await fetchWithTimeout('/api/media/finalize', {
     method: 'POST', headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ path: sign.path }),
-  });
+  }, 30000);
   const fin = await finRes.json().catch(() => ({}));
   if (!finRes.ok) throw new Error(fin.error || 'finalize_failed');
   return fin; // { url, type, kind, width, height, bytes }
@@ -72,6 +76,7 @@ export default function Composer() {
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const [expired, setExpired] = useState(false); // 401 -> offer a Sign in link
   const [hot, setHot] = useState(false);
   const fileRef = useRef(null);
 
@@ -95,7 +100,7 @@ export default function Composer() {
       setItems((prev) => [...prev, { id, name: file.name, localUrl, isVideo, status: 'uploading' }]);
       uploadOne(file).then(
         (descriptor) => setItems((prev) => prev.map((it) => it.id === id ? { ...it, status: 'done', descriptor } : it)),
-        (err) => setItems((prev) => prev.map((it) => it.id === id ? { ...it, status: 'error', error: friendly(err.message) } : it)),
+        (err) => setItems((prev) => prev.map((it) => it.id === id ? { ...it, status: 'error', error: isTimeout(err) ? friendly('timed_out') : friendly(err.message) } : it)),
       );
     }
   }, []);
@@ -115,7 +120,7 @@ export default function Composer() {
 
   async function submit(e) {
     e.preventDefault();
-    setError(null); setResult(null);
+    setError(null); setResult(null); setExpired(false);
     if (uploading) { setError('Wait for uploads to finish.'); return; }
     setBusy(true);
     const media = items.filter((i) => i.status === 'done').map((i) => i.descriptor);
@@ -128,15 +133,15 @@ export default function Composer() {
       publishNow, published_at: publishedIso, media,
     };
     try {
-      const res = await fetch('/api/content/create', {
+      const res = await fetchWithTimeout('/api/content/create', {
         method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload),
-      });
+      }, 30000);
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) { setError(friendly(data.error)); setBusy(false); return; }
+      if (!res.ok) { setExpired(data.error === 'unauthorized'); setError(friendly(data.error)); setBusy(false); return; }
       setResult({ status: data.status, created: data.created });
       reset();
-    } catch {
-      setError('Network error. Please try again.');
+    } catch (e) {
+      setError(isTimeout(e) ? friendly('timed_out') : 'Network error. Please try again.');
     }
     setBusy(false);
   }
@@ -152,7 +157,12 @@ export default function Composer() {
           <a href="/admin">Back to dashboard</a>{' · '}<a href="/blog">View /blog</a>
         </div>
       )}
-      {error && <div className="banner err">{error}</div>}
+      {error && (
+        <div className="banner err">
+          {error}
+          {expired && <> <a href="/admin/login" target="_blank" rel="noopener noreferrer">Sign in ↗</a> — your draft stays here.</>}
+        </div>
+      )}
 
       <div className="field">
         <label>Content type</label>
