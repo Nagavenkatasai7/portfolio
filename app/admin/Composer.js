@@ -28,6 +28,7 @@ const ERR_MSG = {
   image_required: 'Attach at least one image.',
   unrecognized_paste_url: 'Paste a LinkedIn or X/Twitter post URL.',
   invalid_published_at: 'That publish date is invalid.',
+  future_publish_date: 'You can’t publish now with a future date. Clear the date, or uncheck “Publish now” to keep it a draft.',
   svg_rejected: 'SVG files are not allowed.',
   unsupported_type: 'That file type isn’t allowed.',
   image_too_large: 'Image exceeds the 10 MB limit.',

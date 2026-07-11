@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { requireAdmin, isAuthConfigured } from '@/lib/auth/session';
 import { adminCss } from '../ui';
 import Composer from '../Composer';
+import LogoutButton from '../LogoutButton';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'New post | Admin', robots: { index: false, follow: false } };
@@ -17,7 +18,10 @@ export default async function ComposePage() {
     <div className="adm">
       <style>{adminCss}</style>
       <div className="wrap narrow">
-        <a className="backlink" href="/admin">← Dashboard</a>
+        <div className="row-actions" style={{ justifyContent: 'space-between', marginBottom: 10 }}>
+          <a className="backlink" href="/admin" style={{ marginBottom: 0 }}>← Dashboard</a>
+          <LogoutButton className="btn sm" />
+        </div>
         <div className="mark">NC</div>
         <p className="eyebrow">Composer</p>
         <h1>Create <span className="hl">content</span></h1>

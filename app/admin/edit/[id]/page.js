@@ -7,6 +7,7 @@ import { requireAdmin, isAuthConfigured } from '@/lib/auth/session';
 import { getContentById } from '@/lib/gate';
 import { adminCss, SourceChip, StatusChip } from '../../ui';
 import EditForm from '../../EditForm';
+import LogoutButton from '../../LogoutButton';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Edit | Admin', robots: { index: false, follow: false } };
@@ -32,7 +33,10 @@ export default async function EditPage({ params }) {
     <div className="adm">
       <style>{adminCss}</style>
       <div className="wrap narrow">
-        <a className="backlink" href="/admin">← Dashboard</a>
+        <div className="row-actions" style={{ justifyContent: 'space-between', marginBottom: 10 }}>
+          <a className="backlink" href="/admin" style={{ marginBottom: 0 }}>← Dashboard</a>
+          <LogoutButton className="btn sm" />
+        </div>
         <div className="mark">NC</div>
         <p className="eyebrow">Edit item</p>
         <h1>Edit <span className="hl">content</span></h1>

@@ -16,6 +16,7 @@ import { getServiceClient } from '@/lib/supabase/server';
 import { getSyncHealth, syncStaleness, isFgbConfigured } from '@/lib/linkedin_sync';
 import { adminCss, StatusChip, SourceChip } from './ui';
 import LocalTime from './LocalTime';
+import ConfirmForm from './ConfirmForm';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Admin | Naga Venkata Sai Chennu', robots: { index: false, follow: false } };
@@ -139,11 +140,13 @@ function RowActions({ r }) {
           <button className="btn sm" type="submit" title="Restore as a draft">Restore</button>
         </form>
       ) : (
-        <form method="POST" action="/api/content/moderate">
-          <input type="hidden" name="id" value={r.id} />
-          <input type="hidden" name="action" value="remove" />
-          <button className="btn sm danger" type="submit" title="Remove from blog (tombstone)">Remove</button>
-        </form>
+        <ConfirmForm
+          action="/api/content/moderate"
+          fields={{ id: r.id, action: 'remove' }}
+          confirm="Remove this from /blog? It will be tombstoned — you can restore it later."
+          className="btn sm danger"
+          title="Remove from blog (tombstone)"
+        >Remove</ConfirmForm>
       )}
     </div>
   );

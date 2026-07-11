@@ -15,6 +15,7 @@ import {
 } from '@/lib/newsletter_issues';
 import { adminCss } from '../ui';
 import NewsletterStudio from '../NewsletterStudio';
+import LogoutButton from '../LogoutButton';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Newsletter | Naga Venkata Sai Chennu', robots: { index: false, follow: false } };
@@ -71,6 +72,7 @@ export default async function NewsletterAdminPage() {
             <a className="btn" href="/admin">← Dashboard</a>
             <a className="btn" href="/admin/compose">+ New post</a>
             <a className="btn" href="/blog">View /blog</a>
+            <LogoutButton className="btn" />
           </div>
         </div>
 

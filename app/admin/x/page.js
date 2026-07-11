@@ -8,6 +8,7 @@ import { redirect } from 'next/navigation';
 import { requireAdmin, isAuthConfigured } from '@/lib/auth/session';
 import { xCss } from '../xui';
 import XStudio from '../XStudio';
+import LogoutButton from '../LogoutButton';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'X draft studio | Admin', robots: { index: false, follow: false } };
@@ -21,7 +22,10 @@ export default async function XStudioPage() {
     <div className="xst">
       <style>{xCss}</style>
       <div className="wrap">
-        <a className="backlink" href="/admin">← Dashboard</a>
+        <div className="row-actions" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <a className="backlink" href="/admin" style={{ marginBottom: 0 }}>← Dashboard</a>
+          <LogoutButton className="btn ghost" />
+        </div>
         <XStudio />
       </div>
     </div>
