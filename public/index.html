@@ -1,2332 +1,1587 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Naga Venkata Sai Chennu | Software Engineer - Scalable Systems & AI Automation</title>
-  <meta name="description" content="Software Engineer focused on scalable systems, test automation, AI-assisted development, Python, JavaScript/TypeScript, Java, SQL, C++, cloud platforms, telemetry, and measurable product impact. MS Computer Science at George Mason University, May 2026.">
-  <meta name="keywords" content="Software Engineer, Salesforce Software Engineer, Scalable Systems, Test Automation, AI-Assisted Development, Python, Java, JavaScript, TypeScript, SQL, C++, Cloud Computing, George Mason University">
-  <meta name="author" content="Naga Venkata Sai Chennu">
-  <link rel="canonical" href="https://nagavenkatasai7.github.io/portfolio/">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Naga Venkata Sai Chennu — AI Systems Engineer | LLM Evals &amp; Serving</title>
+<meta name="description" content="Naga Venkata Sai Chennu, AI Systems Engineer in Fairfax, VA. LLM fine-tuning pipelines, constrained extraction into typed schemas, and eval harness design.">
+<meta name="author" content="Naga Venkata Sai Chennu">
+<meta name="theme-color" content="#0a0b0f">
+<meta name="color-scheme" content="dark">
+<link rel="canonical" href="https://chennunagavenkatasai.com/">
 
-  <meta property="og:title" content="Naga Venkata Sai Chennu | Software Engineer - Scalable Systems & AI Automation">
-  <meta property="og:description" content="A Salesforce-ready software engineering portfolio for scalable systems, test automation, AI-assisted development, cloud products, and measurable delivery.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://nagavenkatasai7.github.io/portfolio/">
-  <meta property="og:image" content="https://nagavenkatasai7.github.io/portfolio/profile.png">
-  <meta name="twitter:card" content="summary_large_image">
+<meta property="og:type" content="profile">
+<meta property="og:site_name" content="Naga Venkata Sai Chennu">
+<meta property="og:title" content="Naga Venkata Sai Chennu - AI Systems Engineer">
+<meta property="og:description" content="LLM systems, evals, and serving. Fine-tuning pipelines on H100s, constrained extraction into typed schemas, and eval harnesses that catch regressions before release.">
+<meta property="og:url" content="https://chennunagavenkatasai.com/">
+<meta property="og:image" content="https://chennunagavenkatasai.com/profile.png">
+<meta property="og:image:alt" content="Naga Venkata Sai Chennu">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="800">
+<meta property="og:image:type" content="image/png">
+<meta property="og:locale" content="en_US">
+<meta property="profile:first_name" content="Naga Venkata Sai">
+<meta property="profile:last_name" content="Chennu">
 
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Naga Venkata Sai Chennu",
-    "alternateName": "Chennu Naga Venkata Sai",
-    "url": "https://nagavenkatasai7.github.io/portfolio/",
-    "image": "https://nagavenkatasai7.github.io/portfolio/profile.png",
-    "jobTitle": "Software Engineer - Scalable Systems and AI Automation",
-    "email": "mailto:chennunagavenkatasai@gmail.com",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Fairfax",
-      "addressRegion": "Virginia",
-      "addressCountry": "United States"
-    },
-    "alumniOf": [
-      { "@type": "CollegeOrUniversity", "name": "George Mason University" },
-      { "@type": "CollegeOrUniversity", "name": "KL University" }
-    ],
-    "sameAs": [
-      "https://www.linkedin.com/in/naga-venkata-sai-chennu/",
-      "https://github.com/Nagavenkatasai7",
-      "https://orcid.org/0009-0000-8252-8682"
-    ]
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Naga Venkata Sai Chennu - AI Systems Engineer">
+<meta name="twitter:description" content="LLM systems, evals, and serving. Fine-tuning pipelines on H100s, constrained extraction into typed schemas, and eval harnesses that catch regressions before release.">
+<meta name="twitter:image" content="https://chennunagavenkatasai.com/profile.png">
+<meta name="twitter:image:alt" content="Naga Venkata Sai Chennu">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a0b0f'/%3E%3Cpath d='M8 11h3.3l6 8.2V11H20v12h-3.3l-6-8.2V23H8z' fill='%23ff8c42'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
+
+<style>
+/* ============================================================
+   Descent — a scroll journey down a loss landscape
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  /* palette — mirrored exactly in scene.js */
+  --ink:#0a0b0f;
+  --ink-2:#12141b;
+  --ember:#ff8c42;
+  --ember-hi:#ffc46b;
+  --ember-deep:#8a2a1c;
+  --text:#f2ede6;
+  --muted:#9a948c;
+  --accent:#7dd3fc;
+
+  /* body copy — a step between headings and metadata */
+  --text-2:#cbc5bd;
+
+  /* derived */
+  --line: rgba(242,237,230,.11);
+  --line-2: rgba(242,237,230,.20);
+  --line-ember: rgba(255,140,66,.30);
+  --panel: rgba(18,20,27,.92);
+  --panel-solid: #12141b;
+  --ember-wash: rgba(255,140,66,.10);
+
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  --gutter: clamp(1.15rem, 5vw, 4rem);
+  --shell: 72rem;
+  --header-h: 4rem;
+
+  --ease: cubic-bezier(.22,.68,.28,1);
+
+  color-scheme: dark;
+}
+
+html {
+  scroll-padding-top: calc(var(--header-h) + 1.25rem);
+  -webkit-text-size-adjust: 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, .96rem + .2vw, 1.0625rem);
+  line-height: 1.6;
+  letter-spacing: -0.004em;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- static fallback ground: ember on ink ----------
+   On its own fixed layer so the compositor can keep it (a fixed-attachment
+   background repaints on every scroll frame) and so it can cross-fade out
+   when the canvas takes over instead of hard-cutting. */
+body::before {
+  content: "";
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    radial-gradient(60% 42% at 14% -6%, rgba(255,140,66,.17), transparent 62%),
+    radial-gradient(55% 40% at 92% 8%, rgba(138,42,28,.38), transparent 64%),
+    radial-gradient(90% 46% at 50% 46%, rgba(255,196,107,.055), transparent 66%),
+    radial-gradient(120% 55% at 50% 108%, rgba(255,140,66,.14), transparent 62%),
+    linear-gradient(180deg, #0a0b0f 0%, #0e0f16 44%, #0a0b0f 100%);
+  transition: opacity .9s var(--ease);
+}
+html[data-scene="on"] body::before { opacity: 0; }
+
+/* ---------- scene mount (shared contract) ---------- */
+#scene { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+#scene canvas { display: block; width: 100%; height: 100%; }
+
+.veil {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0;
+  transition: opacity .9s var(--ease);
+  background:
+    linear-gradient(180deg, rgba(10,11,15,.80) 0%, rgba(10,11,15,.45) 26%, rgba(10,11,15,.45) 70%, rgba(10,11,15,.72) 100%),
+    radial-gradient(76% 62% at 50% 46%, transparent 0%, rgba(10,11,15,.52) 100%);
+}
+html[data-scene="on"] .veil { opacity: 1; }
+
+.glow {
+  position: fixed; top: 0; left: 0; z-index: 0; pointer-events: none;
+  width: 22rem; height: 22rem; margin: -11rem 0 0 -11rem;
+  border-radius: 50%;
+  opacity: 0;
+  mix-blend-mode: plus-lighter;
+  background: radial-gradient(circle, rgba(255,140,66,.11) 0%, rgba(255,140,66,.04) 40%, transparent 70%);
+  transition: opacity .5s var(--ease);
+}
+.glow.is-live { opacity: 1; will-change: transform; }
+@media (hover: none), (pointer: coarse) { .glow { display: none; } }
+
+/* ---------- page content sits in front ---------- */
+#content { position: relative; z-index: 1; }
+#content:focus:not(:focus-visible) { outline: none; }
+#content:focus-visible { outline: 2px solid var(--ember-hi); outline-offset: 4px; }
+
+/* ---------- utilities ---------- */
+.shell {
+  width: 100%;
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding-inline: max(var(--gutter), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+}
+
+.visually-hidden:where(:not(:focus-within, :active)) {
+  position: absolute !important;
+  clip-path: inset(50%) !important;
+  overflow: hidden !important;
+  width: 1px !important; height: 1px !important;
+  margin: -1px !important; padding: 0 !important; border: 0 !important;
+  white-space: nowrap !important;
+}
+
+.skip-link {
+  position: fixed;
+  top: calc(.6rem + env(safe-area-inset-top, 0px));
+  left: calc(.6rem + env(safe-area-inset-left, 0px));
+  z-index: 100;
+  padding: .7rem 1.1rem;
+  border-radius: .5rem;
+  background: var(--ember);
+  color: #0a0b0f;
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-160%);
+  transition: transform .18s var(--ease);
+}
+.skip-link:focus { transform: translateY(0); }
+
+/* ---------- focus ---------- */
+:where(a, button, input, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--ember-hi);
+  outline-offset: 3px;
+  border-radius: .25rem;
+}
+
+/* ---------- depth rail (decorative position gauge) ---------- */
+.rail {
+  position: fixed;
+  left: clamp(1rem, 2.2vw, 2rem);
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 15;
+  display: none;
+  pointer-events: none;
+}
+@media (min-width: 1100px) { .rail { display: block; } }
+
+.rail ol {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: grid;
+  gap: .95rem;
+}
+.rail li {
+  display: grid;
+  grid-template-columns: 1.75rem auto;
+  align-items: center;
+  gap: .6rem;
+}
+.rail .tick {
+  display: block;
+  height: 1px;
+  width: .85rem;
+  background: var(--line-2);
+  transition: width .35s var(--ease), background-color .35s var(--ease);
+}
+.rail .name {
+  font-family: var(--font-mono);
+  font-size: .625rem;
+  letter-spacing: .06em;
+  color: var(--muted);
+  opacity: 0;
+  translate: -.35rem 0;
+  transition: opacity .35s var(--ease), translate .35s var(--ease), color .35s var(--ease);
+}
+.rail li.is-past .tick { background: rgba(255,140,66,.45); }
+.rail li.is-current .tick { width: 1.75rem; background: var(--ember); }
+.rail li.is-current .name { opacity: 1; translate: 0 0; color: var(--ember-hi); }
+
+/* ---------- header ---------- */
+.site-header {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 30;
+  min-height: calc(var(--header-h) + env(safe-area-inset-top, 0px));
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid transparent;
+  background: linear-gradient(180deg, rgba(10,11,15,.72), rgba(10,11,15,.16));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: background-color .3s var(--ease), border-color .3s var(--ease);
+}
+.site-header[data-stuck="true"] {
+  background: rgba(10,11,15,.86);
+  border-bottom-color: var(--line);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .site-header { background: rgba(10,11,15,.94); }
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  min-width: 0;
+  gap: clamp(.6rem, 2vw, 1.75rem);
+  width: 100%;
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding-inline: max(var(--gutter), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+  padding-block: calc(.4rem + env(safe-area-inset-top, 0px)) .4rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  min-height: 44px;
+  flex: 0 0 auto;
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: -.015em;
+}
+.brand .mark {
+  display: grid; place-items: center;
+  width: 1.65rem; height: 1.65rem;
+  border-radius: .45rem;
+  border: 1px solid var(--line-ember);
+  background: linear-gradient(160deg, rgba(255,140,66,.22), rgba(138,42,28,.28));
+  font-family: var(--font-mono);
+  font-size: .68rem;
+  color: var(--ember-hi);
+}
+.brand .full { white-space: nowrap; }
+@media (max-width: 560px) { .brand .full { display: none; } }
+.brand .short { display: none; font-family: var(--font-mono); font-size: .8rem; letter-spacing: .02em; }
+@media (max-width: 560px) { .brand .short { display: inline; } }
+
+.primary-nav { flex: 1 1 auto; min-width: 0; }
+.primary-nav ul {
+  list-style: none;
+  display: flex;
+  gap: .15rem;
+  margin: 0; padding: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-snap-type: x proximity;
+  padding-inline: 3px;
+  mask-image: linear-gradient(90deg, transparent 0, #000 .75rem, #000 calc(100% - .75rem), transparent 100%);
+}
+/* The edge fade must never eat a focus ring. */
+.primary-nav ul:focus-within { mask-image: none; }
+.primary-nav ul::-webkit-scrollbar { display: none; }
+.primary-nav li { scroll-snap-align: start; }
+.primary-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: .6rem;
+  white-space: nowrap;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: .875rem;
+  transition: color .2s var(--ease);
+}
+.primary-nav a:hover { color: var(--text); }
+.primary-nav a:focus-visible { outline-offset: -2px; }
+.primary-nav a[aria-current="location"] { color: var(--ember); }
+
+.header-cta { display: flex; align-items: center; gap: .45rem; margin-inline-start: auto; flex: 0 0 auto; }
+
+/* ---------- buttons & links ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .45rem;
+  min-height: 44px;
+  padding: .55rem 1rem;
+  border-radius: .5rem;
+  border: 1px solid var(--line-2);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: .875rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color .2s var(--ease), background-color .2s var(--ease), color .2s var(--ease);
+}
+.btn:hover { border-color: var(--line-ember); background: var(--ember-wash); }
+
+.btn--primary {
+  border-color: transparent;
+  background: linear-gradient(140deg, var(--ember-hi), var(--ember) 62%, #f2762c);
+  color: #0a0b0f;
+  font-weight: 600;
+}
+.btn--primary:hover { filter: brightness(1.08); background: linear-gradient(140deg, var(--ember-hi), var(--ember) 62%, #f2762c); }
+
+.btn--quiet { border-color: transparent; color: var(--muted); padding-inline: .6rem; }
+.btn--quiet:hover { color: var(--text); background: transparent; border-color: var(--line-2); }
+
+@media (max-width: 480px) {
+  .btn { font-size: .8125rem; padding-inline: .8rem; }
+}
+
+a:where(.link) {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: rgba(125,211,252,.45);
+  text-underline-offset: .22em;
+  text-decoration-thickness: 1px;
+  transition: text-decoration-color .2s var(--ease);
+}
+a:where(.link):hover { text-decoration-color: currentColor; }
+
+/* ---------- typography ---------- */
+h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: -.025em; line-height: 1.12; text-wrap: balance; }
+p { margin: 0; }
+.prose { max-width: 62ch; }
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
+  font-feature-settings: "tnum" 1;
+}
+
+/* ---------- sections ---------- */
+/* Anchor offset lives on html's scroll-padding only — a scroll-margin here
+   would compose with it and drop every target ~164px too low. */
+.section { padding-block: clamp(5rem, 11vh, 8.5rem); }
+
+.section-head { display: grid; gap: .8rem; margin-bottom: clamp(2.25rem, 5vw, 3.5rem); }
+.section-head h2 { font-size: clamp(1.65rem, 1.1rem + 2.4vw, 2.6rem); }
+.section-head .note { color: var(--muted); max-width: 54ch; }
+.section-head::after {
+  content: "";
+  display: block;
+  height: 1px;
+  margin-top: .4rem;
+  background: linear-gradient(90deg, var(--ember) 0, rgba(255,140,66,.25) 14%, var(--line) 42%, transparent 100%);
+}
+
+/* ---------- hero ---------- */
+#hero {
+  min-height: min(100svh, 56rem);
+  display: flex;
+  align-items: center;
+  padding-block: calc(var(--header-h) + clamp(3.5rem, 12vh, 7rem)) clamp(4rem, 10vh, 7rem);
+}
+.hero-inner { display: grid; gap: clamp(1.6rem, 3.5vw, 2.5rem); width: 100%; }
+
+.hero-name {
+  font-size: clamp(2.6rem, 1.1rem + 8.2vw, 6.25rem);
+  line-height: .95;
+  letter-spacing: -.042em;
+  font-weight: 600;
+  max-width: 17ch;
+  text-wrap: pretty;
+}
+/* Both halves are blocks: the two-line lockup is the whole hero composition,
+   so it must not depend on 'Naga Venkata Sai' happening to fit. */
+.hero-name .given, .hero-name .sur { display: block; }
+.hero-name .sur {
+  color: transparent;
+  background: linear-gradient(96deg, var(--text) 8%, var(--ember-hi) 58%, var(--ember) 96%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  .hero-name .sur { color: var(--ember-hi); background: none; }
+}
+
+.hero-role {
+  font-family: var(--font-mono);
+  font-size: clamp(.95rem, .85rem + .5vw, 1.2rem);
+  font-weight: 500;
+  letter-spacing: .01em;
+  color: var(--ember);
+}
+.hero-role .sep { color: var(--muted); padding-inline: .45rem; }
+
+.hero-line { font-size: clamp(1.02rem, .97rem + .35vw, 1.2rem); color: #d9d3cb; max-width: 58ch; }
+
+.hero-meta {
+  font-size: .75rem;
+  color: var(--muted);
+  letter-spacing: .02em;
+  display: flex; flex-wrap: wrap; align-items: center; gap: .1rem .55rem;
+}
+.hero-meta .dot { color: var(--line-2); }
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  padding: .4rem .8rem .4rem .65rem;
+  border: 1px solid var(--line-ember);
+  border-radius: .4rem;
+  background: rgba(255,140,66,.07);
+  font-family: var(--font-mono);
+  font-size: .75rem;
+  letter-spacing: .01em;
+  color: var(--ember-hi);
+  width: max-content;
+  max-width: 100%;
+}
+.status .dot {
+  width: .45rem; height: .45rem; border-radius: 50%;
+  background: var(--ember);
+  box-shadow: 0 0 0 3px rgba(255,140,66,.18);
+  flex: 0 0 auto;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .status .dot { animation: pulse 3.2s ease-in-out infinite; }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(255,140,66,.18); }
+    50% { box-shadow: 0 0 0 6px rgba(255,140,66,.05); }
   }
-  </script>
-
-  <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      --ink: #171411;
-      --ink-soft: #423b34;
-      --muted: #756b62;
-      --paper: #fbf7ec;
-      --paper-2: #f3ead8;
-      --surface: #fffdf7;
-      --line: #ddceb8;
-      --lime: #caff60;
-      --teal: #4db6aa;
-      --coral: #e86f4a;
-      --plum: #6e4d7d;
-      --gold: #d7ad52;
-      --max: 1180px;
-      --radius: 8px;
-      --shadow: 0 24px 70px rgba(23, 20, 17, 0.11);
-      --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      --serif: Georgia, "Times New Roman", serif;
-      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-    }
-
-    html {
-      scroll-behavior: smooth;
-      -webkit-text-size-adjust: 100%;
-    }
-
-    body {
-      min-height: 100vh;
-      background:
-        linear-gradient(90deg, rgba(23, 20, 17, 0.035) 1px, transparent 1px),
-        linear-gradient(180deg, rgba(23, 20, 17, 0.03) 1px, transparent 1px),
-        var(--paper);
-      background-size: 44px 44px;
-      color: var(--ink);
-      font-family: var(--sans);
-      font-size: 16px;
-      line-height: 1.65;
-      -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
-    }
-
-    body.menu-open {
-      overflow: hidden;
-    }
-
-    ::selection {
-      background: var(--lime);
-      color: var(--ink);
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    img {
-      display: block;
-      max-width: 100%;
-    }
-
-    button {
-      font: inherit;
-    }
-
-    .container {
-      width: min(var(--max), calc(100% - 48px));
-      margin: 0 auto;
-    }
-
-    .skip-link {
-      position: fixed;
-      left: 16px;
-      top: -80px;
-      z-index: 200;
-      background: var(--ink);
-      color: #fff;
-      padding: 10px 14px;
-      transition: top 160ms var(--ease);
-    }
-
-    .skip-link:focus {
-      top: 16px;
-    }
-
-    .site-nav {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      border-bottom: 1px solid rgba(23, 20, 17, 0.1);
-      background: rgba(251, 247, 236, 0.88);
-      backdrop-filter: blur(18px);
-    }
-
-    .nav-inner {
-      min-height: 72px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-    }
-
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 900;
-      letter-spacing: 0;
-    }
-
-    .brand-mark {
-      width: 40px;
-      height: 40px;
-      display: grid;
-      place-items: center;
-      border: 1px solid var(--ink);
-      background: var(--lime);
-      color: var(--ink);
-      font-family: var(--serif);
-      font-weight: 900;
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 22px;
-      list-style: none;
-    }
-
-    .nav-links a {
-      color: var(--muted);
-      font-size: 0.86rem;
-      font-weight: 850;
-      transition: color 160ms var(--ease);
-    }
-
-    .nav-links a:hover,
-    .nav-links a:focus-visible,
-    .nav-links a[aria-current="true"] {
-      color: var(--ink);
-    }
-
-    .nav-cta {
-      border: 1px solid var(--ink);
-      padding: 9px 14px;
-      color: var(--ink) !important;
-      background: var(--surface);
-    }
-
-    .nav-cta:hover,
-    .nav-cta:focus-visible {
-      background: var(--ink);
-      color: #fff !important;
-    }
-
-    .menu-button {
-      display: none;
-      width: 42px;
-      height: 42px;
-      border: 1px solid var(--ink);
-      background: var(--surface);
-      color: var(--ink);
-      cursor: pointer;
-    }
-
-    .menu-button span {
-      display: block;
-      width: 18px;
-      height: 2px;
-      margin: 4px auto;
-      background: currentColor;
-    }
-
-    .hero {
-      position: relative;
-      min-height: calc(100vh - 72px);
-      padding: 72px 0 40px;
-      overflow: hidden;
-      background:
-        linear-gradient(120deg, rgba(202, 255, 96, 0.42), transparent 29%),
-        linear-gradient(90deg, rgba(77, 182, 170, 0.18), transparent 38%, rgba(232, 111, 74, 0.16)),
-        var(--paper);
-    }
-
-    .hero-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.02fr) minmax(320px, 0.72fr);
-      gap: clamp(34px, 6vw, 86px);
-      align-items: center;
-    }
-
-    .eyebrow {
-      color: var(--coral);
-      font-family: var(--mono);
-      font-size: 0.76rem;
-      font-weight: 900;
-      line-height: 1.45;
-      letter-spacing: 0.13em;
-      text-transform: uppercase;
-    }
-
-    h1,
-    h2,
-    h3 {
-      color: var(--ink);
-      line-height: 1.04;
-      letter-spacing: 0;
-    }
-
-    h1 {
-      max-width: 870px;
-      margin-top: 18px;
-      font-family: var(--serif);
-      font-size: clamp(3.25rem, 8vw, 7.2rem);
-      font-weight: 700;
-      text-wrap: balance;
-    }
-
-    h1 span {
-      display: inline;
-      background: linear-gradient(180deg, transparent 54%, rgba(202, 255, 96, 0.85) 54%);
-    }
-
-    h2 {
-      font-family: var(--serif);
-      font-size: clamp(2.2rem, 5vw, 4.35rem);
-      font-weight: 700;
-      text-wrap: balance;
-    }
-
-    h3 {
-      font-size: 1.16rem;
-      font-weight: 900;
-    }
-
-    p {
-      color: var(--ink-soft);
-    }
-
-    .lead {
-      max-width: 700px;
-      margin-top: 24px;
-      color: var(--ink-soft);
-      font-size: clamp(1.04rem, 1.7vw, 1.2rem);
-      line-height: 1.76;
-    }
-
-    .hero-actions,
-    .cta-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 34px;
-    }
-
-    .button {
-      min-height: 48px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      border: 1px solid var(--ink);
-      border-radius: 999px;
-      padding: 12px 18px;
-      font-size: 0.92rem;
-      font-weight: 900;
-      transition: transform 160ms var(--ease), box-shadow 160ms var(--ease), background 160ms var(--ease), color 160ms var(--ease);
-    }
-
-    .button-primary {
-      background: var(--ink);
-      color: #fff;
-      box-shadow: 8px 8px 0 var(--lime);
-    }
-
-    .button-secondary {
-      background: var(--surface);
-      color: var(--ink);
-    }
-
-    .button:hover,
-    .button:focus-visible {
-      transform: translateY(-2px);
-      box-shadow: 0 18px 38px rgba(23, 20, 17, 0.12);
-    }
-
-    .hero-visual {
-      position: relative;
-      min-height: 620px;
-      display: grid;
-      align-items: end;
-    }
-
-    .portrait-stage {
-      position: relative;
-      isolation: isolate;
-      border: 1px solid var(--ink);
-      background:
-        linear-gradient(135deg, rgba(255, 253, 247, 0.92), rgba(243, 234, 216, 0.76)),
-        var(--surface);
-      box-shadow: var(--shadow);
-    }
-
-    .portrait-stage::before {
-      content: "";
-      position: absolute;
-      inset: 18px;
-      z-index: -1;
-      border: 1px solid rgba(23, 20, 17, 0.16);
-      background:
-        linear-gradient(90deg, rgba(23, 20, 17, 0.06) 1px, transparent 1px),
-        linear-gradient(180deg, rgba(23, 20, 17, 0.06) 1px, transparent 1px);
-      background-size: 28px 28px;
-    }
-
-    .portrait-frame {
-      margin: 26px;
-      overflow: hidden;
-      border: 1px solid rgba(23, 20, 17, 0.18);
-      background: #fff;
-    }
-
-    .portrait-frame img {
-      width: 100%;
-      aspect-ratio: 4 / 5;
-      object-fit: cover;
-      object-position: center 22%;
-    }
-
-    .availability-card {
-      position: absolute;
-      left: -38px;
-      bottom: 42px;
-      width: min(290px, 80%);
-      border: 1px solid var(--ink);
-      background: var(--lime);
-      padding: 18px;
-      box-shadow: 10px 10px 0 rgba(23, 20, 17, 0.12);
-    }
-
-    .availability-card p {
-      color: var(--ink);
-      font-size: 0.9rem;
-      font-weight: 900;
-      line-height: 1.45;
-    }
-
-    .signal-sheet {
-      position: absolute;
-      right: -28px;
-      top: 62px;
-      width: 210px;
-      border: 1px solid var(--ink);
-      background: var(--surface);
-      padding: 16px;
-      box-shadow: 9px 9px 0 rgba(23, 20, 17, 0.12);
-    }
-
-    .signal-sheet span {
-      display: block;
-      color: var(--coral);
-      font-family: var(--mono);
-      font-size: 0.68rem;
-      font-weight: 900;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .signal-sheet strong {
-      display: block;
-      margin-top: 8px;
-      color: var(--ink);
-      font-size: 1.05rem;
-      line-height: 1.2;
-    }
-
-    .proof-strip {
-      padding: 26px 0;
-      border-top: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
-      background: var(--surface);
-    }
-
-    .proof-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 1px;
-      background: var(--line);
-      border: 1px solid var(--line);
-    }
-
-    .proof-item {
-      min-height: 150px;
-      background: var(--surface);
-      padding: 24px;
-    }
-
-    .proof-number {
-      color: var(--ink);
-      font-family: var(--serif);
-      font-size: clamp(2.05rem, 4vw, 3.6rem);
-      line-height: 1;
-    }
-
-    .proof-label {
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 0.76rem;
-      font-weight: 900;
-      letter-spacing: 0.06em;
-      line-height: 1.42;
-      text-transform: uppercase;
-    }
-
-    /* The Field Guide — newsletter signup (Phase N1) */
-    .newsletter-card {
-      max-width: 760px;
-      padding: 40px clamp(24px, 4vw, 48px);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: var(--surface);
-      box-shadow: 8px 8px 0 var(--lime);
-    }
-
-    .newsletter-copy {
-      max-width: 60ch;
-      margin-top: 18px;
-      color: var(--ink-soft);
-      font-size: clamp(1.02rem, 1.6vw, 1.16rem);
-      line-height: 1.7;
-    }
-
-    .newsletter-form {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 28px;
-    }
-
-    .newsletter-input {
-      flex: 1 1 260px;
-      min-width: 0;
-      min-height: 48px;
-      padding: 12px 18px;
-      border: 1px solid var(--ink);
-      border-radius: 999px;
-      background: var(--paper);
-      color: var(--ink);
-      font-family: var(--sans);
-      font-size: 0.96rem;
-    }
-
-    .newsletter-input::placeholder {
-      color: var(--muted);
-    }
-
-    .newsletter-input:focus-visible {
-      outline: 2px solid var(--lime);
-      outline-offset: 2px;
-    }
-
-    .newsletter-micro {
-      margin-top: 16px;
-      color: var(--muted);
-      font-family: var(--mono);
-      font-size: 0.76rem;
-      letter-spacing: 0.02em;
-    }
-
-    .newsletter-status {
-      margin-top: 12px;
-      min-height: 1.2em;
-      font-size: 0.92rem;
-      font-weight: 800;
-    }
-
-    .newsletter-status.is-ok {
-      color: #2f7a52;
-    }
-
-    .newsletter-status.is-error {
-      color: var(--coral);
-    }
-
-    /* Visually-hidden honeypot + label (kept in the accessibility tree off-screen) */
-    .newsletter-hp,
-    .newsletter-vh {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    section {
-      padding: 94px 0;
-      border-top: 1px solid rgba(221, 206, 184, 0.72);
-    }
-
-    .section-head {
-      display: grid;
-      grid-template-columns: minmax(0, 0.78fr) minmax(0, 1fr);
-      gap: 42px;
-      align-items: end;
-      margin-bottom: 44px;
-    }
-
-    .section-copy {
-      color: var(--muted);
-      font-size: 1.02rem;
-      line-height: 1.78;
-    }
-
-    .about-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.52fr);
-      gap: 32px;
-      align-items: start;
-    }
-
-    .story {
-      display: grid;
-      gap: 18px;
-      color: var(--ink-soft);
-      font-size: 1.02rem;
-      line-height: 1.82;
-    }
-
-    .principles {
-      display: grid;
-      gap: 12px;
-      list-style: none;
-    }
-
-    .principles li {
-      border: 1px solid var(--line);
-      background: var(--surface);
-      padding: 18px;
-    }
-
-    .principles strong {
-      display: block;
-      color: var(--ink);
-      margin-bottom: 6px;
-    }
-
-    .market-band {
-      background:
-        linear-gradient(115deg, rgba(77, 182, 170, 0.12), transparent 44%, rgba(202, 255, 96, 0.22)),
-        var(--paper-2);
-    }
-
-    .market-grid,
-    .skills-grid,
-    .research-grid,
-    .education-grid,
-    .contact-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-    }
-
-    .market-card,
-    .skill-card,
-    .research-card,
-    .education-card,
-    .contact-card {
-      position: relative;
-      min-height: 100%;
-      border: 1px solid var(--line);
-      background: rgba(255, 253, 247, 0.82);
-      padding: 24px;
-      transition: transform 160ms var(--ease), box-shadow 160ms var(--ease), border-color 160ms var(--ease);
-    }
-
-    .market-card::before,
-    .skill-card::before,
-    .research-card::before,
-    .education-card::before,
-    .contact-card::before {
-      content: "";
-      display: block;
-      width: 38px;
-      height: 6px;
-      margin-bottom: 18px;
-      background: var(--coral);
-    }
-
-    .market-card:nth-child(2)::before,
-    .skill-card:nth-child(2)::before,
-    .research-card:nth-child(2)::before,
-    .contact-card:nth-child(2)::before {
-      background: var(--teal);
-    }
-
-    .market-card:nth-child(3)::before,
-    .skill-card:nth-child(3)::before,
-    .research-card:nth-child(3)::before,
-    .contact-card:nth-child(3)::before {
-      background: var(--lime);
-    }
-
-    .market-card:hover,
-    .skill-card:hover,
-    .research-card:hover,
-    .education-card:hover,
-    .contact-card:hover,
-    .contact-card:focus-visible {
-      border-color: rgba(23, 20, 17, 0.34);
-      transform: translateY(-3px);
-      box-shadow: var(--shadow);
-    }
-
-    .market-card p,
-    .skill-card p,
-    .research-card p,
-    .education-card p,
-    .contact-card p {
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 0.94rem;
-    }
-
-    .source-link {
-      display: inline-flex;
-      margin-top: 18px;
-      color: var(--ink);
-      font-size: 0.84rem;
-      font-weight: 900;
-      text-decoration: underline;
-      text-decoration-color: var(--coral);
-      text-underline-offset: 4px;
-    }
-
-    .projects-toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 26px;
-    }
-
-    .filter-button {
-      min-height: 38px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: var(--surface);
-      color: var(--ink-soft);
-      padding: 8px 13px;
-      font-size: 0.82rem;
-      font-weight: 900;
-      cursor: pointer;
-    }
-
-    .filter-button.is-active {
-      border-color: var(--ink);
-      background: var(--ink);
-      color: #fff;
-    }
-
-    /* ============================================================
-       PROJECT CARDS — 2-up vertical gallery (Luminous)
-       Drop-in REPLACEMENT for the old 3-column project-card CSS
-       (former index.html v4 lines ~633-788, .projects-grid through
-       .project-link:focus-visible). Full uncropped 16:10 screenshot
-       on top; 7 screenshot-less cards get a matching CSS placeholder.
-       ============================================================ */
-
-    /* ---- Grid: 2-up, collapses to 1-up under 860px ---- */
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 28px;
-    }
-    @media (max-width: 860px) {
-      .projects-grid {
-        grid-template-columns: 1fr;
-        gap: 24px;
-      }
-    }
-
-    /* ---- Card: vertical column, media on top, content below ---- */
-    .project-card {
-      display: flex;
-      flex-direction: column;
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      overflow: hidden;                    /* clips media to radius; NOT the offset shadow */
-      transition: transform 0.35s var(--ease),
-                  box-shadow 0.35s var(--ease),
-                  border-color 0.35s var(--ease);
-    }
-
-    /* REQUIRED: category filter JS toggles .is-hidden — keep this rule
-       (.project-card.is-hidden out-specifies .project-card's display:flex) */
-    .project-card.is-hidden { display: none; }
-
-    .project-card:hover,
-    .project-card:focus-within {
-      transform: translate(-3px, -3px);
-      box-shadow: 8px 8px 0 var(--lime);   /* signature hard offset */
-      border-color: var(--ink);
-    }
-
-    /* ---- Media: full, UNCROPPED screenshot on a tinted mat ---- */
-    .project-media {
-      display: block;
-      position: relative;
-      aspect-ratio: 1000 / 625;            /* exact 16:10 of the shots -> no crop */
-      background: var(--paper-2);          /* mat / safety backdrop */
-      border-bottom: 1px solid var(--line);
-      overflow: hidden;
-      text-decoration: none;               /* live media is an <a> */
-    }
-    .project-media img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;                   /* ratio matches -> whole image shows */
-      object-position: center top;
-      transition: transform 0.5s var(--ease);
-    }
-    .project-card:hover .project-media img { transform: scale(1.03); }
-
-    /* ---- Placeholder media for the 7 screenshot-less cards ---- */
-    .project-media--placeholder {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, var(--paper-2) 0%, var(--surface) 100%);
-    }
-    .project-media--placeholder::before {           /* dashed inset frame */
-      content: "";
-      position: absolute;
-      inset: 14px;
-      border: 1px dashed var(--line);
-      border-radius: calc(var(--radius) - 4px);
-      pointer-events: none;
-    }
-    .project-media--placeholder::after {            /* signature lime corner tick */
-      content: "";
-      position: absolute;
-      left: 14px;
-      top: 14px;
-      width: 26px;
-      height: 26px;
-      background: var(--lime);
-      border-bottom-right-radius: var(--radius);
-    }
-    .project-media .media-mono {                    /* centered mono label */
-      position: relative;
-      z-index: 1;
-      font-family: var(--mono);
-      font-size: 0.8rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      padding: 6px 12px;
-    }
-    .project-media .media-mono::before { content: "\2039 "; color: var(--teal); }
-    .project-media .media-mono::after  { content: " \203A"; color: var(--teal); }
-
-    /* ---- Content: header ---- */
-    .project-top { padding: 22px 24px 4px; }
-    .project-kicker {
-      font-family: var(--mono);
-      font-size: 0.72rem;
-      font-weight: 900;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--coral);                 /* matches site-wide .eyebrow convention */
-      line-height: 1.4;
-      margin: 0 0 8px;
-    }
-    .project-top h3 {
-      font-family: var(--sans);
-      font-size: 1.25rem;
-      line-height: 1.2;
-      color: var(--ink);
-      margin: 0 0 8px;
-    }
-    .project-summary {
-      font-size: 0.95rem;
-      line-height: 1.55;
-      color: var(--ink-soft);
-      margin: 0;
-    }
-
-    /* ---- Case content: compact divided stacked list (no 3 columns) ---- */
-    .case-grid {
-      display: flex;
-      flex-direction: column;
-      padding: 16px 24px 4px;
-    }
-    .case-block {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 3px;
-      padding: 12px 0;
-      border-top: 1px solid var(--line);
-    }
-    .case-block:first-child { border-top: none; padding-top: 4px; }
-    .case-label {
-      font-family: var(--mono);
-      font-size: 0.68rem;
-      font-weight: 900;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-    .case-block p {
-      font-size: 0.9rem;
-      line-height: 1.5;
-      color: var(--ink-soft);
-      margin: 0;
-    }
-
-    /* ---- Bottom: tags + pill CTA, pinned to base ---- */
-    .project-bottom {
-      margin-top: auto;
-      padding: 16px 24px 22px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .tag-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-    .tag {
-      font-family: var(--mono);
-      font-size: 0.72rem;
-      color: var(--ink-soft);
-      background: var(--paper-2);
-      border: 1px solid var(--line);
-      border-radius: 999px;                 /* pill motif */
-      padding: 4px 11px;
-    }
-    .project-link {
-      align-self: flex-start;
-      font-family: var(--sans);
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--ink);
-      text-decoration: none;
-      background: var(--lime);
-      border: 1px solid var(--ink);
-      border-radius: 999px;                 /* pill motif */
-      padding: 8px 18px;
-      transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
-    }
-    .project-link:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: 4px 4px 0 var(--ink);
-    }
-    .project-link:focus-visible {
-      outline: 2px solid var(--teal);
-      outline-offset: 2px;
-    }
-
-    /* ---- Accessibility: respect reduced motion ---- */
-    @media (prefers-reduced-motion: reduce) {
-      .project-card,
-      .project-media img,
-      .project-link { transition: none; }
-      .project-card:hover,
-      .project-card:focus-within { transform: none; }
-      .project-card:hover .project-media img { transform: none; }
-    }
-
-    .experience-list {
-      display: grid;
-      gap: 16px;
-    }
-
-    .experience-item {
-      display: grid;
-      grid-template-columns: 300px 1fr;
-      gap: 28px;
-      border-top: 1px solid var(--line);
-      padding: 28px 0;
-    }
-
-    .experience-meta {
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    .experience-role {
-      color: var(--ink);
-      font-weight: 950;
-      line-height: 1.25;
-    }
-
-    .experience-company {
-      margin-top: 6px;
-      color: var(--coral);
-      font-weight: 900;
-    }
-
-    .bullets {
-      display: grid;
-      gap: 10px;
-      padding-left: 18px;
-      color: var(--ink-soft);
-    }
-
-    .bullets li {
-      line-height: 1.65;
-    }
-
-    .skills-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .research-grid,
-    .education-grid,
-    .contact-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .research-meta {
-      margin-top: 14px;
-      color: var(--coral);
-      font-family: var(--mono);
-      font-size: 0.78rem;
-      font-weight: 900;
-    }
-
-    .cta {
-      background:
-        linear-gradient(90deg, rgba(23, 20, 17, 0.92), rgba(23, 20, 17, 0.84)),
-        var(--ink);
-      color: #fff;
-    }
-
-    .cta-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 30px;
-      align-items: center;
-    }
-
-    .cta h2,
-    .cta p {
-      color: #fff;
-    }
-
-    .cta p {
-      margin-top: 14px;
-      color: rgba(255, 255, 255, 0.72);
-      max-width: 720px;
-    }
-
-    .cta .button-primary {
-      background: var(--lime);
-      color: var(--ink);
-      box-shadow: none;
-    }
-
-    .cta .button-secondary {
-      background: transparent;
-      color: #fff;
-      border-color: rgba(255, 255, 255, 0.34);
-    }
-
-    .contact-value {
-      margin-top: 12px;
-      color: var(--coral);
-      font-weight: 900;
-      overflow-wrap: anywhere;
-    }
-
-    .footer {
-      padding: 34px 0;
-      border-top: 1px solid var(--line);
-      background: var(--surface);
-    }
-
-    .footer-inner {
-      display: flex;
-      justify-content: space-between;
-      gap: 18px;
-      color: var(--muted);
-      font-size: 0.88rem;
-    }
-
-    .footer-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      font-weight: 900;
-    }
-
-    .reveal {
-      opacity: 1;
-      transform: none;
-      transition: opacity 520ms var(--ease), transform 520ms var(--ease);
-    }
-
-    .reveal.is-visible {
-      opacity: 1;
-      transform: none;
-    }
-
-    .hero .reveal {
-      opacity: 1;
-      transform: none;
-    }
-
-    @media (max-width: 980px) {
-      .menu-button {
-        display: block;
-      }
-
-      .nav-links {
-        position: fixed;
-        inset: 72px 16px auto 16px;
-        display: none;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0;
-        border: 1px solid var(--ink);
-        background: var(--surface);
-        box-shadow: var(--shadow);
-      }
-
-      .nav-links.open {
-        display: flex;
-      }
-
-      .nav-links li {
-        border-bottom: 1px solid var(--line);
-      }
-
-      .nav-links li:last-child {
-        border-bottom: 0;
-      }
-
-      .nav-links a {
-        display: block;
-        padding: 15px;
-      }
-
-      .nav-cta {
-        border: 0;
-      }
-
-      .hero-layout,
-      .section-head,
-      .about-grid,
-      .experience-item,
-      .cta-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .hero {
-        min-height: auto;
-        padding: 54px 0 42px;
-      }
-
-      .hero-visual {
-        min-height: auto;
-      }
-
-      .signal-sheet {
-        right: 12px;
-        top: 24px;
-      }
-
-      .availability-card {
-        left: 12px;
-        bottom: 22px;
-      }
-
-      .proof-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .market-grid,
-      .skills-grid,
-      .research-grid,
-      .education-grid,
-      .contact-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 620px) {
-      .container {
-        width: min(100% - 36px, var(--max));
-      }
-
-      .brand span:last-child {
-        max-width: 210px;
-        white-space: normal;
-        line-height: 1.2;
-      }
-
-      h1 {
-        font-size: clamp(2rem, 9vw, 2.35rem);
-        line-height: 1.1;
-        text-wrap: wrap;
-      }
-
-      h2 {
-        font-size: clamp(2rem, 10vw, 3.1rem);
-      }
-
-      section {
-        padding: 66px 0;
-      }
-
-      .hero-actions,
-      .cta-actions,
-      .newsletter-form {
-        flex-direction: column;
-      }
-
-      .button {
-        width: 100%;
-      }
-
-      .portrait-frame {
-        margin: 18px;
-      }
-
-      .eyebrow {
-        font-size: 0.68rem;
-        line-height: 1.55;
-        max-width: 32ch;
-      }
-
-      .lead {
-        font-size: 0.95rem;
-        line-height: 1.72;
-        max-width: 32ch;
-      }
-
-      .signal-sheet,
-      .availability-card {
-        position: static;
-        width: auto;
-        margin: 0 18px 18px;
-      }
-
-      .proof-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .proof-item {
-        min-height: 120px;
-      }
-
-      .footer-inner {
-        flex-direction: column;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        scroll-behavior: auto !important;
-        transition: none !important;
-      }
-
-      .reveal {
-        opacity: 1;
-        transform: none;
-      }
-    }
-  </style>
-  <link rel="stylesheet" href="chatbot.css">
+}
+
+.hero-actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+
+/* stat readout */
+.stats {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border-block: 1px solid var(--line);
+}
+.stats li {
+  background: rgba(10,11,15,.90);
+  padding: 1.05rem 1.1rem 1.15rem 0;
+  display: grid;
+  gap: .3rem;
+  align-content: start;
+}
+.stats .num {
+  font-family: var(--font-mono);
+  font-size: clamp(1.5rem, 1.15rem + 1.5vw, 2.15rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -.03em;
+  color: var(--ember-hi);
+  font-feature-settings: "tnum" 1;
+}
+.stats .lab { font-size: .8125rem; color: var(--muted); line-height: 1.45; }
+
+/* hero drift on scroll */
+@media (prefers-reduced-motion: no-preference) {
+  @supports ((animation-timeline: view()) and (animation-range: entry)) {
+    .hero-inner {
+      animation: heroDrift auto linear forwards;
+      animation-timeline: view();
+      animation-range: exit 0% exit 100%;
+      will-change: opacity, translate;
+    }
+    @keyframes heroDrift { to { opacity: .18; translate: 0 -5vh; } }
+  }
+}
+
+/* ---------- case cards ---------- */
+.cases {
+  display: grid;
+  gap: clamp(1rem, 2vw, 1.35rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 25rem), 1fr));
+}
+
+.case {
+  position: relative;
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+  padding: clamp(1.4rem, 3vw, 2rem);
+  border: 1px solid var(--line);
+  border-radius: .875rem;
+  background: var(--panel);
+  backdrop-filter: blur(16px) saturate(125%);
+  -webkit-backdrop-filter: blur(16px) saturate(125%);
+  transition: border-color .3s var(--ease), box-shadow .3s var(--ease);
+  overflow: hidden;
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .case { background: #12141b; }
+}
+/* With the canvas live, a backdrop-filter re-blurs freshly rendered pixels on
+   every frame. Opaque panels instead — and text contrast stops depending on
+   whatever the scene happens to be doing behind them. */
+html[data-scene="on"] :is(.case, .nl) {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: rgba(18,20,27,.92);
+}
+.case::before {
+  content: "";
+  position: absolute; inset-inline: 0; inset-block-start: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,196,107,.55) 30%, rgba(255,140,66,.25) 70%, transparent);
+  opacity: .5;
+  transition: opacity .3s var(--ease);
+}
+.case:hover { border-color: var(--line-ember); box-shadow: 0 1.5rem 3.5rem -1.5rem rgba(138,42,28,.55); }
+.case:hover::before { opacity: 1; }
+
+.case .meta {
+  font-family: var(--font-mono);
+  font-size: .6875rem;
+  letter-spacing: .04em;
+  color: var(--muted);
+}
+.case h3 { font-size: clamp(1.15rem, 1.02rem + .6vw, 1.45rem); letter-spacing: -.022em; }
+.case .hook { font-size: 1.02rem; color: #ded8d0; text-wrap: pretty; }
+
+.facts { margin: 0; display: grid; gap: .8rem; }
+.facts > div { display: grid; grid-template-columns: 6.25rem 1fr; gap: .25rem 1rem; align-items: baseline; }
+@media (max-width: 30rem) { .facts > div { grid-template-columns: 1fr; } }
+.facts dt {
+  font-family: var(--font-mono);
+  font-size: .6875rem;
+  letter-spacing: .05em;
+  color: var(--ember);
+  padding-top: .18rem;
+}
+.facts dd { margin: 0; font-size: .9375rem; color: var(--text-2); line-height: 1.55; text-wrap: pretty; }
+.facts dd strong { color: var(--text); font-weight: 500; }
+
+.case-links { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .4rem .9rem; }
+.case-links a {
+  display: inline-flex; align-items: center; min-height: 44px;
+  font-family: var(--font-mono); font-size: .75rem; letter-spacing: .02em;
+  color: var(--accent); text-decoration: underline; text-underline-offset: .25em;
+  text-decoration-color: rgba(125,211,252,.4);
+}
+.case-links a:hover { text-decoration-color: currentColor; }
+
+/* ---------- secondary project grid ---------- */
+.subhead {
+  margin: clamp(3rem, 7vw, 4.5rem) 0 1.5rem;
+  display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap;
+}
+.subhead h3 { font-size: 1.1rem; letter-spacing: -.015em; }
+.subhead .note { color: var(--muted); font-size: .875rem; }
+
+.minis {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: 1px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: .625rem;
+  overflow: hidden;
+}
+.minis li {
+  background: rgba(10,11,15,.90);
+  padding: 1.25rem 1.3rem 1.35rem;
+  display: grid; gap: .45rem; align-content: start;
+  /* one anatomy: heading / description / stack / link — so the stack line
+     lands on the same baseline whether or not a card has a public link */
+  grid-template-rows: auto 1fr auto auto;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 12rem;
+  transition: background-color .25s var(--ease);
+}
+.minis li:hover { background: rgba(255,140,66,.06); }
+.minis h4 { font-size: .9375rem; letter-spacing: -.012em; }
+.minis p { font-size: .8438rem; color: var(--text-2); line-height: 1.5; }
+.minis .stack { font-family: var(--font-mono); font-size: .6875rem; color: rgba(255,140,66,.75); letter-spacing: .03em; }
+.minis a {
+  justify-self: start;
+  display: inline-flex; align-items: center; min-height: 44px;
+  font-family: var(--font-mono); font-size: .71rem; letter-spacing: .03em;
+  color: var(--accent); text-decoration: underline; text-underline-offset: .25em;
+  text-decoration-color: rgba(125,211,252,.4);
+}
+.minis a:hover { text-decoration-color: currentColor; }
+
+/* ---------- experience ---------- */
+.roles { display: grid; gap: clamp(2.25rem, 5vw, 3.25rem); }
+.role { display: grid; gap: 1rem; }
+.role-head { display: grid; gap: .3rem; }
+.role-head .org { font-size: clamp(1.1rem, 1rem + .5vw, 1.3rem); letter-spacing: -.02em; }
+.role-head .who {
+  font-family: var(--font-mono); font-size: .75rem; letter-spacing: .03em; color: var(--ember);
+}
+.role-head .when { font-family: var(--font-mono); font-size: .75rem; color: var(--muted); letter-spacing: .02em; }
+
+.bullets { margin: 0; padding: 0; list-style: none; display: grid; gap: .85rem; max-width: 74ch; }
+.bullets li {
+  position: relative;
+  padding-inline-start: 1.5rem;
+  color: var(--text-2);
+  font-size: .9375rem;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+.bullets li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: .62em;
+  width: .6rem; height: 1px;
+  background: var(--ember);
+  opacity: .8;
+}
+.bullets strong { color: var(--text); font-weight: 500; }
+
+.edu { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); }
+.edu > div {
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: .625rem;
+  display: grid; gap: .3rem;
+}
+.edu .school { font-size: .9375rem; font-weight: 600; letter-spacing: -.012em; }
+.edu .degree { font-size: .875rem; color: var(--muted); }
+.edu .term { font-family: var(--font-mono); font-size: .71rem; color: var(--ember); letter-spacing: .03em; }
+
+/* ---------- papers ---------- */
+.papers { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; background: var(--line); border-block: 1px solid var(--line); }
+.papers li { background: rgba(10,11,15,.90); padding: 1.15rem 0 1.3rem; display: grid; gap: .4rem; }
+.papers .title { font-size: .9688rem; font-weight: 500; color: var(--text); letter-spacing: -.012em; text-wrap: pretty; }
+.papers .where { font-family: var(--font-mono); font-size: .75rem; color: var(--muted); letter-spacing: .02em; }
+
+.certs { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .5rem; }
+.certs li {
+  border: 1px solid var(--line-2);
+  border-radius: .4rem;
+  padding: .5rem .8rem;
+  font-family: var(--font-mono);
+  font-size: .75rem;
+  letter-spacing: .01em;
+  color: var(--muted);
+}
+
+/* ---------- skills ---------- */
+.tiers { display: grid; gap: 1px; background: var(--line); border-block: 1px solid var(--line); }
+.tier {
+  background: rgba(10,11,15,.90);
+  display: grid;
+  grid-template-columns: 8.5rem 1fr;
+  gap: .5rem 1.75rem;
+  padding: 1.35rem 0 1.5rem;
+  align-items: start;
+}
+@media (max-width: 40rem) { .tier { grid-template-columns: 1fr; } }
+.tier dt {
+  font-family: var(--font-mono);
+  font-size: .8125rem;
+  letter-spacing: .04em;
+  color: var(--ember);
+}
+.tier dd { margin: 0; color: var(--text-2); font-size: .9375rem; line-height: 1.65; text-wrap: pretty; }
+.tier dd b { color: var(--text); font-weight: 500; }
+
+/* ---------- writing + newsletter ---------- */
+.writing-grid { display: grid; gap: clamp(1.5rem, 4vw, 2.5rem); grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); align-items: start; }
+
+.nl {
+  border: 1px solid var(--line);
+  border-radius: .75rem;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  background: var(--panel);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: grid; gap: .9rem;
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .nl { background: #12141b; } }
+.nl h3 { font-size: 1.0625rem; }
+.nl p { font-size: .875rem; color: var(--text-2); }
+.nl form { display: flex; flex-wrap: wrap; gap: .5rem; }
+.nl input[type="email"] {
+  flex: 1 1 12rem;
+  min-width: 0;
+  min-height: 44px;
+  padding: .55rem .8rem;
+  border: 1px solid var(--line-2);
+  border-radius: .5rem;
+  background: rgba(10,11,15,.7);
+  color: var(--text);
+  font: inherit;
+  font-size: .875rem;
+}
+.nl input[type="email"]::placeholder { color: rgba(154,148,140,.8); }
+.nl input[type="email"]:focus-visible { border-color: var(--ember); }
+.nl .micro { font-size: .75rem; color: var(--muted); }
+.hp { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; margin: -1px; }
+
+/* ---------- contact ---------- */
+.contact-grid { display: grid; gap: clamp(2rem, 5vw, 3rem); grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); align-items: start; }
+.contact-line { font-size: clamp(1.15rem, 1rem + 1vw, 1.6rem); letter-spacing: -.022em; line-height: 1.3; max-width: 22ch; text-wrap: balance; }
+.contact-sub { margin-top: 1rem; font-size: .875rem; color: var(--text-2); }
+.channels { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; background: var(--line); border-block: 1px solid var(--line); }
+.channels li { background: rgba(10,11,15,.90); }
+.channels a {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  gap: .25rem 1rem;
+  align-items: baseline;
+  min-height: 44px;
+  padding: .85rem 0 .95rem;
+  text-decoration: none;
+  color: var(--text);
+}
+@media (max-width: 26rem) { .channels a { grid-template-columns: 1fr; } }
+.channels .k { font-family: var(--font-mono); font-size: .71rem; letter-spacing: .05em; color: var(--ember); }
+.channels .v { font-size: .9375rem; color: var(--muted); word-break: break-word; transition: color .2s var(--ease); }
+.channels a:hover .v { color: var(--accent); }
+
+.site-footer {
+  position: relative; z-index: 1;
+  border-top: 1px solid var(--line);
+  padding-block: 2rem calc(2.75rem + env(safe-area-inset-bottom, 0px));
+}
+.footer-inner { display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; justify-content: space-between; align-items: baseline; }
+.site-footer p { font-family: var(--font-mono); font-size: .71rem; letter-spacing: .03em; color: var(--muted); }
+
+/* ---------- reveal (JS-gated so no-JS shows everything) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-reveal] {
+    opacity: 0;
+    translate: 0 1.1rem;
+    transition: opacity .62s var(--ease), translate .62s var(--ease);
+    transition-delay: calc(var(--i, 0) * 65ms);
+    transition-delay: calc((sibling-index() - 1) * 65ms);
+  }
+  html.js [data-reveal].is-in { opacity: 1; translate: 0 0; }
+  /* The hero is the LCP element — it is never revealed, only shown. */
+  html.js #hero [data-reveal] { opacity: 1; translate: none; }
+}
+
+/* ---------- pointer-tilt: fine pointers only, motion-safe ----------
+   Per-card perspective: a shared one on the grid views each card off-axis
+   from the same vanishing point, so identical movement shears them
+   differently. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .case[data-tilt] {
+    transition: transform .45s var(--ease), border-color .3s var(--ease), box-shadow .3s var(--ease);
+    transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  }
+  .case[data-tilt].is-tilting { transition: transform .08s linear, border-color .3s var(--ease), box-shadow .3s var(--ease); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .case[data-tilt] { transform: none !important; }
+  .glow { display: none; }
+  .rail .tick, .rail .name { transition: none; }
+  .skip-link { transition: none; }
+}
+
+/* ---------- forced colors: nothing here may depend on alpha or gradients ---------- */
+@media (forced-colors: active) {
+  .hero-name .sur {
+    color: CanvasText;
+    -webkit-text-fill-color: CanvasText;
+    background: none;
+  }
+  .case, .edu > div, .certs li, .nl, .minis { border-color: CanvasText; }
+  .stats, .papers, .tiers, .channels { background: CanvasText; }
+  :where(a, button, input, summary, [tabindex]):focus-visible { outline-color: Highlight; }
+}
+</style>
+
+<link rel="stylesheet" href="chatbot.css">
+<script>document.documentElement.classList.add('js');</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Naga Venkata Sai Chennu",
+  "jobTitle": "AI Systems Engineer",
+  "url": "https://chennunagavenkatasai.com/",
+  "image": "https://chennunagavenkatasai.com/profile.png",
+  "email": "mailto:nagavenkatasaichennu@gmail.com",
+  "telephone": "+1-571-546-6207",
+  "address": { "@type": "PostalAddress", "addressLocality": "Fairfax", "addressRegion": "VA", "addressCountry": "US" },
+  "sameAs": [
+    "https://github.com/Nagavenkatasai7",
+    "https://www.linkedin.com/in/naga-venkata-sai-chennu/"
+  ],
+  "knowsAbout": ["LLM systems", "Supervised fine-tuning", "LoRA", "QLoRA", "GRPO", "Model evaluation", "Retrieval-Augmented Generation", "Model Context Protocol", "PyTorch"],
+  "alumniOf": [
+    {
+      "@type": "CollegeOrUniversity",
+      "name": "George Mason University",
+      "address": { "@type": "PostalAddress", "addressLocality": "Fairfax", "addressRegion": "VA", "addressCountry": "US" }
+    },
+    {
+      "@type": "CollegeOrUniversity",
+      "name": "Koneru Lakshmaiah University",
+      "address": { "@type": "PostalAddress", "addressLocality": "Vaddeswaram", "addressCountry": "IN" }
+    }
+  ]
+}
+</script>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
+<a class="skip-link" href="#content">Skip to content</a>
+<div id="scene" aria-hidden="true"></div>
+<div class="veil" aria-hidden="true"></div>
+<div class="glow" id="cursorGlow" aria-hidden="true"></div>
 
-  <nav class="site-nav" aria-label="Primary navigation">
-    <div class="container nav-inner">
-      <a class="brand" href="#top" aria-label="Naga Venkata Sai Chennu home">
-        <span class="brand-mark">NS</span>
-        <span>Naga Venkata Sai Chennu</span>
-      </a>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="#about">About</a></li>
-        <li><a href="#proof">Proof</a></li>
-        <li><a href="#software">Software</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#experience">Experience</a></li>
-        <li><a href="#skills">Skills</a></li>
-        <li><a href="#research">Research</a></li>
-        <li><a href="/blog">Blog</a></li>
-        <li><a class="nav-cta" href="#contact">Contact</a></li>
+<div class="rail" aria-hidden="true">
+  <ol>
+    <li data-rail="hero"><span class="tick"></span><span class="name">Top</span></li>
+    <li data-rail="work"><span class="tick"></span><span class="name">Work</span></li>
+    <li data-rail="experience"><span class="tick"></span><span class="name">Experience</span></li>
+    <li data-rail="papers"><span class="tick"></span><span class="name">Papers</span></li>
+    <li data-rail="skills"><span class="tick"></span><span class="name">Skills</span></li>
+    <li data-rail="writing"><span class="tick"></span><span class="name">Writing</span></li>
+    <li data-rail="contact"><span class="tick"></span><span class="name">Contact</span></li>
+  </ol>
+</div>
+
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a class="brand" href="#hero">
+      <span class="mark" aria-hidden="true">NC</span>
+      <span class="full">Naga Venkata Sai Chennu</span>
+      <span class="short">N. Chennu</span>
+    </a>
+    <nav class="primary-nav" aria-label="Sections">
+      <ul>
+        <li><a href="#work" data-nav="work">Work</a></li>
+        <li><a href="#experience" data-nav="experience">Experience</a></li>
+        <li><a href="#papers" data-nav="papers">Papers</a></li>
+        <li><a href="#skills" data-nav="skills">Skills</a></li>
+        <li><a href="#writing" data-nav="writing">Writing</a></li>
+        <li><a href="#contact" data-nav="contact">Contact</a></li>
       </ul>
-      <button class="menu-button" id="menuButton" aria-label="Open navigation" aria-expanded="false" aria-controls="navLinks">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+    </nav>
+    <div class="header-cta">
+      <a class="btn btn--primary" href="https://fantastical.app/vhrdnrbmgt/chennunagavenkatasai" target="_blank" rel="noopener">Book 30 min<span class="visually-hidden"> (opens in a new tab)</span></a>
     </div>
-  </nav>
+  </div>
+</header>
 
-  <main id="main">
-    <header class="hero" id="top">
-      <div class="container hero-layout">
-        <div class="hero-copy reveal">
-          <p class="eyebrow">Software Engineer · Scalable Systems, Test Automation, AI-Assisted Development</p>
-          <h1 aria-label="Scalable software with AI systems judgment built in."><span>Scalable software</span><br>with AI systems<br>judgment built in.</h1>
-          <p class="lead">
-            I architect, design, implement, test, and deliver scalable products across Python, JavaScript/TypeScript, SQL, and C++ while using AI coding assistants responsibly and keeping quality, telemetry, and maintainability visible.
-          </p>
-          <div class="hero-actions">
-            <a class="button button-primary" href="#projects">See project impact</a>
-            <a class="button button-secondary" href="Naga_Venkata_Sai_Chennu_Career_Fair_Resume.pdf" download>Download resume</a>
-            <a class="button button-secondary" href="https://fantastical.app/vhrdnrbmgt/chennunagavenkatasai" target="_blank" rel="noopener">Book 30 minutes</a>
-          </div>
+<main id="content" tabindex="-1">
+
+  <!-- ============================ HERO ============================ -->
+  <section id="hero" aria-labelledby="hero-h">
+    <div class="shell">
+      <div class="hero-inner">
+        <h1 class="hero-name" id="hero-h">
+          <span class="given">Naga Venkata Sai</span>
+          <span class="sur">Chennu</span>
+        </h1>
+
+        <p class="hero-role mono">AI Systems Engineer<span class="sep">/</span>LLM systems, evals, and serving</p>
+
+        <p class="hero-line">I build the parts of an LLM system you only notice when they are wrong: the fine-tuning pipeline, the schema the model has to fill, and the eval harness that catches a regression before a user does.</p>
+
+        <p class="status mono"><span class="dot" aria-hidden="true"></span>Available now — Fairfax, VA — open to remote</p>
+
+        <div class="hero-actions" data-reveal>
+          <a class="btn btn--primary" href="#work">See selected work</a>
+          <a class="btn" href="/Naga_Chennu_Resume.pdf">Resume (PDF)</a>
         </div>
 
-        <div class="hero-visual reveal" aria-label="Profile summary">
-          <div class="portrait-stage">
-            <div class="portrait-frame">
-              <img src="profile.png" alt="Naga Venkata Sai Chennu profile portrait">
+        <p class="hero-meta mono" data-reveal>
+          <a class="link" href="https://github.com/Nagavenkatasai7" target="_blank" rel="noopener">GitHub<span class="visually-hidden"> (opens in a new tab)</span></a>
+          <span class="dot" aria-hidden="true">·</span>
+          <a class="link" href="https://www.linkedin.com/in/naga-venkata-sai-chennu/" target="_blank" rel="noopener">LinkedIn<span class="visually-hidden"> (opens in a new tab)</span></a>
+          <span class="dot" aria-hidden="true">·</span>
+          <a class="link" href="mailto:nagavenkatasaichennu@gmail.com">nagavenkatasaichennu@gmail.com</a>
+        </p>
+
+        <ul class="stats" data-stagger>
+          <li data-reveal>
+            <span class="num"><span class="visually-hidden">900</span><span aria-hidden="true" data-count-to="900">900</span></span>
+            <span class="lab">checks in the regression suite, scored against human-labeled ground truth</span>
+          </li>
+          <li data-reveal>
+            <span class="num"><span class="visually-hidden">4×</span><span aria-hidden="true" data-count-to="4" data-count-suffix="×">4×</span></span>
+            <span class="lab">NVIDIA H100 SLURM cluster running the fine-tuning pipeline</span>
+          </li>
+          <li data-reveal>
+            <span class="num"><span class="visually-hidden">6,000</span><span aria-hidden="true" data-count-to="6000">6,000</span></span>
+            <span class="lab">ChartX images evaluated across 18 chart types</span>
+          </li>
+          <li data-reveal>
+            <span class="num"><span class="visually-hidden">500+</span><span aria-hidden="true" data-count-to="500" data-count-suffix="+">500+</span></span>
+            <span class="lab">multi-page USPTO and legal filings converted into JSON</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ WORK ============================ -->
+  <section id="work" class="section" aria-labelledby="work-h">
+    <div class="shell">
+      <div class="section-head" data-reveal>
+        <h2 id="work-h">Selected work</h2>
+        <p class="note">Four problems, what constrained each one, what broke or got measured, and what changed.</p>
+      </div>
+
+      <div class="cases" data-stagger>
+
+        <article class="case" data-tilt data-reveal>
+          <p class="meta">George Mason University, Costello College of Business · 2025-2026</p>
+          <h3>TRL loss-masking regression</h3>
+          <p class="hook">Nothing crashed. Assistant-only loss masking had quietly stopped being applied, and every run on the cluster was training on the wrong tokens.</p>
+          <dl class="facts">
+            <div><dt>constraint</dt><dd>Every supervised fine-tuning run on the cluster sat on TRL v0.20.0.</dd></div>
+            <div><dt>what broke</dt><dd>A TRL v0.20.0 regression <strong>silently dropped assistant-only loss masking</strong>. I traced it by inspecting token-level loss across SFT checkpoints rather than trusting the aggregate curve.</dd></div>
+            <div><dt>result</dt><dd>Correct training behavior restored for <strong>every fine-tuning run on the cluster</strong>.</dd></div>
+          </dl>
+        </article>
+
+        <article class="case" data-tilt data-reveal>
+          <p class="meta">George Mason University, Costello College of Business · open source · 2025-2026</p>
+          <h3>LLM Forge</h3>
+          <p class="hook">One configuration file stands up a 12-stage supervised fine-tuning run on a shared H100 cluster.</p>
+          <dl class="facts">
+            <div><dt>constraint</dt><dd>A <strong>4× NVIDIA H100 SLURM cluster</strong> shared across faculty research groups.</dd></div>
+            <div><dt>what I built</dt><dd>A configuration-driven <strong>12-stage SFT pipeline</strong> supporting LoRA, QLoRA, and GRPO.</dd></div>
+            <div><dt>result</dt><dd><strong>Halved researcher time-to-first-experiment.</strong></dd></div>
+          </dl>
+          <ul class="case-links">
+            <li><a href="/llm-forge">Open LLM Forge</a></li>
+          </ul>
+        </article>
+
+        <article class="case" data-tilt data-reveal>
+          <p class="meta">Independent research · 2026</p>
+          <h3>A benchmark flaw, not a model flaw</h3>
+          <p class="hook">GPT-5.4 was not failing at treemaps. The ground truth was never recoverable from the image.</p>
+          <dl class="facts">
+            <div><dt>constraint</dt><dd><strong>GPT-5.4</strong> against all <strong>6,000 ChartX images</strong> spanning 18 chart types, through one deterministic eval harness.</dd></div>
+            <div><dt>what I measured</dt><dd>Accuracy tracked the human perceptual encoding hierarchy: <strong>91-95% on position-encoded charts against 51.6% on treemaps</strong>.</dd></div>
+            <div><dt>result</dt><dd>Re-rendering treemaps with explicit value labels lifted accuracy <strong>51.6% to 97.7% (McNemar p = 0.0003)</strong>, attributing the gap to the benchmark rather than the model.</dd></div>
+          </dl>
+          <ul class="case-links">
+            <li><a href="/vlm-eval">Open the vision-language eval harness</a></li>
+          </ul>
+        </article>
+
+        <article class="case" data-tilt data-reveal>
+          <p class="meta">George Mason University, Costello College of Business · 2025-2026</p>
+          <h3>Constrained extraction and an MCP server</h3>
+          <p class="hook">Constrain what the model is allowed to emit, instead of repairing malformed output downstream.</p>
+          <dl class="facts">
+            <div><dt>constraint</dt><dd><strong>500+ multi-page USPTO and legal filings</strong> to convert into JSON.</dd></div>
+            <div><dt>what I built</dt><dd>A Claude API extraction service that <strong>constrains tool-call output to a Pydantic v2 schema</strong>, plus a Model Context Protocol server routing multi-step tool calls across 2,000+ records.</dd></div>
+            <div><dt>result</dt><dd><strong>95% field-level accuracy</strong> against human-labeled ground truth, manual review effort cut <strong>~80%</strong>, extraction throughput up <strong>~30%</strong>. Fine-tuned models published to Hugging Face for two faculty research groups.</dd></div>
+          </dl>
+        </article>
+
+      </div>
+
+      <div class="subhead" data-reveal>
+        <h3>Also built</h3>
+        <p class="note">Smaller projects, described with what they actually do.</p>
+      </div>
+
+      <ul class="minis">
+        <li data-reveal>
+          <h4>JetBot, on-device agent</h4>
+          <p>A full LLM agent loop running on-device under a fixed edge memory budget, isolating inference with cgroups v2 and gating every destructive tool call behind human approval rather than trusting the planner.</p>
+          <p class="stack mono">Jetson Orin Nano / Nemotron / SQLite FTS5 / cgroups v2</p>
+        </li>
+        <li data-reveal>
+          <h4>IntelliDoc-Nexus</h4>
+          <p>A production-grade multi-agent platform that ingests, understands, and answers questions over complex documents with citations.</p>
+          <p class="stack mono">Multi-agent / retrieval / citations</p>
+          <a href="/intellidoc">Open IntelliDoc-Nexus</a>
+        </li>
+        <li data-reveal>
+          <h4>CUDA matrix-multiplication kernel</h4>
+          <p>A tiled matrix-multiplication kernel in C++/CUDA focused on memory behavior, shared-memory usage, and performance tradeoffs.</p>
+          <p class="stack mono">C++ / CUDA</p>
+        </li>
+        <li data-reveal>
+          <h4>LoRA fine-tuning pipeline</h4>
+          <p>An end-to-end pipeline for fine-tuning LLMs with LoRA/QLoRA, from dataset preparation to evaluation.</p>
+          <p class="stack mono">LoRA / QLoRA / dataset prep / evaluation</p>
+          <a href="/lora-pipeline">Open the LoRA pipeline</a>
+        </li>
+        <li data-reveal>
+          <h4>Google ADK multi-agent workflow</h4>
+          <p>A multi-agent workflow system built on Google's Agent Development Kit (ADK).</p>
+          <p class="stack mono">Google Agent Development Kit / multi-agent</p>
+          <a href="/adk-agents">Open the ADK workflow</a>
+        </li>
+        <li data-reveal>
+          <h4>Research-paper discovery system</h4>
+          <p>An AI system that discovers, analyzes, and summarizes academic papers via a multi-agent architecture.</p>
+          <p class="stack mono">Multi-agent / discovery / summarization</p>
+          <a href="/paper-discovery">Open paper discovery</a>
+        </li>
+        <li data-reveal>
+          <h4>RAG from scratch</h4>
+          <p>A retrieval-augmented generation pipeline built from first principles.</p>
+          <p class="stack mono">Retrieval-augmented generation</p>
+          <a href="/rag-scratch">Open RAG from scratch</a>
+        </li>
+        <li data-reveal>
+          <h4>Resume Tailor</h4>
+          <p>An AI tool that tailors a resume to a target job description and optimizes it to be ATS-compliant.</p>
+          <p class="stack mono">Resume tailoring / ATS compliance</p>
+          <a href="/resume-tailor">Open Resume Tailor</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ========================= EXPERIENCE ========================= -->
+  <section id="experience" class="section" aria-labelledby="experience-h">
+    <div class="shell">
+      <div class="section-head" data-reveal>
+        <h2 id="experience-h">Experience</h2>
+        <p class="note">Where the work above was done, and the rest of it.</p>
+      </div>
+
+      <div class="roles">
+        <article class="role" data-reveal>
+          <div class="role-head">
+            <h3 class="org">George Mason University, Costello College of Business</h3>
+            <p class="who mono">AI Systems Engineer</p>
+            <p class="when mono">Fairfax, VA — Aug 2025 - May 2026</p>
+          </div>
+          <ul class="bullets">
+            <li>Traced a TRL v0.20.0 regression that silently dropped assistant-only loss masking by inspecting token-level loss across SFT checkpoints, restoring correct training behavior for every fine-tuning run on the cluster.</li>
+            <li>Shipped a Claude API extraction service converting 500+ multi-page USPTO and legal filings into JSON by constraining tool-call output to a Pydantic v2 schema rather than repairing malformed output downstream; <strong>95% field-level accuracy</strong> against human-labeled ground truth, cutting manual review effort ~80%.</li>
+            <li>Architected LLM Forge, a configuration-driven 12-stage SFT pipeline supporting LoRA, QLoRA, and GRPO on a 4x NVIDIA H100 SLURM cluster, halving researcher time-to-first-experiment (<a class="link" href="/llm-forge">github.com/Nagavenkatasai7/llm-forge</a>).</li>
+            <li>Built a 900-check regression suite scored against human-labeled ground truth with McNemar's exact test and ANOVA, surfacing model regressions before release rather than in user reports.</li>
+            <li>Built the Model Context Protocol (MCP) server routing multi-step tool calls across 2,000+ records, raising extraction throughput ~30%; published the resulting fine-tuned models to Hugging Face for two faculty research groups.</li>
+          </ul>
+        </article>
+
+        <article class="role" data-reveal>
+          <div class="role-head">
+            <h3 class="org">Koneru Lakshmaiah University, Department of Computer Science and Engineering</h3>
+            <p class="who mono">Research Assistant</p>
+            <p class="when mono">Vaddeswaram, India — Aug 2020 - May 2024</p>
+          </div>
+          <ul class="bullets">
+            <li>Benchmarked a four-classifier ensemble against single-model baselines for physiological stress detection, reaching <strong>93% accuracy and 92% F1</strong> with t-test and ANOVA significance testing, not a single held-out split.</li>
+            <li>Selected CatBoost over an ANN for psychological stress detection on measured accuracy (89%) and precision (91%), then deployed the winning model into a dashboard operated by non-technical reviewers.</li>
+          </ul>
+        </article>
+
+        <div data-reveal>
+          <div class="subhead"><h3>Education</h3></div>
+          <div class="edu">
+            <div>
+              <p class="school">George Mason University</p>
+              <p class="degree">Master of Science in Computer Science — GPA 3.57/4.00</p>
+              <p class="term mono">Fairfax, VA — Aug 2024 - May 2026</p>
             </div>
-            <div class="signal-sheet">
-              <span>Role target</span>
-              <strong>Salesforce-ready software engineering profile</strong>
-            </div>
-            <div class="availability-card">
-              <p>Available for new-grad Software Engineer roles across cloud platforms, AI systems, test automation, and scalable product engineering from May 2026.</p>
+            <div>
+              <p class="school">Koneru Lakshmaiah University</p>
+              <p class="degree">Bachelor of Technology in Computer Science and Engineering — First Class with Distinction</p>
+              <p class="term mono">Vaddeswaram, India — Aug 2020 - May 2024</p>
             </div>
           </div>
         </div>
       </div>
-    </header>
+    </div>
+  </section>
 
-    <section class="proof-strip" id="proof" aria-label="Career proof metrics">
-      <div class="container">
-        <div class="proof-grid">
-          <div class="proof-item">
-            <div class="proof-number">900</div>
-            <div class="proof-label">Unit and functional checks across LLM Forge pipeline stages</div>
-          </div>
-          <div class="proof-item">
-            <div class="proof-number">4x</div>
-            <div class="proof-label">H100 SLURM cluster workflow used for scalable AI jobs</div>
-          </div>
-          <div class="proof-item">
-            <div class="proof-number">80%</div>
-            <div class="proof-label">Manual processing time reduced through Python extraction service</div>
-          </div>
-          <div class="proof-item">
-            <div class="proof-number">6+</div>
-            <div class="proof-label">Software and AI systems spanning SaaS, edge, CUDA, and data products</div>
-          </div>
-          <div class="proof-item">
-            <div class="proof-number">50+</div>
-            <div class="proof-label">Research citations across AI, ML, NLP, security</div>
-          </div>
-        </div>
+  <!-- =========================== PAPERS =========================== -->
+  <section id="papers" class="section" aria-labelledby="papers-h">
+    <div class="shell">
+      <div class="section-head" data-reveal>
+        <h2 id="papers-h">Publications and patent</h2>
+        <p class="note">Peer-reviewed work, plus one pending patent application.</p>
       </div>
-    </section>
 
-    <section id="newsletter" aria-label="The Field Guide newsletter signup">
-      <div class="container">
-        <div class="newsletter-card">
-          <p class="eyebrow reveal">THE FIELD GUIDE · EVERY TUESDAY</p>
-          <h2 class="reveal">AI, explained like I'd explain it to a friend.</h2>
-          <p class="newsletter-copy reveal">One email a week: the three or four AI stories that actually matter, what they mean in plain English, and one thing you can try yourself. I read the noise so you don't have to.</p>
-          <form class="newsletter-form" id="newsletterForm" method="POST" action="/api/newsletter/subscribe" novalidate>
+      <ul class="papers" data-stagger>
+        <li data-reveal>
+          <p class="title">Speech Quality Assessment in Indian Languages</p>
+          <p class="where mono">IEEE Intl. Conference on Inventive Computation Technologies (ICICT) 2023</p>
+          <p><a class="link" href="https://doi.org/10.1109/ICICT57646.2023.10134057" target="_blank" rel="noopener">doi:10.1109/ICICT57646.2023.10134057<span class="visually-hidden"> (opens in a new tab)</span></a></p>
+        </li>
+        <li data-reveal>
+          <p class="title">Three additional first-author papers on stress detection and AI-driven cybersecurity risk mitigation</p>
+          <p class="where mono">IJRITCC (2023) and IJISAE (2023, 2024)</p>
+        </li>
+        <li data-reveal>
+          <p class="title">Smart FuelGuard, GPS-integrated ML fuel management</p>
+          <p class="where mono">Patent application pending</p>
+        </li>
+      </ul>
+
+      <div class="subhead" data-reveal><h3>Certifications</h3></div>
+      <ul class="certs" data-reveal>
+        <li>AWS Certified AI Practitioner</li>
+        <li>NVIDIA-Certified Associate: Generative AI and LLMs</li>
+        <li>AWS Certified Cloud Practitioner</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- =========================== SKILLS =========================== -->
+  <section id="skills" class="section" aria-labelledby="skills-h">
+    <div class="shell">
+      <div class="section-head" data-reveal>
+        <h2 id="skills-h">Technical skills</h2>
+        <p class="note">Split by how much I have actually shipped with each, rather than by category.</p>
+      </div>
+
+      <dl class="tiers" data-stagger>
+        <div class="tier" data-reveal>
+          <dt class="mono">Production</dt>
+          <dd><b>Python</b> (PyTorch, Hugging Face Transformers, TRL, PEFT, scikit-learn), <b>SQL</b> (PostgreSQL), <b>Docker</b>, <b>Linux</b>, <b>Git</b></dd>
+        </div>
+        <div class="tier" data-reveal>
+          <dt class="mono">Working</dt>
+          <dd>FastAPI, Model Context Protocol (MCP), SLURM, CUDA, CatBoost, TypeScript, AWS, NVIDIA Jetson</dd>
+        </div>
+        <div class="tier" data-reveal>
+          <dt class="mono">Methods</dt>
+          <dd>supervised fine-tuning (SFT), LoRA, QLoRA, GRPO, Retrieval-Augmented Generation (RAG), constrained tool calling, eval harness design, error taxonomy, McNemar's exact test, ANOVA</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ========================== WRITING =========================== -->
+  <section id="writing" class="section" aria-labelledby="writing-h">
+    <div class="shell">
+      <div class="section-head" data-reveal>
+        <h2 id="writing-h">Writing</h2>
+      </div>
+
+      <div class="writing-grid">
+        <p class="prose" data-reveal>Notes on the systems above and what I am reading live on <a class="link" href="/blog">the blog</a>.</p>
+
+        <div class="nl" data-reveal>
+          <h3>The Field Guide</h3>
+          <p>One email a week: the three or four AI stories that actually matter, and one thing you can try yourself.</p>
+          <form id="newsletterForm" method="POST" action="/api/newsletter/subscribe">
             <input type="hidden" name="source" value="home">
-            <p class="newsletter-hp" aria-hidden="true">
+            <p class="hp" aria-hidden="true">
               <label for="nl-website">Leave this field empty</label>
               <input id="nl-website" type="text" name="website" tabindex="-1" autocomplete="off">
             </p>
-            <label class="newsletter-vh" for="nl-email">Email address</label>
-            <input id="nl-email" class="newsletter-input" type="email" name="email" placeholder="you@example.com" autocomplete="email" required>
-            <button class="button button-primary" type="submit">Send me Tuesday's issue</button>
+            <label class="visually-hidden" for="nl-email">Email address</label>
+            <input id="nl-email" type="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+            <button class="btn btn--primary" type="submit">Subscribe</button>
           </form>
-          <p class="newsletter-micro">Free. One click to unsubscribe, no hard feelings.</p>
-          <p class="newsletter-status" id="newsletterStatus" role="status" aria-live="polite"></p>
+          <p class="micro" id="newsletterStatus" role="status" aria-live="polite"></p>
+          <p class="micro">Free. One click to unsubscribe, no hard feelings.</p>
         </div>
-      </div>
-    </section>
-    <script>
-      /* Progressive enhancement for the newsletter form. The "/" page has no CSP
-         (documented compromise), so an inline script is permitted here. With JS
-         off, the form falls back to a normal POST -> 303 -> /newsletter/pending. */
-      (function () {
-        var form = document.getElementById("newsletterForm");
-        if (!form) return;
-        var statusEl = document.getElementById("newsletterStatus");
-        var emailEl = document.getElementById("nl-email");
-        var hpEl = document.getElementById("nl-website");
-        var btn = form.querySelector("button[type=submit]");
-        function setStatus(msg, kind) {
-          statusEl.textContent = msg;
-          statusEl.className = "newsletter-status" + (kind ? " is-" + kind : "");
-        }
-        form.addEventListener("submit", function (e) {
-          e.preventDefault();
-          if (hpEl && hpEl.value) return; // honeypot tripped — do nothing
-          var email = (emailEl.value || "").trim();
-          if (!email || email.indexOf("@") < 1) {
-            setStatus("Please enter a valid email address.", "error");
-            emailEl.focus();
-            return;
-          }
-          var prev = btn.textContent;
-          btn.disabled = true;
-          btn.textContent = "Sending...";
-          setStatus("", "");
-          fetch("/api/newsletter/subscribe", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: email, website: "", source: "home" })
-          }).then(function (r) {
-            return r.json().catch(function () { return {}; }).then(function (data) {
-              return { status: r.status, data: data };
-            });
-          }).then(function (res) {
-            btn.disabled = false;
-            btn.textContent = prev;
-            if (res.status === 200 && res.data && res.data.ok) {
-              form.reset();
-              setStatus("Almost there — check your inbox to confirm.", "ok");
-            } else if (res.status === 429) {
-              setStatus("Too many tries just now — give it a few minutes and retry.", "error");
-            } else if (res.status === 400) {
-              setStatus("Please enter a valid email address.", "error");
-            } else {
-              setStatus("Something went wrong — please try again in a moment.", "error");
-            }
-          }).catch(function () {
-            btn.disabled = false;
-            btn.textContent = prev;
-            setStatus("Something went wrong — please try again in a moment.", "error");
-          });
-        });
-      })();
-    </script>
-
-    <section id="about">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow reveal">Profile</p>
-            <h2 class="reveal">Built for the space between software engineering and AI systems.</h2>
-          </div>
-          <p class="section-copy reveal">
-            I am targeting Software Engineer roles where architecture, implementation, testing, telemetry, and AI-assisted development all matter. My Business Systems Analyst – AI Automation foundation helps me understand product needs, but my recent work is deeply software-driven.
-          </p>
-        </div>
-
-        <div class="about-grid">
-          <div class="story reveal">
-            <p>
-              As a Graduate Research Assistant at George Mason University's Costello College of Business, I architected and built LLM Forge, a configuration-driven 12-stage automation pipeline in object-oriented Python that lets researchers launch jobs from a single config file. It reduced time-to-experiment by over 50% across a shared 4x H100 SLURM cluster.
-            </p>
-            <p>
-              I designed an automated test framework with roughly 900 unit and functional checks using Pydantic v2 schema validation at every pipeline stage. The goal was exactly what strong engineering teams value: catch configuration errors before runtime, protect shared compute, improve code coverage, and reduce support requests.
-            </p>
-            <p>
-              I also implemented a Python extraction service using Claude API that converted 500+ multi-page legal PDFs into validated JSON, reducing manual processing time by roughly 80%. Across that work I used Claude Code, GitHub Copilot, and Cursor, but critically reviewed and refactored generated code before merge so the codebase stayed maintainable.
-            </p>
-          </div>
-
-          <ul class="principles reveal">
-            <li><strong>Architecture first</strong><span>Define service boundaries, data contracts, and failure modes before adding features.</span></li>
-            <li><strong>Quality automation</strong><span>Use unit, functional, schema, and telemetry checks to keep systems stable.</span></li>
-            <li><strong>AI with review</strong><span>Guide coding agents, review generated artifacts, and keep ownership of the final code.</span></li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <section class="market-band" id="market">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow reveal">AI boom hub</p>
-            <h2 class="reveal">Market-aligned, not trend-chasing.</h2>
-          </div>
-          <p class="section-copy reveal">
-            Enterprise AI is moving from loose chatbots to task-specific agents, workflow automation, AI-assisted SaaS, and governed process redesign. This portfolio is written like case-study proof because that is what hiring teams need to evaluate.
-          </p>
-        </div>
-
-        <div class="market-grid">
-          <article class="market-card reveal">
-            <h3>Agents are entering enterprise apps</h3>
-            <p>Gartner predicts task-specific AI agents will be integrated into 40% of enterprise applications by the end of 2026, up from less than 5% in 2025.</p>
-            <a class="source-link" href="https://www.gartner.com/en/newsroom/press-releases/2025-08-26-gartner-predicts-40-percent-of-enterprise-apps-will-feature-task-specific-ai-agents-by-2026-up-from-less-than-5-percent-in-2025" target="_blank" rel="noopener">Read Gartner signal</a>
-          </article>
-          <article class="market-card reveal">
-            <h3>SaaS is becoming AI-assisted</h3>
-            <p>Deloitte's 2026 outlook frames SaaS as moving toward more intelligent, adaptive, agent-enabled workflows across enterprise applications.</p>
-            <a class="source-link" href="https://www.deloitte.com/us/en/insights/industry/technology/technology-media-and-telecom-predictions/2026/saas-ai-agents.html" target="_blank" rel="noopener">Read Deloitte outlook</a>
-          </article>
-          <article class="market-card reveal">
-            <h3>Impact matters more than demos</h3>
-            <p>The strongest AI automation portfolios explain the operational problem, implementation path, controls, and measurable change. That is the structure used here.</p>
-            <a class="source-link" href="https://calmops.com/content-creation/portfolio-website-complete-guide-2026/" target="_blank" rel="noopener">Read portfolio guidance</a>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="software">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow reveal">Salesforce fit</p>
-            <h2 class="reveal">Software engineering proof for trusted cloud products.</h2>
-          </div>
-          <p class="section-copy reveal">
-            Salesforce needs engineers who can architect, design, implement, test, and deliver scalable products while working with product managers, UX, performance engineers, and AI tooling. This is the engineering signal I want recruiters to find quickly.
-          </p>
-        </div>
-
-        <div class="market-grid">
-          <article class="market-card reveal">
-            <h3>Architect, design, implement, test, and deliver scalable products</h3>
-            <p>Built LLM Forge as a 12-stage object-oriented Python pipeline with explicit service boundaries, configuration contracts, shared-cluster execution, and validation gates before expensive runs.</p>
-          </article>
-          <article class="market-card reveal">
-            <h3>Test automation and release quality</h3>
-            <p>Designed roughly 900 unit and functional checks across schema validation, pipeline stages, and runtime configuration, improving confidence before jobs reached shared H100 compute.</p>
-          </article>
-          <article class="market-card reveal">
-            <h3>AI-assisted development with code ownership</h3>
-            <p>Used Claude Code, GitHub Copilot, Cursor, Gemini and other agentic tools to accelerate development while critically reviewing generated code, refactoring weak artifacts, and keeping maintainability high.</p>
-          </article>
-          <article class="market-card reveal">
-            <h3>Operational telemetry and metrics</h3>
-            <p>Instrumented pipeline telemetry and performance metrics to surface low-confidence outputs, failed runs, runtime risk, and quality-control issues before they became support problems.</p>
-          </article>
-          <article class="market-card reveal">
-            <h3>Cloud and data product foundation</h3>
-            <p>Worked across Python, Java, JavaScript/TypeScript, SQL, C++, HTML, PostgreSQL, Docker, AWS, FastAPI, Linux, SLURM, REST APIs, and multi-tenant product patterns.</p>
-          </article>
-          <article class="market-card reveal">
-            <h3>Team delivery habits</h3>
-            <p>Translated stakeholder requirements into technical specs, ran weekly reviews, documented decisions, and delivered measurable improvements that product and research users could adopt.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="projects">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow reveal">Project atlas</p>
-            <h2 class="reveal">What we built, how we built it, and the impact created.</h2>
-          </div>
-          <p class="section-copy reveal">
-            These projects are structured as product case studies: every one connects a business workflow to frontend, backend, APIs, AI routing, dashboards, settings, and deployment.
-          </p>
-        </div>
-
-        <div class="projects-toolbar reveal" aria-label="Project filters">
-          <button class="filter-button is-active" type="button" data-filter="all">All</button>
-          <button class="filter-button" type="button" data-filter="software">Software systems</button>
-          <button class="filter-button" type="button" data-filter="automation">Automation</button>
-          <button class="filter-button" type="button" data-filter="data">Data quality</button>
-          <button class="filter-button" type="button" data-filter="healthcare">Healthcare</button>
-          <button class="filter-button" type="button" data-filter="revops">RevOps</button>
-          <button class="filter-button" type="button" data-filter="research">Research</button>
-          <button class="filter-button" type="button" data-filter="ai">AI &amp; Agents</button>
-        </div>
-
-        <div class="projects-grid">
-          <article class="project-card reveal" data-category="software">
-            <div class="project-media"><img src="assets/projects/jetbot.jpg" alt="" loading="lazy" width="1000" height="625"></div>
-            <div class="project-top">
-              <p class="project-kicker">Edge AI + Linux runtime stability</p>
-              <h3>JetBot — Edge AI Agent on Jetson</h3>
-              <p class="project-summary">A Telegram-controlled AI agent running on Jetson Orin Nano with Python, SQLite/FTS5, resource isolation, and human-approval gates.</p>
-            </div>
-            <div class="case-grid">
-              <div class="case-block">
-                <span class="case-label">What we did</span>
-                <p>Designed an edge AI agent that can search local context, respond through Telegram, and protect destructive actions behind explicit human review.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">How we did it</span>
-                <p>Implemented Python services, SQLite/FTS5 retrieval, Linux systemd deployment, and cgroups v2 resource controls for constrained edge compute.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">Impact created</span>
-                <p>Demonstrated stable AI runtime engineering where inference, search, and automation must share limited CPU, memory, and device resources safely.</p>
-              </div>
-            </div>
-            <div class="project-bottom">
-              <ul class="tag-list">
-                <li class="tag">Python</li>
-                <li class="tag">SQLite FTS5</li>
-                <li class="tag">Linux</li>
-                <li class="tag">systemd</li>
-              </ul>
-            </div>
-          </article>
-
-          <article class="project-card reveal" data-category="software">
-            <div class="project-media"><img src="assets/projects/cuda.jpg" alt="" loading="lazy" width="1000" height="625"></div>
-            <div class="project-top">
-              <p class="project-kicker">C++ systems + performance profiling</p>
-              <h3>CUDA Matrix-Multiplication Kernel</h3>
-              <p class="project-summary">A tiled matrix-multiplication kernel in C++/CUDA focused on memory behavior, shared-memory usage, and performance tradeoffs.</p>
-            </div>
-            <div class="case-grid">
-              <div class="case-block">
-                <span class="case-label">What we did</span>
-                <p>Implemented a tiled matrix multiplication kernel and benchmarked throughput against the cuBLAS baseline to understand performance ceilings.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">How we did it</span>
-                <p>Tuned shared-memory usage, thread-block sizing, arithmetic intensity, memory access patterns, and occupancy while profiling each iteration.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">Impact created</span>
-                <p>Added low-level engineering evidence for performance-sensitive platforms where implementation details directly affect user-visible scalability.</p>
-              </div>
-            </div>
-            <div class="project-bottom">
-              <ul class="tag-list">
-                <li class="tag">C++</li>
-                <li class="tag">CUDA</li>
-                <li class="tag">Profiling</li>
-                <li class="tag">Performance</li>
-              </ul>
-            </div>
-          </article>
-
-          <article class="project-card reveal" data-category="automation">
-            <a class="project-media" href="https://ai-business-request-intake.vercel.app" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
-              <img src="assets/projects/jira-automation.jpg" alt="" loading="lazy" width="1000" height="625">
-            </a>
-            <div class="project-top">
-              <p class="project-kicker">Request intake + Jira automation</p>
-              <h3>AI Business Request Intake & Jira Automation System</h3>
-              <p class="project-summary">A multi-tenant SaaS product for turning vague stakeholder asks into structured requirements and delivery-ready Jira work.</p>
-            </div>
-            <div class="case-grid">
-              <div class="case-block">
-                <span class="case-label">What we did</span>
-                <p>Created a self-service intake workspace where teams can submit business requests, generate BRD/FRD-style artifacts, route approvals, and prepare Jira-ready ticket payloads.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">How we did it</span>
-                <p>Mapped request patterns, built tenant auth, client workspaces, automation packs, Jira credential flow, signed webhooks, analytics, and AI research prompts.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">Impact created</span>
-                <p>Modeled roughly 70% faster clarification on sample requests while preserving human review before work reaches engineering.</p>
-              </div>
-            </div>
-            <div class="project-bottom">
-              <ul class="tag-list">
-                <li class="tag">Next.js</li>
-                <li class="tag">Postgres</li>
-                <li class="tag">Jira API</li>
-                <li class="tag">OpenRouter</li>
-              </ul>
-              <a class="project-link" href="https://ai-business-request-intake.vercel.app" target="_blank" rel="noopener">Open live app</a>
-            </div>
-          </article>
-
-          <article class="project-card reveal" data-category="automation">
-            <a class="project-media" href="https://ai-automation-roi.vercel.app" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
-              <img src="assets/projects/automation-roi.jpg" alt="" loading="lazy" width="1000" height="625">
-            </a>
-            <div class="project-top">
-              <p class="project-kicker">Automation ROI + process optimization</p>
-              <h3>AI Automation ROI & Process-Optimization Platform</h3>
-              <p class="project-summary">A decision platform for evaluating which manual workflows should be automated first and why.</p>
-            </div>
-            <div class="case-grid">
-              <div class="case-block">
-                <span class="case-label">What we did</span>
-                <p>Built a workflow portfolio where users can enter process volume, cycle time, errors, cost, integration complexity, and automation readiness.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">How we did it</span>
-                <p>Implemented a six-dimension scoring model, portfolio analytics, workflow detail pages, webhook subscriptions, settings, and tenant-scoped data APIs.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">Impact created</span>
-                <p>Modeled $120K+ annualized savings potential on sample data and turned automation ideas into leadership-ready business cases.</p>
-              </div>
-            </div>
-            <div class="project-bottom">
-              <ul class="tag-list">
-                <li class="tag">ROI model</li>
-                <li class="tag">Analytics</li>
-                <li class="tag">Webhooks</li>
-              </ul>
-              <a class="project-link" href="https://ai-automation-roi.vercel.app" target="_blank" rel="noopener">Open live app</a>
-            </div>
-          </article>
-
-          <article class="project-card reveal" data-category="healthcare">
-            <a class="project-media" href="https://healthcare-emr-extraction.vercel.app" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
-              <img src="assets/projects/healthcare-emr.jpg" alt="" loading="lazy" width="1000" height="625">
-            </a>
-            <div class="project-top">
-              <p class="project-kicker">Healthcare workflow + EMR extraction</p>
-              <h3>Healthcare Workflow Automation & EMR Data-Extraction System</h3>
-              <p class="project-summary">A healthcare operations workspace that extracts, validates, and routes synthetic EMR-style records safely.</p>
-            </div>
-            <div class="case-grid">
-              <div class="case-block">
-                <span class="case-label">What we did</span>
-                <p>Created a clinical queue, intake workflow, record detail view, exception routing, analytics, settings, and research page using synthetic healthcare records.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">How we did it</span>
-                <p>Used privacy-conscious boundaries, tenant auth, server-side validation, clinical event routes, webhook ingestion, and aggregate-only AI research context.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">Impact created</span>
-                <p>Modeled roughly 65% faster extraction and 94% exception detection on synthetic data without using real PHI.</p>
-              </div>
-            </div>
-            <div class="project-bottom">
-              <ul class="tag-list">
-                <li class="tag">Synthetic data</li>
-                <li class="tag">Validation</li>
-                <li class="tag">Queue UX</li>
-              </ul>
-              <a class="project-link" href="https://healthcare-emr-extraction.vercel.app" target="_blank" rel="noopener">Open live app</a>
-            </div>
-          </article>
-
-          <article class="project-card reveal" data-category="data">
-            <a class="project-media" href="https://product-master-data-qc.vercel.app" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
-              <img src="assets/projects/master-data.jpg" alt="" loading="lazy" width="1000" height="625">
-            </a>
-            <div class="project-top">
-              <p class="project-kicker">Product master data + quality control</p>
-              <h3>Product Master-Data Automation & Data-Quality Control System</h3>
-              <p class="project-summary">A catalog quality-control SaaS for SKU validation, duplicate detection, approval status, and stewardship workflows.</p>
-            </div>
-            <div class="case-grid">
-              <div class="case-block">
-                <span class="case-label">What we did</span>
-                <p>Built a merchant workspace for importing product CSVs, validating rule failures, finding duplicates, scoring quality, and managing stewardship stages.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">How we did it</span>
-                <p>Designed quality rules, batch APIs, dashboard analytics, batch detail updates, merchant settings, webhook subscriptions, and catalog event ingestion.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">Impact created</span>
-                <p>Modeled 85% duplicate SKU reduction and item setup improvement from days to hours on a 200+ SKU sample catalog.</p>
-              </div>
-            </div>
-            <div class="project-bottom">
-              <ul class="tag-list">
-                <li class="tag">Data quality</li>
-                <li class="tag">CSV rules</li>
-                <li class="tag">Postgres</li>
-              </ul>
-              <a class="project-link" href="https://product-master-data-qc.vercel.app" target="_blank" rel="noopener">Open live app</a>
-            </div>
-          </article>
-
-          <article class="project-card reveal" data-category="revops">
-            <a class="project-media" href="https://revops-automation-dashboard.vercel.app" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
-              <img src="assets/projects/revops.jpg" alt="" loading="lazy" width="1000" height="625">
-            </a>
-            <div class="project-top">
-              <p class="project-kicker">Revenue operations + CRM risk scoring</p>
-              <h3>AI-Powered Revenue-Operations Automation Dashboard</h3>
-              <p class="project-summary">A RevOps command center for cleaning CRM exports, scoring pipeline risk, and producing manager action queues.</p>
-            </div>
-            <div class="case-grid">
-              <div class="case-block">
-                <span class="case-label">What we did</span>
-                <p>Created a revenue workspace with CRM import, forecast dashboard, import lifecycle stages, risk detail pages, settings, webhooks, and AI research.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">How we did it</span>
-                <p>Scored missing next steps, stale activity, close pressure, material deal size, and health signals through server-side APIs and tenant analytics.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">Impact created</span>
-                <p>Modeled weekly reporting reduction from 4 hours to under 15 minutes and surfaced 23 at-risk relationships in sample data.</p>
-              </div>
-            </div>
-            <div class="project-bottom">
-              <ul class="tag-list">
-                <li class="tag">RevOps</li>
-                <li class="tag">Risk scoring</li>
-                <li class="tag">Dashboard</li>
-              </ul>
-              <a class="project-link" href="https://revops-automation-dashboard.vercel.app" target="_blank" rel="noopener">Open live app</a>
-            </div>
-          </article>
-
-          <article class="project-card reveal" data-category="research">
-            <div class="project-media"><img src="assets/projects/llm-forge.jpg" alt="" loading="lazy" width="1000" height="625"></div>
-            <div class="project-top">
-              <p class="project-kicker">LLM operations + research enablement</p>
-              <h3>LLM Forge: Domain-Specific LLM Fine-Tuning Platform</h3>
-              <p class="project-summary">A YAML-driven fine-tuning operations pipeline that helps researchers launch repeatable LLM experiments safely.</p>
-            </div>
-            <div class="case-grid">
-              <div class="case-block">
-                <span class="case-label">What we did</span>
-                <p>Built a 12-stage pipeline for dataset prep, configuration validation, model training setup, evaluation, and experiment tracking.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">How we did it</span>
-                <p>Used Hugging Face, PEFT/LoRA, Pydantic v2 schemas, config-first orchestration, and automated tests to prevent runtime failure.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">Impact created</span>
-                <p>Cut time-to-experiment by over 50% and made shared GPU research workflows easier for non-technical collaborators to use.</p>
-              </div>
-            </div>
-            <div class="project-bottom">
-              <ul class="tag-list">
-                <li class="tag">Hugging Face</li>
-                <li class="tag">LoRA</li>
-                <li class="tag">Pydantic</li>
-              </ul>
-              <a class="project-link" href="https://github.com/Nagavenkatasai7/llm-forge" target="_blank" rel="noopener">View on GitHub</a>
-            </div>
-          </article>
-
-          <article class="project-card reveal" data-category="ai">
-            <a class="project-media" href="https://intellidoc-nexus.vercel.app" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
-              <img src="assets/projects/intellidoc.jpg" alt="" loading="lazy" width="1000" height="625">
-            </a>
-            <div class="project-top">
-              <p class="project-kicker">Multi-agent RAG + document intelligence</p>
-              <h3>IntelliDoc-Nexus — Document Intelligence Platform</h3>
-              <p class="project-summary">A production-grade multi-agent platform that ingests, understands, and answers questions over complex documents with citations.</p>
-            </div>
-            <div class="case-grid">
-              <div class="case-block">
-                <span class="case-label">What we did</span>
-                <p>Built a document-intelligence platform where specialized agents parse, retrieve, and reason over uploaded documents to answer questions with sources.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">How we did it</span>
-                <p>Orchestrated a multi-agent RAG pipeline — chunking, embeddings, vector search, and reranking — behind a Python backend deployed on Vercel.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">Impact created</span>
-                <p>Turned static document piles into a queryable knowledge surface, showing end-to-end ownership of a production AI system.</p>
-              </div>
-            </div>
-            <div class="project-bottom">
-              <ul class="tag-list">
-                <li class="tag">Python</li>
-                <li class="tag">Multi-Agent</li>
-                <li class="tag">RAG</li>
-                <li class="tag">Vercel</li>
-              </ul>
-              <a class="project-link" href="https://intellidoc-nexus.vercel.app" target="_blank" rel="noopener">Open live app</a>
-            </div>
-          </article>
-
-          <article class="project-card reveal" data-category="ai">
-            <div class="project-media"><img src="assets/projects/lora.jpg" alt="" loading="lazy" width="1000" height="625"></div>
-            <div class="project-top">
-              <p class="project-kicker">LLM fine-tuning + LoRA/QLoRA</p>
-              <h3>LoRA Fine-Tuning Pipeline</h3>
-              <p class="project-summary">An end-to-end pipeline for fine-tuning LLMs with LoRA/QLoRA, from dataset preparation to evaluation.</p>
-            </div>
-            <div class="case-grid">
-              <div class="case-block">
-                <span class="case-label">What we did</span>
-                <p>Built a reproducible fine-tuning pipeline covering dataset preparation, training, and evaluation of adapted language models.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">How we did it</span>
-                <p>Used LoRA/QLoRA parameter-efficient methods, structured configs, and evaluation hooks to keep runs repeatable and inexpensive.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">Impact created</span>
-                <p>Showed the ability to take base models to domain-specific behavior efficiently on constrained GPU budgets.</p>
-              </div>
-            </div>
-            <div class="project-bottom">
-              <ul class="tag-list">
-                <li class="tag">Python</li>
-                <li class="tag">LoRA</li>
-                <li class="tag">QLoRA</li>
-                <li class="tag">PEFT</li>
-              </ul>
-              <a class="project-link" href="https://github.com/Nagavenkatasai7/llm-finetuning-lora-pipeline" target="_blank" rel="noopener">View on GitHub</a>
-            </div>
-          </article>
-
-          <article class="project-card reveal" data-category="ai">
-            <div class="project-media"><img src="assets/projects/adk.jpg" alt="" loading="lazy" width="1000" height="625"></div>
-            <div class="project-top">
-              <p class="project-kicker">Multi-agent orchestration (Google ADK)</p>
-              <h3>Google ADK Multi-Agent Workflow</h3>
-              <p class="project-summary">A multi-agent workflow system built on Google's Agent Development Kit (ADK).</p>
-            </div>
-            <div class="case-grid">
-              <div class="case-block">
-                <span class="case-label">What we did</span>
-                <p>Designed a workflow where multiple cooperating agents decompose and complete a task end-to-end.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">How we did it</span>
-                <p>Implemented agent roles, tool integrations, and orchestration on the Google Agent Development Kit.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">Impact created</span>
-                <p>Explored modern agent frameworks and coordination patterns beyond single-prompt LLM calls.</p>
-              </div>
-            </div>
-            <div class="project-bottom">
-              <ul class="tag-list">
-                <li class="tag">Python</li>
-                <li class="tag">Google ADK</li>
-                <li class="tag">Multi-Agent</li>
-                <li class="tag">Orchestration</li>
-              </ul>
-              <a class="project-link" href="https://github.com/Nagavenkatasai7/google-adk-multi-agent-workflow" target="_blank" rel="noopener">View on GitHub</a>
-            </div>
-          </article>
-
-          <article class="project-card reveal" data-category="ai">
-            <div class="project-media"><img src="assets/projects/research.jpg" alt="" loading="lazy" width="1000" height="625"></div>
-            <div class="project-top">
-              <p class="project-kicker">Multi-agent research assistant</p>
-              <h3>Research-Paper Discovery System</h3>
-              <p class="project-summary">An AI system that discovers, analyzes, and summarizes academic papers via a multi-agent architecture.</p>
-            </div>
-            <div class="case-grid">
-              <div class="case-block">
-                <span class="case-label">What we did</span>
-                <p>Built a research assistant that searches for relevant papers, extracts key findings, and synthesizes them for the user.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">How we did it</span>
-                <p>Coordinated multiple agents over search, retrieval, and summarization with a RAG backbone.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">Impact created</span>
-                <p>Compressed literature-review effort — Naga's own publication background applied as a reusable tool.</p>
-              </div>
-            </div>
-            <div class="project-bottom">
-              <ul class="tag-list">
-                <li class="tag">Python</li>
-                <li class="tag">Multi-Agent</li>
-                <li class="tag">RAG</li>
-                <li class="tag">Research</li>
-              </ul>
-              <a class="project-link" href="https://github.com/Nagavenkatasai7/Research-Paper-Discovery-System" target="_blank" rel="noopener">View on GitHub</a>
-            </div>
-          </article>
-
-          <article class="project-card reveal" data-category="ai">
-            <a class="project-media" href="https://resume-maker-coral-alpha.vercel.app" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
-              <img src="assets/projects/resume-tailor.jpg" alt="" loading="lazy" width="1000" height="625">
-            </a>
-            <div class="project-top">
-              <p class="project-kicker">AI resume optimization (ATS)</p>
-              <h3>Resume Tailor — AI Resume Optimization</h3>
-              <p class="project-summary">An AI tool that tailors a resume to a target job description and optimizes it to be ATS-compliant.</p>
-            </div>
-            <div class="case-grid">
-              <div class="case-block">
-                <span class="case-label">What we did</span>
-                <p>Built a tool that takes a resume plus a job description and rewrites it into an ATS-compliant, role-targeted resume.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">How we did it</span>
-                <p>Used LLM-driven analysis to match keywords, restructure content, and score ATS-compliance behind a fast web UI.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">Impact created</span>
-                <p>Turns a generic resume into a targeted, ATS-friendly application in minutes — AI applied to the job-search problem itself.</p>
-              </div>
-            </div>
-            <div class="project-bottom">
-              <ul class="tag-list">
-                <li class="tag">AI</li>
-                <li class="tag">LLM</li>
-                <li class="tag">ATS</li>
-                <li class="tag">Vercel</li>
-              </ul>
-              <a class="project-link" href="https://resume-maker-coral-alpha.vercel.app" target="_blank" rel="noopener">Open live app</a>
-            </div>
-          </article>
-
-          <article class="project-card reveal" data-category="ai">
-            <a class="project-media" href="https://passportpathways.vercel.app" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
-              <img src="assets/projects/passport.jpg" alt="" loading="lazy" width="1000" height="625">
-            </a>
-            <div class="project-top">
-              <p class="project-kicker">Citizenship & immigration intelligence</p>
-              <h3>PassportPathways — Citizenship Intelligence Platform</h3>
-              <p class="project-summary">An interactive platform for exploring citizenship pathways, passport power rankings, investment routes, and immigration strategies across 190+ countries.</p>
-            </div>
-            <div class="case-grid">
-              <div class="case-block">
-                <span class="case-label">What we did</span>
-                <p>Built a platform that helps global citizens compare passports, discover citizenship-by-investment routes, and plan immigration strategies across 190+ countries.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">How we did it</span>
-                <p>Aggregated country and passport datasets into interactive rankings, pathway explorers, and strategy views behind a responsive web app on Vercel.</p>
-              </div>
-              <div class="case-block">
-                <span class="case-label">Impact created</span>
-                <p>Turned scattered immigration data into a single, explorable decision tool for a real-world, high-stakes problem.</p>
-              </div>
-            </div>
-            <div class="project-bottom">
-              <ul class="tag-list">
-                <li class="tag">Web App</li>
-                <li class="tag">Data</li>
-                <li class="tag">Intelligence</li>
-                <li class="tag">Vercel</li>
-              </ul>
-              <a class="project-link" href="https://passportpathways.vercel.app" target="_blank" rel="noopener">Open live app</a>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="experience">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow reveal">Experience</p>
-            <h2 class="reveal">Where engineering quality became real.</h2>
-          </div>
-          <p class="section-copy reveal">
-            My experience connects professional coding, object-oriented design, test automation, LLM-assisted development, telemetry, stakeholder reviews, and measurable delivery.
-          </p>
-        </div>
-
-        <div class="experience-list">
-          <article class="experience-item reveal">
-            <div class="experience-meta">
-              <p class="experience-role">Graduate Research Assistant - AI Systems & Test Automation Engineering</p>
-              <p class="experience-company">George Mason University - Costello College of Business</p>
-              <p>Aug 2025 - May 2026 | Fairfax, VA</p>
-            </div>
-            <ul class="bullets">
-              <li>Architected and built LLM Forge, a configuration-driven 12-stage automation pipeline in object-oriented Python that lets researchers launch jobs from a single config file, cutting time-to-experiment by over 50% across a shared 4x H100 SLURM cluster.</li>
-              <li>Designed an automated test framework with roughly 900 unit and functional checks using Pydantic v2 schema validation at every pipeline stage, catching configuration errors before runtime.</li>
-              <li>Implemented and delivered a Python extraction service using Claude API that converted 500+ multi-page legal PDFs into validated structured JSON and reduced manual processing time by roughly 80%.</li>
-              <li>Used Claude Code, GitHub Copilot, and Cursor to accelerate delivery while critically reviewing and refactoring AI-generated code before merge.</li>
-              <li>Instrumented pipeline telemetry and performance metrics, surfacing low-confidence outputs and run failures to improve operational visibility and quality.</li>
-            </ul>
-          </article>
-
-          <article class="experience-item reveal">
-            <div class="experience-meta">
-              <p class="experience-role">Event Operations Technician - Operational Leadership & Process Improvement</p>
-              <p class="experience-company">George Mason University - EagleBank Arena & Campus Events</p>
-              <p>Aug 2024 - May 2026 | Fairfax, VA</p>
-            </div>
-            <ul class="bullets">
-              <li>Led crews of 5-15 during high-stakes arena setups, enforcing SOPs and reallocating staff in real time to remove scheduling gaps.</li>
-              <li>Trained new team members on safety and equipment procedures, reducing setup errors by over 30% and improving time-to-productivity.</li>
-              <li>Coordinated event managers, facilities, and external vendors, keeping status updates and incident response aligned.</li>
-            </ul>
-          </article>
-
-          <article class="experience-item reveal">
-            <div class="experience-meta">
-              <p class="experience-role">Undergraduate Researcher - Software Engineering</p>
-              <p class="experience-company">KL University - Department of CSE</p>
-              <p>Jan 2022 - May 2024</p>
-            </div>
-            <ul class="bullets">
-              <li>Built an end-to-end machine-learning system in Python combining four classifiers with ensemble methods, reaching 93% accuracy and 92% F1 validated through t-test and ANOVA.</li>
-              <li>Engineered an Ethereum land-registration prototype using object-oriented Solidity smart contracts and SHA-256 hashing for tamper-resistant transfers across 200 transactions on a 12-node network.</li>
-              <li>Evaluated competing models and integrated the higher-performing CatBoost model with 89% accuracy and 91% precision into a web-based analytics dashboard.</li>
-            </ul>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="skills">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow reveal">Skills</p>
-            <h2 class="reveal">Software engineering capability architecture.</h2>
-          </div>
-          <p class="section-copy reveal">
-            I combine computer science fundamentals, production-minded coding habits, AI-assisted development, and the communication needed to ship features with teams.
-          </p>
-        </div>
-
-        <div class="skills-grid">
-          <article class="skill-card reveal">
-            <h3>Languages and OOP</h3>
-            <p>Java, JavaScript/TypeScript, SQL, C++, HTML, Python, object-oriented design, design patterns, service architecture, REST APIs, and maintainable module boundaries.</p>
-            <ul class="tag-list">
-              <li class="tag">Java</li>
-              <li class="tag">Python</li>
-              <li class="tag">TypeScript</li>
-              <li class="tag">C++</li>
-            </ul>
-          </article>
-          <article class="skill-card reveal">
-            <h3>Testing and quality automation</h3>
-            <p>Unit and functional testing, automated test frameworks, Pydantic v2 schema validation, code coverage, test strategy, quality gates, and release-readiness checks.</p>
-            <ul class="tag-list">
-              <li class="tag">Unit tests</li>
-              <li class="tag">Functional tests</li>
-              <li class="tag">Pydantic</li>
-              <li class="tag">Coverage</li>
-            </ul>
-          </article>
-          <article class="skill-card reveal">
-            <h3>Cloud and product engineering</h3>
-            <p>PostgreSQL, Docker, AWS, FastAPI, NestJS, Next.js, Linux/SLURM, REST APIs, multi-tenant SaaS patterns, dashboards, authentication, tenant models, and webhooks.</p>
-            <ul class="tag-list">
-              <li class="tag">Postgres</li>
-              <li class="tag">Docker</li>
-              <li class="tag">AWS</li>
-              <li class="tag">Next.js</li>
-            </ul>
-          </article>
-          <article class="skill-card reveal">
-            <h3>AI coding assistants</h3>
-            <p>Claude Code, GitHub Copilot, Cursor, Gemini, prompt engineering, agent-guided implementation, generated-code review, refactoring, and maintainability checks.</p>
-            <ul class="tag-list">
-              <li class="tag">Claude Code</li>
-              <li class="tag">Copilot</li>
-              <li class="tag">Cursor</li>
-              <li class="tag">Gemini</li>
-            </ul>
-          </article>
-          <article class="skill-card reveal">
-            <h3>Telemetry and operational excellence</h3>
-            <p>Pipeline telemetry, performance metrics, run-failure surfacing, low-confidence output routing, operational dashboards, stakeholder reviews, and support-request reduction.</p>
-            <ul class="tag-list">
-              <li class="tag">Telemetry</li>
-              <li class="tag">Metrics</li>
-              <li class="tag">Dashboards</li>
-              <li class="tag">SLURM</li>
-            </ul>
-          </article>
-          <article class="skill-card reveal">
-            <h3>Credentials</h3>
-            <p>AWS Certified AI Practitioner, NVIDIA-Certified Associate: Generative AI LLMs, Claude Code in Action, Red Hat certification.</p>
-            <ul class="tag-list">
-              <li class="tag">AWS AI</li>
-              <li class="tag">NVIDIA GenAI</li>
-              <li class="tag">Claude Code</li>
-              <li class="tag">Red Hat</li>
-            </ul>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="research">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow reveal">Research and publications</p>
-            <h2 class="reveal">Academic rigor behind the automation mindset.</h2>
-          </div>
-          <p class="section-copy reveal">
-            My research background gives me a measurement-first approach: define the process, gather evidence, validate the model, then communicate what changed.
-          </p>
-        </div>
-
-        <div class="research-grid">
-          <article class="research-card reveal">
-            <h3>Assessing the Effectiveness of Artificial Intelligence Techniques in Mitigating Cyber Security Risks</h3>
-            <p>Surveyed 468 IT professionals and used SEM/CFA analysis to identify significant drivers in AI-assisted cybersecurity strategy.</p>
-            <p class="research-meta">First author | AI + cybersecurity</p>
-          </article>
-          <article class="research-card reveal">
-            <h3>Enhancing Hairfall Prediction: A Comparative Analysis of Individual Algorithms and An Ensemble Method</h3>
-            <p>Built and evaluated ensemble ML pipelines, achieving 93% accuracy and 92% F1 across validated model comparisons.</p>
-            <p class="research-meta">First author | ML + healthcare analytics</p>
-          </article>
-          <article class="research-card reveal">
-            <h3>Comparative Analysis of Psychological Stress Detection: ANN and CatBoost</h3>
-            <p>Compared AI models for stress detection and recommended CatBoost based on accuracy, precision, and deployment suitability.</p>
-            <p class="research-meta">AI model comparison</p>
-          </article>
-          <article class="research-card reveal">
-            <h3>Blockchain, speech quality, and applied AI systems</h3>
-            <p>Co-authored research across Ethereum land registration, speech quality assessment in Indian languages, and intelligent vehicle fuel management.</p>
-            <p class="research-meta">5 publications | 50+ citations | patent work</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="education">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow reveal">Education</p>
-            <h2 class="reveal">Computer science foundation.</h2>
-          </div>
-          <p class="section-copy reveal">
-            Formal CS training plus applied research gives me the range to talk to business stakeholders and technical teams in the same project.
-          </p>
-        </div>
-        <div class="education-grid">
-          <article class="education-card reveal">
-            <h3>George Mason University</h3>
-            <p>Master's degree, Computer Science | 2024 - 2026</p>
-            <p class="research-meta">Fairfax, Virginia | Expected May 2026</p>
-          </article>
-          <article class="education-card reveal">
-            <h3>KL University</h3>
-            <p>Bachelor of Technology, Computer Science & Engineering | May 2020 - May 2024</p>
-            <p class="research-meta">AI/ML, cybersecurity, blockchain, NLP research</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="cta" aria-label="Call to action">
-      <div class="container cta-grid">
-        <div>
-          <p class="eyebrow reveal">Ready for the next system</p>
-          <h2 class="reveal">I am looking for engineering teams building trusted, scalable cloud products.</h2>
-          <p class="reveal">Best-fit roles: Software Engineer, Salesforce new-grad Software Engineer, Cloud Platform Engineer, AI Systems Engineer, Test Automation Engineer, or product engineering roles where implementation quality matters.</p>
-        </div>
-        <div class="cta-actions reveal">
-          <a class="button button-primary" href="mailto:chennunagavenkatasai@gmail.com">Email me</a>
-          <a class="button button-secondary" href="https://fantastical.app/vhrdnrbmgt/chennunagavenkatasai" target="_blank" rel="noopener">Schedule a call</a>
-        </div>
-      </div>
-    </section>
-
-    <section id="contact">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow reveal">Contact</p>
-            <h2 class="reveal">Let us talk about software engineering work.</h2>
-          </div>
-          <p class="section-copy reveal">
-            If your team needs someone who can learn a large codebase, build features, write tests, use AI tools responsibly, and communicate engineering impact clearly, I would be glad to connect.
-          </p>
-        </div>
-
-        <div class="contact-grid">
-          <a class="contact-card reveal" href="mailto:chennunagavenkatasai@gmail.com">
-            <h3>Email</h3>
-            <p>Best for direct role, project, and collaboration conversations.</p>
-            <div class="contact-value">chennunagavenkatasai@gmail.com</div>
-          </a>
-          <a class="contact-card reveal" href="https://www.linkedin.com/in/naga-venkata-sai-chennu/" target="_blank" rel="noopener">
-            <h3>LinkedIn</h3>
-            <p>Connect with my full profile, experience, certifications, and research background.</p>
-            <div class="contact-value">linkedin.com/in/naga-venkata-sai-chennu</div>
-          </a>
-          <a class="contact-card reveal" href="https://github.com/Nagavenkatasai7" target="_blank" rel="noopener">
-            <h3>GitHub</h3>
-            <p>View code, deployments, portfolio experiments, and implementation work.</p>
-            <div class="contact-value">github.com/Nagavenkatasai7</div>
-          </a>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <div class="container footer-inner">
-      <p>&copy; 2026 Naga Venkata Sai Chennu. Built for software engineering and AI systems roles.</p>
-      <div class="footer-links" aria-label="Footer links">
-        <a href="mailto:chennunagavenkatasai@gmail.com">Email</a>
-        <a href="https://www.linkedin.com/in/naga-venkata-sai-chennu/" target="_blank" rel="noopener">LinkedIn</a>
-        <a href="https://github.com/Nagavenkatasai7" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://fantastical.app/vhrdnrbmgt/chennunagavenkatasai" target="_blank" rel="noopener">Calendar</a>
       </div>
     </div>
-  </footer>
+  </section>
 
-  <script>
-    const menuButton = document.getElementById("menuButton");
-    const navLinks = document.getElementById("navLinks");
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  <!-- ========================== CONTACT =========================== -->
+  <section id="contact" class="section" aria-labelledby="contact-h">
+    <div class="shell">
+      <div class="section-head" data-reveal>
+        <h2 id="contact-h">Contact</h2>
+      </div>
 
-    if (menuButton && navLinks) {
-      menuButton.addEventListener("click", () => {
-        const open = navLinks.classList.toggle("open");
-        document.body.classList.toggle("menu-open", open);
-        menuButton.setAttribute("aria-expanded", String(open));
-        menuButton.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+      <div class="contact-grid">
+        <div data-reveal>
+          <p class="contact-line">If you are building LLM systems that have to be measured, not just demoed, I would like to hear about it.</p>
+          <p class="contact-sub">Available now — Fairfax, VA — open to remote.</p>
+        </div>
+
+        <ul class="channels" data-stagger>
+          <li data-reveal><a href="mailto:nagavenkatasaichennu@gmail.com"><span class="k mono">Email</span><span class="v">nagavenkatasaichennu@gmail.com</span></a></li>
+          <li data-reveal><a href="https://www.linkedin.com/in/naga-venkata-sai-chennu/" target="_blank" rel="noopener"><span class="k mono">LinkedIn</span><span class="v">naga-venkata-sai-chennu<span class="visually-hidden"> (opens in a new tab)</span></span></a></li>
+          <li data-reveal><a href="https://github.com/Nagavenkatasai7" target="_blank" rel="noopener"><span class="k mono">GitHub</span><span class="v">Nagavenkatasai7<span class="visually-hidden"> (opens in a new tab)</span></span></a></li>
+          <li data-reveal><a href="/Naga_Chennu_Resume.pdf"><span class="k mono">Resume</span><span class="v">Naga_Chennu_Resume.pdf</span></a></li>
+          <li data-reveal><a href="https://fantastical.app/vhrdnrbmgt/chennunagavenkatasai" target="_blank" rel="noopener"><span class="k mono">Calendar</span><span class="v">Book 30 minutes<span class="visually-hidden"> (opens in a new tab)</span></span></a></li>
+          <li data-reveal><a href="tel:+15715466207"><span class="k mono">Phone</span><span class="v">(571) 546-6207</span></a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="shell footer-inner">
+    <p>Naga Venkata Sai Chennu — AI Systems Engineer</p>
+    <p>Fairfax, VA</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var doc = document.documentElement;
+  var reduceMQ = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var fineMQ = window.matchMedia("(hover: hover) and (pointer: fine)");
+  var reduced = function () { return reduceMQ.matches; };
+
+  /* ---------------------------------------------------------- */
+  /* staggered reveals                                           */
+  /* ---------------------------------------------------------- */
+  var nativeStagger = window.CSS && CSS.supports &&
+    CSS.supports("transition-delay: calc(sibling-index() * 65ms)");
+
+  if (!nativeStagger) {
+    Array.prototype.forEach.call(document.querySelectorAll("[data-stagger]"), function (group) {
+      Array.prototype.forEach.call(group.children, function (el, i) {
+        el.style.setProperty("--i", i);
       });
+    });
+  }
 
-      navLinks.querySelectorAll("a").forEach((link) => {
-        link.addEventListener("click", () => {
-          navLinks.classList.remove("open");
-          document.body.classList.remove("menu-open");
-          menuButton.setAttribute("aria-expanded", "false");
-          menuButton.setAttribute("aria-label", "Open navigation");
-        });
-      });
+  var revealables = document.querySelectorAll("[data-reveal]");
+  var hasIO = "IntersectionObserver" in window;
+
+  function revealAll() {
+    Array.prototype.forEach.call(revealables, function (el) { el.classList.add("is-in"); });
+  }
+
+  if (!hasIO || reduced()) {
+    revealAll();
+  } else {
+    var revealIO = new IntersectionObserver(function (entries) {
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i].isIntersecting) {
+          entries[i].target.classList.add("is-in");
+          revealIO.unobserve(entries[i].target);
+        }
+      }
+    }, { rootMargin: "0px 0px -6% 0px", threshold: 0.06 });
+
+    Array.prototype.forEach.call(revealables, function (el) { revealIO.observe(el); });
+    if (reduceMQ.addEventListener) {
+      reduceMQ.addEventListener("change", function (e) { if (e.matches) revealAll(); });
+    }
+  }
+
+  /* ---------------------------------------------------------- */
+  /* stat counters — final values already present in markup      */
+  /* ---------------------------------------------------------- */
+  var counters = document.querySelectorAll("[data-count-to]");
+
+  function runCounter(el) {
+    var target = parseFloat(el.getAttribute("data-count-to"));
+    var suffix = el.getAttribute("data-count-suffix") || "";
+    if (!isFinite(target)) return;
+    var start = 0;
+    var duration = 1150;
+
+    function tick(ts) {
+      if (!start) start = ts;
+      var p = Math.min(1, (ts - start) / duration);
+      var eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(target * eased).toLocaleString("en-US") + suffix;
+      if (p < 1) requestAnimationFrame(tick);
+    }
+    el.textContent = "0" + suffix;
+    requestAnimationFrame(tick);
+  }
+
+  if (hasIO && !reduced() && counters.length) {
+    var countIO = new IntersectionObserver(function (entries) {
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i].isIntersecting) {
+          runCounter(entries[i].target);
+          countIO.unobserve(entries[i].target);
+        }
+      }
+    }, { threshold: 0.5 });
+    Array.prototype.forEach.call(counters, function (el) { countIO.observe(el); });
+  }
+
+  /* ---------------------------------------------------------- */
+  /* scrollspy + header state + progress fallback (rAF only)      */
+  /* ---------------------------------------------------------- */
+  var SECTION_IDS = ["hero", "work", "experience", "papers", "skills", "writing", "contact"];
+  var sections = [];
+  var navLinks = {};
+  var railItems = {};
+  var header = document.getElementById("siteHeader");
+
+  for (var s = 0; s < SECTION_IDS.length; s++) {
+    var node = document.getElementById(SECTION_IDS[s]);
+    if (node) sections.push({ id: SECTION_IDS[s], el: node, top: 0 });
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("[data-nav]"), function (a) {
+    navLinks[a.getAttribute("data-nav")] = a;
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-rail]"), function (li) {
+    railItems[li.getAttribute("data-rail")] = li;
+  });
+
+  var maxScroll = 1;
+  var currentId = null;
+  var stuck = null;
+  var dirty = true;
+  var rafId = 0;
+  var glowRaf = 0;
+
+  /* layout reads happen here only — never inside a scroll handler */
+  function measure() {
+    var y = window.pageYOffset || doc.scrollTop || 0;
+    for (var i = 0; i < sections.length; i++) {
+      sections[i].top = sections[i].el.getBoundingClientRect().top + y;
+    }
+    maxScroll = Math.max(1, doc.scrollHeight - window.innerHeight);
+    dirty = true;
+  }
+
+  function setCurrent(id) {
+    if (id === currentId) return;
+    if (currentId) {
+      if (navLinks[currentId]) navLinks[currentId].removeAttribute("aria-current");
+    }
+    currentId = id;
+    if (navLinks[id]) navLinks[id].setAttribute("aria-current", "location");
+
+    var passed = true;
+    for (var i = 0; i < sections.length; i++) {
+      var li = railItems[sections[i].id];
+      if (!li) continue;
+      if (sections[i].id === id) {
+        li.className = "is-current";
+        passed = false;
+      } else {
+        li.className = passed ? "is-past" : "";
+      }
+    }
+  }
+
+  function frame() {
+    rafId = 0;
+    if (!dirty) return;
+    dirty = false;
+
+    var y = window.pageYOffset || doc.scrollTop || 0;
+
+    /* writing the same attribute value still dirties style — only on change */
+    var nextStuck = y > 8;
+    if (header && nextStuck !== stuck) {
+      stuck = nextStuck;
+      header.setAttribute("data-stuck", nextStuck ? "true" : "false");
     }
 
-    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-      anchor.addEventListener("click", (event) => {
-        const selector = anchor.getAttribute("href");
-        if (!selector || selector === "#") return;
-        const target = document.querySelector(selector);
-        if (!target) return;
-        event.preventDefault();
-        window.scrollTo({
-          top: target.getBoundingClientRect().top + window.scrollY - 82,
-          behavior: reducedMotion ? "auto" : "smooth"
+    var probe = y + window.innerHeight * 0.34;
+    var active = sections.length ? sections[0].id : null;
+    for (var i = 0; i < sections.length; i++) {
+      if (sections[i].top <= probe) active = sections[i].id;
+    }
+    /* cached maxScroll, never doc.scrollHeight — that forces a layout flush */
+    if (y >= maxScroll - 4 && sections.length) {
+      active = sections[sections.length - 1].id;
+    }
+    setCurrent(active);
+  }
+
+  function schedule() {
+    if (document.hidden || rafId) return;
+    rafId = requestAnimationFrame(frame);
+  }
+
+  function markDirty() { dirty = true; schedule(); }
+
+  window.addEventListener("scroll", markDirty, { passive: true });
+
+  var resizeTimer = 0;
+  function deferMeasure() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () { measure(); schedule(); }, 180);
+  }
+  window.addEventListener("resize", deferMeasure, { passive: true });
+
+  /* deferred sections change document height as they render in — re-measure */
+  if ("ResizeObserver" in window) {
+    var firstRO = true;
+    new ResizeObserver(function () {
+      if (firstRO) { firstRO = false; return; }
+      deferMeasure();
+    }).observe(document.body);
+  }
+
+  window.addEventListener("load", function () { measure(); schedule(); }, { passive: true });
+
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) {
+      if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+      if (glowRaf) { cancelAnimationFrame(glowRaf); glowRaf = 0; }
+    } else {
+      measure();
+      schedule();
+    }
+  });
+
+  if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
+    document.fonts.ready.then(function () { measure(); schedule(); }).catch(function () {});
+  }
+  measure();
+  schedule();
+
+  /* ---------------------------------------------------------- */
+  /* pointer-tracked tilt on the case cards                       */
+  /* ---------------------------------------------------------- */
+  var tiltCards = document.querySelectorAll("[data-tilt]");
+
+  function enableTilt() {
+    Array.prototype.forEach.call(tiltCards, function (card) {
+      var box = null;
+      var pending = 0;
+      var nx = 0, ny = 0;
+
+      function apply() {
+        pending = 0;
+        card.style.setProperty("--ry", (nx * 5).toFixed(2) + "deg");
+        card.style.setProperty("--rx", (-ny * 4).toFixed(2) + "deg");
+      }
+
+      card.addEventListener("pointerenter", function () {
+        if (!fineMQ.matches || reduced()) return;
+        box = card.getBoundingClientRect();
+        card.classList.add("is-tilting");
+      }, { passive: true });
+
+      card.addEventListener("pointermove", function (e) {
+        if (!box || !fineMQ.matches || reduced()) return;
+        nx = ((e.clientX - box.left) / box.width) * 2 - 1;
+        ny = ((e.clientY - box.top) / box.height) * 2 - 1;
+        if (!pending) pending = requestAnimationFrame(apply);
+      }, { passive: true });
+
+      card.addEventListener("pointerleave", function () {
+        box = null;
+        if (pending) { cancelAnimationFrame(pending); pending = 0; }
+        card.classList.remove("is-tilting");
+        card.style.setProperty("--rx", "0deg");
+        card.style.setProperty("--ry", "0deg");
+      }, { passive: true });
+    });
+  }
+  if (fineMQ.matches && !reduced()) enableTilt();
+
+  /* ---------------------------------------------------------- */
+  /* cursor glow — fine pointers, motion-safe                     */
+  /* ---------------------------------------------------------- */
+  var glow = document.getElementById("cursorGlow");
+  var gx = 0, gy = 0;
+
+  function placeGlow() {
+    glowRaf = 0;
+    glow.style.transform = "translate3d(" + gx + "px," + gy + "px,0)";
+  }
+
+  function hideGlow() {
+    if (glow) glow.classList.remove("is-live");
+  }
+
+  if (glow && fineMQ.matches && !reduced()) {
+    window.addEventListener("pointermove", function (e) {
+      if (e.pointerType === "touch") return;
+      gx = e.clientX; gy = e.clientY;
+      if (!glow.classList.contains("is-live")) glow.classList.add("is-live");
+      if (!glowRaf && !document.hidden) glowRaf = requestAnimationFrame(placeGlow);
+    }, { passive: true });
+    document.addEventListener("pointerleave", hideGlow, { passive: true });
+    window.addEventListener("blur", hideGlow);
+  }
+
+  /* ---------------------------------------------------------- */
+  /* newsletter — subscribe without leaving the page              */
+  /* ---------------------------------------------------------- */
+  var nlForm = document.getElementById("newsletterForm");
+  var nlStatus = document.getElementById("newsletterStatus");
+  var nlEmail = document.getElementById("nl-email");
+
+  if (nlForm && nlStatus && nlEmail && window.fetch) {
+    nlForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      if (!nlEmail.validity.valid) {
+        nlEmail.setAttribute("aria-invalid", "true");
+        nlEmail.setAttribute("aria-describedby", "newsletterStatus");
+        nlStatus.textContent = "Please enter a valid email address.";
+        nlEmail.focus();
+        return;
+      }
+      nlEmail.removeAttribute("aria-invalid");
+      nlEmail.removeAttribute("aria-describedby");
+
+      var button = nlForm.querySelector("button[type=submit]");
+      if (button) button.disabled = true;
+      nlStatus.textContent = "Subscribing…";
+
+      fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({
+          email: nlEmail.value,
+          source: "home",
+          website: document.getElementById("nl-website") ? document.getElementById("nl-website").value : ""
+        })
+      }).then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (data) {
+          return { ok: res.ok, data: data };
         });
+      }).then(function (out) {
+        if (out.ok) {
+          nlStatus.textContent = "Check your inbox to confirm.";
+          nlForm.reset();
+        } else {
+          var code = out.data && out.data.error;
+          nlStatus.textContent =
+            code === "rate_limited" ? "Too many attempts. Try again a little later." :
+            code === "invalid_email" ? "Please enter a valid email address." :
+            "That did not go through. Try again in a moment.";
+        }
+      }).catch(function () {
+        nlStatus.textContent = "That did not go through. Try again in a moment.";
+      }).then(function () {
+        if (button) button.disabled = false;
       });
     });
+  }
+})();
+</script>
 
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add("is-visible");
-        revealObserver.unobserve(entry.target);
-      });
-    }, { threshold: 0.1, rootMargin: "0px 0px -32px 0px" });
+<!-- Ask Naga — AI chatbot widget -->
+<div id="naga-chat-root"></div>
+<script src="chatbot.js" defer></script>
 
-    document.querySelectorAll(".reveal").forEach((item) => revealObserver.observe(item));
-
-    const navAnchors = Array.from(document.querySelectorAll('.nav-links a[href^="#"]'));
-    const sections = navAnchors
-      .map((anchor) => document.querySelector(anchor.getAttribute("href")))
-      .filter(Boolean);
-
-    const activeObserver = new IntersectionObserver((entries) => {
-      const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-      if (!visible) return;
-      navAnchors.forEach((anchor) => {
-        anchor.toggleAttribute("aria-current", anchor.getAttribute("href") === `#${visible.target.id}`);
-      });
-    }, { threshold: [0.18, 0.35, 0.55], rootMargin: "-20% 0px -68% 0px" });
-
-    sections.forEach((section) => activeObserver.observe(section));
-
-    const filterButtons = document.querySelectorAll(".filter-button");
-    const projectCards = document.querySelectorAll(".project-card");
-
-    filterButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        const filter = button.dataset.filter;
-        filterButtons.forEach((item) => item.classList.toggle("is-active", item === button));
-        projectCards.forEach((card) => {
-          const visible = filter === "all" || card.dataset.category === filter;
-          card.classList.toggle("is-hidden", !visible);
-        });
-      });
-    });
-  </script>
-
-  <!-- Ask Naga — AI chatbot widget -->
-  <div id="naga-chat-root"></div>
-  <script src="chatbot.js" defer></script>
+<script type="module" src="scene.js"></script>
 </body>
 </html>
