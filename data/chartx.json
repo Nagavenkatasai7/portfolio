@@ -1,0 +1,14 @@
+{
+  "provenance": "resume",
+  "note": "Résumé constants until the full per-type results file is supplied. The position-encoded figure is a range across those chart types, not a single measured type.",
+  "types": [
+    { "name": "position-encoded chart types (91-95% range)", "accuracy": 0.95 },
+    { "name": "treemap", "accuracy": 0.516 }
+  ],
+  "treemap": {
+    "before": { "accuracy": 0.516 },
+    "after": { "accuracy": 0.977 },
+    "p": 0.0003,
+    "discordant": null
+  }
+}
