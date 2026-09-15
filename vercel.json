@@ -6,6 +6,7 @@
     { "path": "/api/cron/newsletter-send", "schedule": "0 13 * * *" }
   ],
   "redirects": [
+    { "source": "/Naga_Venkata_Sai_Chennu_Career_Fair_Resume.pdf", "destination": "/Naga_Chennu_Resume.pdf", "permanent": false },
     { "source": "/intellidoc", "destination": "https://intellidoc-nexus.vercel.app", "permanent": false },
     { "source": "/jira-automation", "destination": "https://ai-business-request-intake.vercel.app", "permanent": false },
     { "source": "/automation-roi", "destination": "https://ai-automation-roi.vercel.app", "permanent": false },

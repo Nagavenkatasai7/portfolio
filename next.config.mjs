@@ -1,14 +1,15 @@
 /**
- * Phase A platform conversion.
+ * Next config for the platform.
  *
- * The legacy portfolio (index.html + its CSS/JS/images, plus the "Ask Naga"
- * chatbot widget assets) lives untouched under public/, exactly as it was
- * previously served. This rewrite maps the site root to that static file so
- * the existing page keeps serving byte-identical at "/", the same URL it has
- * always been served at.
+ * There are no rewrites. The legacy single-page site (public/index.html plus the
+ * "Ask Naga" widget assets) and the `/` -> `/index.html` rewrite that served it
+ * are both gone: "/" is now the COLDSTART app route (app/page.js) and "/plain"
+ * is its linear reading, both wrapped by app/layout.js like every other app
+ * route. `rewrites()` is kept returning [] as an explicit "nothing is remapped".
  *
- * Nothing else about the legacy page is touched: no JSX conversion, no
- * layout wrapping. It is served as a plain static file, unmodified.
+ * What survives from that era is public/: the résumé PDF, profile.png and
+ * assets/projects/*.jpg are still plain static files at the same paths, and
+ * vercel.json still owns their edge headers and the project shortlinks.
  */
 
 // Scheme+host the browser may load a newsletter hero <img> from inside the
@@ -27,16 +28,20 @@ const nextConfig = {
   // only ever loaded (lazily) on the Node-runtime cron route / backfill.
   serverExternalPackages: ["pg"],
   async rewrites() {
-    return [
-      { source: "/", destination: "/index.html" },
-    ];
+    return [];
   },
-  // Security headers for the NEW app routes only. The page routes (/blog,
-  // /admin) get their CSP from middleware.js (nonce-based); here we add the
-  // non-CSP headers for them, and a locked-down CSP for /api (JSON, plus the
-  // controlled HTML error page from the OAuth callback — hence style-src is
-  // left inline-capable so that error page stays legible). The legacy static
-  // site at "/" is untouched: its headers stay in vercel.json.
+  // Security headers for the app routes. The page routes (/blog, /admin) get
+  // their CSP from middleware.js (nonce-based); here we add the non-CSP headers
+  // for them, and a locked-down CSP for /api (JSON, plus the controlled HTML
+  // error page from the OAuth callback — hence style-src is left inline-capable
+  // so that error page stays legible).
+  //
+  // "/" and "/plain" are NOT listed here and are not in the middleware matcher,
+  // so they get no CSP — only the blanket vercel.json header set. That is the
+  // same posture the static homepage had. If they are ever added to the matcher,
+  // note that the COLDSTART demos (LossMask, ChartX, SchemaCheck, RunLog) style
+  // themselves with inline style objects and so need style-src 'unsafe-inline',
+  // which the existing /blog profile already grants.
   async headers() {
     // Non-CSP security headers for the app routes (/blog, /admin, /api). Set
     // here so `next start` emits them (locally verifiable); the same HSTS +

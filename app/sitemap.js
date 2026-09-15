@@ -10,7 +10,12 @@ export const dynamic = 'force-dynamic';
 export default async function sitemap() {
   const base = siteBaseUrl();
   const entries = [
+    // "/" is an app route now (the COLDSTART graph), not a static file behind a
+    // rewrite, so it belongs in the sitemap like any other page.
+    { url: `${base}/`, lastModified: new Date(), changeFrequency: 'monthly', priority: 1.0 },
     { url: `${base}/blog`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
+    // The linear, zero-JS reading of the homepage graph. Static, always present.
+    { url: `${base}/plain`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
   ];
 
   const supabase = getAnonServerClient();

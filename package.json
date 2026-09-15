@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "description": "Naga Venkata Sai Chennu — portfolio (Next.js platform) with an 'Ask Naga' AI chatbot (OpenRouter).",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

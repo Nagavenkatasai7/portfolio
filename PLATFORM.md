@@ -46,7 +46,9 @@ served at their original relative paths. Nothing was hand-converted to JSX.
 - `public/chatbot.css`, `public/chatbot.js` — the "Ask Naga" chat widget
   front end, referenced by `index.html` via plain relative `href`/`src`.
 - `public/profile.png`,
-  `public/Naga_Venkata_Sai_Chennu_Career_Fair_Resume.pdf`,
+  `public/Naga_Chennu_Resume.pdf` (renamed from
+  `Naga_Venkata_Sai_Chennu_Career_Fair_Resume.pdf`; the old URL redirects
+  via `vercel.json`),
   `public/assets/projects/*.jpg` — every image/asset `index.html`
   references, at the same relative paths it already used.
 - `next.config.mjs` adds a single rewrite, `/` → `/index.html`, so the site

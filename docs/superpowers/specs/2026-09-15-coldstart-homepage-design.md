@@ -125,7 +125,7 @@ Camera follows the running node (ease 300 ms) unless the user has dragged in the
 
 ## 7. Demos
 
-- LossMask: fixed synthetic conversation (60 tokens, roles user/assistant), rendered as chips. OFF: assistant tokens grey, `contributing: 0`. ON (after `P`): assistant span amber, `contributing: 41`. Loss curve sparkline labelled "illustrative — shape only". Caption: `upstream: trl==0.20.0`.
+- LossMask: fixed synthetic conversation (60 tokens, roles user/assistant), rendered as chips. OFF (the regression): every token contributes, `contributing: 60` — the prompt is training the model too. ON (after `P`): only the 41 assistant tokens contribute, `contributing: 41`, and the prompt chips go grey. (Corrected 2026-09-15: an earlier draft of this line had it backwards — TRL v0.20.0 *dropped* assistant-only masking, so the bug state trains on all 60 tokens rather than on none. `lib/coldstart/lossmask.js` has always implemented the corrected semantics.) Loss curve sparkline labelled "illustrative — shape only". Caption: `upstream: trl==0.20.0`.
 - ChartX: reads `data/chartx.json` `{ types: [{name, accuracy, n}], treemap: { before: {accuracy, n}, after: {accuracy, n}, discordant: {b, c} } }`. Bars fill in run; if `discordant` present, `p = mcnemarExact(b, c)` shown with provenance `computed`; else the résumé's `p = 0.0003` with provenance `resume`. Until the owner's file arrives, ship the résumé constants (3 types: position-encoded 91–95% range shown as 91 and 95, treemap 51.6 → 97.7) all tagged `resume`.
 - SchemaCheck: a small JSON-schema-subset validator (`type`, `required`, `enum`, `properties`, `pattern`) runs a sample extraction tool-call against the filing schema; shows PASS with the validated payload; a deliberately malformed sample shows the rejection — "wrong outputs are unrepresentable".
 
@@ -166,7 +166,7 @@ Skip link first; escape pill second. `aria-live="polite"` region narrates: "Runn
 - stats.test: mcnemarExact(b,c) against known values (e.g. b=0,c=12 → p≈0.000488; symmetric; b=c → 1.0).
 - match.test: JD text with "PyTorch TRL SLURM" ranks llm-forge and loss-mask.patch top.
 - nav.test: valid JSON + enum passes; unknown node → null; caption > 140 → null; prose → null.
-- lossmask.test: OFF → contributing 0; ON → contributing 41 (fixed conversation).
+- lossmask.test: OFF (the regression) → contributing 60; ON → contributing 41 (fixed conversation).
 
 ## 15. Ship
 

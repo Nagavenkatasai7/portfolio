@@ -1,6 +1,9 @@
-// Content-Security-Policy for the new APP HTML routes (/blog, /admin). Scoped
-// by the matcher below so it NEVER touches the legacy static site at "/"
-// (served from public/ via a rewrite) or its vercel.json headers. Non-page
+// Content-Security-Policy for the /blog and /admin HTML routes. Scoped by the
+// matcher at the bottom of this file, which deliberately does NOT cover "/" or
+// "/plain": those are now app routes (the COLDSTART homepage and its linear
+// reading) but they inherit only the blanket vercel.json header set, exactly as
+// the static homepage they replaced did. Adding them here is a live option — the
+// note in next.config.mjs records what their CSP would have to allow. Non-page
 // routes (/api) get their headers from next.config.mjs.
 //
 // Two CSP profiles, because nonce-based CSP is fundamentally incompatible with
