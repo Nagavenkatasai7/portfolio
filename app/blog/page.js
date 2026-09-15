@@ -17,7 +17,7 @@ import {
 
 export const metadata = {
   title: 'Blog | Naga Venkata Sai Chennu',
-  description: 'Writing and posts on scalable systems, test automation, and AI-assisted development.',
+  description: 'Notes on LLM systems, fine-tuning pipelines, and eval harness design.',
   alternates: {
     canonical: '/blog',
   },
@@ -49,7 +49,7 @@ export default async function BlogPage() {
           <div className="mark">NC</div>
           <p className="eyebrow">Field notes</p>
           <h1>Writing &amp; <span className="hl">posts</span></h1>
-          <p className="lede">Notes on scalable systems, test automation, and AI-assisted development — plus cross-posted updates from LinkedIn and X.</p>
+          <p className="lede">Notes on LLM systems, fine-tuning pipelines, and eval harness design — plus cross-posted updates from LinkedIn and X.</p>
           <div className="navrow">
             <a href="/">← Portfolio</a>
           </div>
