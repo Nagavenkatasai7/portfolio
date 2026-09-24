@@ -1,23 +1,45 @@
-// Root layout for the new Next.js app surface (Phase A).
-//
-// This ONLY wraps routes that actually live under app/ (/blog, /blog/[id],
-// /admin — /api/* are route handlers and aren't wrapped by HTML layout). The
-// legacy site at "/" is served as a raw static file from public/ via a rewrite
-// in next.config.mjs and never passes through this layout.
-//
-// metadataBase makes every page's relative canonical / Open Graph / Twitter URL
-// resolve to an absolute one. It reads lib/site.js (optional NEXT_PUBLIC_SITE_URL
-// -> Vercel system vars -> localhost), so no new required env var is introduced.
-import { siteBaseUrl } from '@/lib/site';
+import '@fontsource-variable/inter';
+import '@fontsource-variable/space-grotesk';
+import '@fontsource-variable/jetbrains-mono';
+import './globals.css';
+import { person, SITE_URL } from '@/content/profile';
+
+const description = `${person.name} — ${person.title}. ${person.summary}`;
 
 export const metadata = {
-  metadataBase: new URL(siteBaseUrl()),
-  title: "Naga Venkata Sai Chennu",
+  metadataBase: new URL(SITE_URL),
+  title: `${person.name} — ${person.title}`,
+  description,
+  alternates: { canonical: '/' },
+  authors: [{ name: person.name, url: SITE_URL }],
+  openGraph: {
+    type: 'profile',
+    url: '/',
+    siteName: person.name,
+    title: `${person.name} — ${person.title}`,
+    description,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${person.name} — ${person.title}`,
+    description,
+  },
+  robots: { index: true, follow: true },
+};
+
+export const viewport = {
+  themeColor: '#07070c',
+  width: 'device-width',
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        {/* Enables the scroll-reveal styles only when JavaScript is running. */}
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+      </head>
       <body>{children}</body>
     </html>
   );

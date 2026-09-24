@@ -1,24 +1,20 @@
-// Global 404 for the app-router surfaces (/blog, /admin/*). Rendered for any
-// notFound() call (e.g. /admin/edit/[id] on a missing row) and unmatched app
-// routes. Server component, on-brand, no client JS.
-import { boundaryCss } from './boundary-ui';
-
-export const metadata = { title: 'Not found', robots: { index: false, follow: false } };
+export const metadata = { title: 'Page not found', robots: { index: false } };
 
 export default function NotFound() {
   return (
-    <div className="bnd">
-      <style>{boundaryCss}</style>
-      <div className="card">
-        <div className="mark">NC</div>
-        <p className="eyebrow">404</p>
-        <h1>This page <span className="hl">wandered off</span></h1>
-        <p>The link may be broken, or the content was moved or removed.</p>
-        <div className="row">
-          <a href="/blog" className="primary">View the blog</a>
-          <a href="/">Portfolio home</a>
+    <main className="hero" style={{ minHeight: '100svh' }}>
+      <div className="container">
+        <span className="eyebrow">404</span>
+        <h1 className="section-title" style={{ marginTop: 16 }}>
+          This page doesn’t exist.
+        </h1>
+        <p className="section-sub">The site was rebuilt, and some old links no longer work.</p>
+        <div className="hero-actions">
+          <a className="btn btn-primary" href="/">
+            Go to the homepage
+          </a>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

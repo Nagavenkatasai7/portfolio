@@ -1,40 +1,24 @@
 {
   "name": "naga-portfolio",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
-  "description": "Naga Venkata Sai Chennu — portfolio (Next.js platform) with an 'Ask Naga' AI chatbot (OpenRouter).",
+  "description": "Naga Venkata Sai Chennu — AI Engineer portfolio with live AI features (Ask my work, Job-fit matcher, finance-Llama demo).",
+  "engines": {
+    "node": ">=20.9"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "dev:chatbot": "node scripts/dev-server.mjs",
-    "gate:verify": "node scripts/gate-verify.mjs",
-    "verify:phase-c": "node --conditions=react-server scripts/phase-c-verify.mjs",
-    "verify:phase-d": "node --conditions=react-server scripts/phase-d-verify.mjs",
-    "verify:phase-e": "node --conditions=react-server scripts/phase-e-verify.mjs",
-    "verify:phase-f": "node --conditions=react-server scripts/phase-f-verify.mjs",
-    "verify:newsletter": "node --conditions=react-server scripts/newsletter-verify.mjs",
-    "verify:newsletter-issues": "node --conditions=react-server scripts/newsletter-issues-verify.mjs",
-    "verify:newsletter-preview": "node scripts/newsletter-preview-verify.mjs",
-    "newsletter:hero": "node scripts/newsletter-hero.mjs",
-    "newsletter:draft": "node --conditions=react-server scripts/newsletter-draft-helper.mjs",
-    "linkedin:backfill": "node --conditions=react-server scripts/linkedin-backfill.mjs",
-    "db:migrate": "node scripts/apply-migrations.mjs",
-    "db:rls-probe": "node scripts/rls-probe.mjs"
+    "test": "node --test 'tests/*.test.js'"
   },
   "dependencies": {
-    "@supabase/supabase-js": "2.110.1",
-    "jose": "6.2.3",
-    "marked": "18.0.5",
-    "next": "15.5.20",
-    "pg": "8.22.0",
-    "react": "19.2.7",
-    "react-dom": "19.2.7",
-    "sanitize-html": "2.17.5",
-    "server-only": "0.0.1"
-  },
-  "overrides": {
-    "postcss": "8.5.16"
+    "@fontsource-variable/inter": "5.3.0",
+    "@fontsource-variable/jetbrains-mono": "5.3.0",
+    "@fontsource-variable/space-grotesk": "5.3.0",
+    "next": "16.3.6",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
   }
 }
