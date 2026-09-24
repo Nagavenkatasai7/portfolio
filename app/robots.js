@@ -1,20 +1,8 @@
-// /robots.txt — allow the public site + /blog, keep crawlers out of the admin
-// dashboard and the API surface, and point at the sitemap.
-import { siteBaseUrl } from '@/lib/site';
-
-export const dynamic = 'force-dynamic';
+import { SITE_URL } from '@/content/profile';
 
 export default function robots() {
-  const base = siteBaseUrl();
   return {
-    rules: [
-      {
-        userAgent: '*',
-        allow: ['/', '/blog'],
-        disallow: ['/admin', '/api'],
-      },
-    ],
-    sitemap: `${base}/sitemap.xml`,
-    host: base,
+    rules: [{ userAgent: '*', allow: '/', disallow: '/api/' }],
+    sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }
