@@ -1,4 +1,4 @@
-# CI: checks only. Vercel's Git integration owns deploys.
+# CI: checks only. The site is self-hosted on a Jetson; see DEPLOY.md.
 name: CI
 
 on:
